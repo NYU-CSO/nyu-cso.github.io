@@ -1,0 +1,5 @@
+2/25;<a href="labs/l1.html">Lab 1</a> due
+3/18;<a href="labs/l2.html">Lab 2</a> due
+4/1;<a href="labs/l3.html">Lab 3</a> due
+5/1;<a href="labs/l4.html">Lab 4</a> due
+5/15;<a href="labs/l5.html">Lab 5</a> due
