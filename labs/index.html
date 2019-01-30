@@ -1,0 +1,271 @@
+<html>
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no, content=no-cache">
+
+	<!-- Bootstrap CSS -->
+	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.3/css/bootstrap.min.css" integrity="sha384-Zug+QiDoJOrZ5t4lssLdxGhVrurbmBWopoEl+M6BdEfwnCJZtKxi1KgxUyJq13dy" crossorigin="anonymous">
+	<link rel="stylesheet" href="../sty2.css">
+
+  <title>Computer Systems Organization (Spring 2019) </title>
+</head>
+
+<body>
+<br>
+    <main role="main" class="container">
+      <header class="header clearfix">
+        <nav>
+          <ul class="nav nav-pills float-left">
+            <li class="nav-item">
+              <a class="nav-link" href="../index.html">Home <span class="sr-only">(current)</span></a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="../schedule.html">Schedule</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link active" href="index.html">Lab</a>
+            </li>
+          </ul>
+        </nav>
+	<div class="row">
+		<div class="col-sm-3"><img src="../org.png" width=150></div>
+		<div class="col-sm-9">
+		<div class="row">
+        <h3 class="text-success">Computer Systems Organization</h3>
+		</div>
+		<div class="row">
+			CSCI-UA.0201(001), Spring 2019
+		</div>
+		</div>
+	</div>
+      </header>
+
+<div id="content">
+<hr>
+
+<h4>Lab assignments</h4>
+
+<a href="l1.html">Lab 1 </a> Basic C programming <br>
+<a href="l2.html">Lab 2</a> Rabin Karp Substring Matching <br>
+<a href="l3.html">Lab 3 </a> Binary Mystery <br>
+<a href="l4.html">Lab 4</a>  Malloc <br>
+<a href="l5.html">Lab 5</a> Multi-thread programming<br>
+
+<p>
+<h4>Collaboration and Integrity Policy</h4>
+Please read <a href="../policy.html">this</a> carefully. We will run plagiarism detection software on all submitted code.
+
+<p>
+<h4>Lab Setup Instructions</h4>
+<a href="#vm">Set up VirtualBox</a><br> 
+<span class="glyphicon glyphicon-star"></span><a href="#vm-faq">FAQs on setting up VirtualBox</a><br>
+<a href="#repo">Set up Git repository</a><br>
+<span class="glyphicon glyphicon-star"></span><a href="#git-faq">FAQs on gits</a><br>
+
+
+<p>
+<h4 id="vm">Setting up Virtual Box</h4>
+We will grade your labs on an Ubuntu 16.04 machine.
+We recommend you do the labs in the 
+the class virtual machine (based on Ubuntu 16.04). 
+
+<p>For a basic virtual machine setup, perform 
+the following four steps:
+<ul>
+<li><b>Step 1. Install VirtualBox.</b> Download the Virtualbox virtual machine monitor 5.2.24. 
+	If your laptop runs MacOS, download <a href="http://download.virtualbox.org/virtualbox/5.2.24/VirtualBox-5.2.24-128163-OSX.dmg">this</a>.  If your laptop runs Windows, download <a href="http://download.virtualbox.org/virtualbox/5.2.24/VirtualBox-5.2.24-128163-Win.exe">this</a>.
+
+<li><b>Step 2. Download class virtual machine image</b>. Download this <a href="http://tintin.news.cs.nyu.edu/lubuntu16.04.ova">file.</a> This file is fairly large (&gt;2GB), so you need to be patient.
+We have also put a copy of the image on Dropbox <a href="https://www.dropbox.com/s/n7mc7ut9c5mmo2y/lubuntu16.04.ova">here</a>.
+
+<li><b>Step 3. Launch Virtualbox and import class VM image</b>.  On the Virtualbox application toolbar, under the Menu
+item "File", click on "Import appliance...", and choose the previously downloaded lubuntu16.04.ova file
+when prompted.
+<li><b>Step 4. Launch Lubuntu Linux and install necessary packages</b>. After importing, start the virtual machine named "lubuntu" and log in using 
+the username and password given in Piazza). Once you are logged in, 
+start a terminal once you logged in by pressing short-cut key combination "Ctrl-Alt-t". (Alternatively, find "LXterminal" under the "System tools" tab, which is expanded when you click the lower left button). 
+<!--Type <kbd>sudo apt-get install gcc gdb make git</kbd> to install GNU C compiler, make builder, gdb debugger, git source management tool--></li>
+<!---username=lab lab12345-->
+</ul>
+
+<p>For more advanced tune-ups to help your productivity, do the following:
+<ul>
+<li><b>Enable copy-n-paste between your native OS (e.g. MacOS) and class VM</b>. First, click the settings button in the VirtualBox window, and then click "advanced" tab, change the pulldown button of "Shared Clipboard" and "Drag'n'Drop" to "Bidirectional".
+<p>
+<img src="vboxsettings.png" width=600></img>
+<p>Launch class VM image and log in.  
+<p>Under the "Devices" menu, click "Insert Guest Additions CD".
+<p>Start LXterminal, type <kbd>cd /media/lab/VBox_GAs_5.2.24/</kbd>. Become root by typing <kbd>sudo bash</kbd>. Afterwards, type <kbd>./VBoxLinuxAdditions.run</kbd>. 
+<img src="guestaddition.png" width=900></img>
+Restart Virtual box and re-launch class VM. Now you should be able to do copy-n-paste between native OS and class VM.
+</li>
+<li><b>Mount a folder in native-OS in class VM</b>. (Note that this option requires completing the previous option which installs the virtualbox guest additions.) Instead of writing code in class VM, you may want to write code in your native-OS (e.g. using sublime) and only execute the labs in class VM. In this case, you want to store lab files in a native folder (e.g. /User/jinyang/cso-labs) and mount the native folder in class VM, so changes made to lab files in native OS are instantly visible inside the class VM. 
+	<p>To mount a native folder in class VM, inside VirtualBox, click "Settings" button, and then click "Shared Folders" on the left. Click the add-share logo on the right hand side. Enter the "Folder path" in your native OS (e.g. <tt>/User/jinyang/cso-labs</tt> and "Folder name" (e.g. <tt>cso-labs</tt>) with "Auto-mount" selected.  
+	<img src="vboxmount.png" width=600></img>
+	<p>Launch class VM, open LXterminal once logged in. Create mount directory by typing <kbd>sudo mkdir /mnt/cso-labs</kbd>.  Mount by typing <kbd> sudo mount -t vboxsf -o uid=1000,gid=1000 cso-labs /mnt/cso-labs</kbd>. From now on, the <tt>/mnt/cso-labs</tt> directory refers to the <tt>/User/jinyang/cso-labs</tt> directory in your native OS.  If you reboot the VM, you will lose your mount. To keep it automatically mounted across reboots, add the following line (as root user) to your class VM's <tt>/etc/fstab</tt> file by typing:
+	<p>	<kbd>
+		sudo bash -c 'echo "cso-labs /mnt/cso-labs vboxsf uid=1000,gid=1000 0 0" >> /etc/fstab'
+</kbd>
+</li>
+</ul>
+
+<p>Note that if you choose to do your labs outside of the class virtual machine,
+we will not provide any technical support should you encounter 
+any OS-related issues in doing the labs. Furthermore, should the results of your
+lab differ from what we have obtained by running the tests on Linux, we will use
+our test results in determining the grade.
+
+<div class="bd-callout bd-callout-info">
+<h5 id="vm-faq">FAQs on Virtual Box Setup</h5>
+<ul>
+	<li>
+		<b>VT-x/AMD-V hardware acceleration is not available.</b> 
+		<p>Virtualbox wants you to enable virtualization in BIOS. If you don't know how to do that, come to see one of the course staff.
+	</li>
+ 
+	<li><b>VM fails to launch and halts with either black screen or distorted image.</b> 
+		<p>You should try to allocate more video memory to your VM. Shutdown your VM first. Then open "Settings", click "Display", and change "Video Memory" to a larger value.
+	</li>
+       
+	<li><b>"Insert Guest Additions CD Image..." fails.</b>
+		<p>If on your VM desktop, there is an icon that appears like a CD, that means you inserted the CD image already. You cannot insert the CD image twice.
+       
+		<li><b>Mount shared folder fails and get "protocol error".</b></b>
+      <p>When you add a shared folder in VM settings, you will specify a folder name. If you folder name is abcdefg, then when you mount your shared folder inside VM, you should change the command to
+      <kbd>sudo mount -t vboxsf -o uid=1000,gid=1000 abcdefg /mnt/cso-labs</kbd>
+       
+      <li><b>When typing in password, nothing happens.</b>
+	      <p>That is a security feature. Terminal won't display your typed password because someone sitting next to you can see it and steal your password. Just continue to type your full password, and hit Enter
+      </li>
+       
+      <li><b>How to resize the VM to full screen?</b>
+	      <p>After you install the Guest Additions CD Image, in the VirtualBox Menu bar, click "View" then "Full-Screen Mode", then wait for a while. The first time switching to full screen requires patience. If it still does not work, uncheck "Full-Screen Mode" and then check "Full-Screen Mode", and wait for a while. Repeat until you run out of patience and decide to give up and use "Scaled Mode" instead...
+      </li>
+       
+      <li><b>The command sudo unable to resolve host.</b>
+	      <p>This is just a warning, you can ignore it. But if you really wants to get rid of the warning message, open up a terminal, type 
+      <kbd>sudo sh -c 'echo "127.0.1.1\tvbox" >> /etc/hosts'</kbd>
+</ul>
+</div>
+
+<h4 id="repo">Setting up Git Repository</h4>
+For each student in the class, we have created for him/her a corresponding private
+lab repository on Github.com. You will submit labs by pushing to your private
+repo on github.com (as many times as you want) and we will collect labs for
+grading after the lab deadline directly from Github.com.  Below are the steps
+for setting up your the lab environment on your laptop.  If you are not
+familiar with the <tt>git</tt> version control system,  follow the resources <a
+href="https://help.github.com/articles/good-resources-for-learning-git-and-github/">here</a>
+to get started.
+
+<p>
+<ul>
+	<li><b>Cloning your lab repo locally</b>
+<p>In a VirtualBox terminal, clone your repo by typing the following:
+<pre >
+$ git clone https://github.com/nyu-cso-sp19/labs-&lt;YourGithubUsername&gt;.git  cso-labs
+$ cd cso-labs
+</pre>
+
+<p>
+You will see that a directory named <tt>cso-labs</tt> has been created under your home directory.  This is the git repo for your lab assignments throughout the semester.
+</li>
+
+<li><b>Setting up the upstream repo</b>
+		<p>The lab skeleton code are kept in the repo <a
+      href="https://github.com/nyu-cso/cso-labs"><tt>https://github.com/nyu-cso-sp19/cso-labs</tt></a>
+managed by the course staff. Therefore, the first thing you need to do is to
+set up your own lab repo to track the changes made in the <tt>cso-labs</tt> repo.
+In the git world, <tt>cso-labs</tt> would be your "upstream" repo from which changes 
+should ``flow'' into your own lab repo.
+
+<p>Type <kbd>git remote add</kbd> to add the upstream repo, and <kbd>git remote -v</kbd> to check that <tt>cso-labs</tt> is indeed an upstream for your own lab repo.
+<pre >
+$ git remote add upstream https://github.com/nyu-cso-sp19/cso-labs.git
+$ git remote -v
+origin	https://github.com/nyu-cso-sp19/labs-YourGithubUsername.git (fetch)
+origin	https://github.com/nyu-cso-sp19/labs-YourGithubUsername.git (push)
+upstream	https://github.com/nyu-cso-sp19/cso-labs.git (fetch)
+upstream	https://github.com/nyu-cso-sp19/cso-labs.git (push)
+</pre>
+
+<p>Immediately, you should check if the upstream cso-labs repo has additional changes not present in your repo. You can check for and merge in those changes by typing:
+<pre >
+$ git pull upstream master
+</pre>
+You should perform the above two steps periodically to ensure that you've got the latest lab code. 
+We will also remind you to fetch upstream on Piazza if we make changes/bug-fixes to the labs.
+</li>
+
+<li><b>Saving changes while you are working on Labs</b>
+<p>
+As you modify the skeleton files to complete the labs, you should frequently save your 
+work to protect against laptop failures and other unforeseen troubles. 
+You save the changes by first "committing" them to your local lab repo and then "pushing" 
+those changes to the repo stored on github.com
+<pre >
+$ git commit -am "saving my changes"
+$ git push origin master
+</pre>
+
+Note that whenever you add a new file, you need to manually tell git to ``track it''.
+Otherwise, the file will not be committed by git commit. Make git track a new file by typing:
+<pre >
+$ git add &lt;my-new-file&gt;
+</pre>
+
+<p>After you've pushed your changes by typing <kbd>git push origin master</kbd>, they are safely stored on github.com.
+Even if your laptop catches on fire in the future, those pushed changes can still be retrieved.
+However, you must remember that doing <kbd>git commit</kbd> by itself does not save your changes on github.com 
+(it only saves your changes locally).  So, don't forget to type <kbd>git push origin master</kbd>.
+
+<p>
+To see if your local repo is up-to-date with your origin repo on github.com and vice versa, type
+<kbd>git status</kbd>
+</li>
+</ul>
+
+<h4>Handin Procedure</h4>
+
+To handin your files, simply commit and push them to github.com by doing:
+<pre >
+$ git commit -am "saving all my changes and handing in"
+$ git push origin master
+</pre>
+
+We will fetch your lab files from Github.com at the specified deadline and grade them.
+
+<p>
+<div class="bd-callout bd-callout-info">
+<h5 id="git-faq">FAQs on Git repository</h5>
+<ul>
+	<li><b>What message should I fill in for <kbd>git commit -am "message"</kbd></b>
+		<p>The <tt>"message"</tt> can be any string. But we ask you to leave something descriptive as message. In the future, when you check your git logs, this message helps you recall what you did for this commit. We (CSO staff) will never read your commit message. It's not going to affect grading.
+	</li>
+ 
+	<li><b>How can I change a message if it's already pushed to GitHub?</b>
+		<p>You don't need to change a message. There are ways to change messages but for CSO you never need them. Don't do it. It's going to cause conflict. <font color="red">Super dangerous.</font>
+	</li>
+ 
+	<li>I got an error message <tt>Fatal: Not a git repository</tt> (or any of the parent directories).</b>
+	<p> This means you are typing git commands outside the directory containing your git repository. You need to type <kbd>cd recitations-XXX</kbd>, where XXX is your GitHub username.
+	Remember to always type most git commands inside git repository. Commands like <kbd>git clone</kbd>, <kbd>git config --global</kbd> can be issued anywhere.
+	</li>
+ 
+	<li><b>Can I edit files through GitHub.com?</b>
+		<p>No. You should <b>never</b> do that. That's very likely to cause conflicts. <font color="red"> Super dangerous.</font>
+Please only use GitHub.com for read-only access, i.e. checking if all your changes have been pushed to your remote repository.
+	</li>
+ 
+	<li><b>When I do <tt>git pull</tt>, I got an error <tt>Repository not found</tt>.</b>
+Check the repository address, there should be no quotes (") or angle brackets (&lt; &gt;). The lab instructions use quotes or angle brackets to mark a placeholder for your GitHub username.
+If <tt>git pull upstream master</tt> fails, then check upstream address by typing
+<kbd>git remote -v</kbd>
+    To edit your upstream address, remove it first by typing
+    <kbd>git remote remove upstream</kbd>, and then add it back with <kbd>git remote add</kbd>
+</div>
+
+<hr>
+</div>
+</body>
+</html>
