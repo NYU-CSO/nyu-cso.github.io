@@ -143,7 +143,7 @@ those changes to the repo stored on github.com
 <p>
 <pre >
 $ git commit -am "saving lab1 changes"
-$ git push origin
+$ git push origin master
 </pre>
 
 <p>The `-a` flag (as in the command `git commit -am ...`) tells git to add the changes you've made to existing files to the current commit.
@@ -151,7 +151,8 @@ If you do not provide this flag, the changes you made to the existing files will
 After you've pushed your changes with <kbd>git push</kbd>, they are safely stored on github.com.
 Even if your laptop catches on fire in the future, those pushed changes can still be retrieved.
 However, you must remember that <kbd>git commit</kbd> by itself does not save your changes on github.com 
-(it only saves your changes locally).  So, don't forget to type that <kbd>git push origin</kbd>.
+(it only saves your changes locally).  So, don't forget to type that <kbd>git
+  push origin master</kbd>.
 
 <p>
 <h4 id="debug">Debugging the lab</h4>
@@ -191,6 +192,27 @@ $ gdb build/part1
 You are to write one standard alone C program from scratch.
 
 <p>
+<div class="bd-callout bd-callout-danger">
+	<h5>Output format:</h5>
+	<p> Now that you are writing a stand-alone program, you need to pay special
+  attention to the output format of your program since when we grade your labs,
+  we only compare the output. So your output must be exactly the same as our
+  standard solution. <b>If your output format is wrong, there won't be partial
+    scores</b>.
+
+  <p> Therefore, the very important thing to keep in mind is read carefully the
+  instructions below and understand what the output should be. You need to
+  strictly follow our requirements on output format. If you have questions
+  about the output format, ask on Piazza.
+
+  <p> And, we provide you with a simple script in lab repository to check your
+  output for <tt>avgcsv</tt> and <tt>gameoflife</tt>. To use the checker,
+  first change to the scratch folder by <kbd>cd clab/scratch</kbd>, and then
+  <kbd>./output_format_checker.sh</kbd>. If the checker does not report error,
+  then your output format is good.
+</div>
+
+<p>
 <h5 id="e1">Standalone C program: Averaging columns in a *.csv file (25 points)</h5>
 <p>Put all your files for this exercise in <tt>cso-labs/clab/scratch/avgcsv</tt> directory.
 
@@ -218,13 +240,14 @@ $ ./avgcsv example.csv
 <p>We expect you to write a Makefile to generate the <tt>avgcsv</tt> executable file from your source code. 
 <a href="https://github.com/nyu-cso-sp19/cso19-recitation/blob/master/r01/r01.pdf">Recitation 1</a> teaches you how to write a Makefile.
 
-<p>We do not provide you with any tests and will test your program under a few *.csv files of our own choosing during grading time. 
+<p>There are some simple test cases under
+<tt>cso-labs/clab/scratch/simple_test_cases</tt>, but we do not provide you with all tests and will test your program under a few *.csv files of our own choosing during grading time. 
 You should write unit tests for your program. In particular, you should test the cases when the input csv file contains a 
 large number of rows or a large number of columns. You can assume that you
 won't run out of memory storing all the floating points parsed from the file in the memory.
 
 <p>Once finished, add relevant source files and Makefile to your git repo by typing <kbd>git add *.c *.h Makefile</kbd>. 
-Commit and push <kbd>git commit -am "avgcsv"; git push origin</kbd>
+Commit and push <kbd>git commit -am "avgcsv"; git push origin master</kbd>
 <p>Note that whenever you add a new file in this directory, you need to manually tell git to ``track it'' with 
 <kbd>git add</kbd>.  Otherwise, the file will not be committed by <tt>git commit</tt>. 
 
@@ -232,7 +255,7 @@ Commit and push <kbd>git commit -am "avgcsv"; git push origin</kbd>
 <ul>
 	<li><b>Use either <tt>strtok_r</tt> from C library, or <tt>string_token</tt> you implemented in part8.c of minilab</b> to split into columns.
 		If you decide to use the former, read its documentation <kbd>man strtok_r</kbd>, and compile your program with gcc flag `<tt>gcc -std=gnu99</tt>`. If you decide to use the latter, include the header file with <tt>#include "../../mini/part8.h"</tt>, and link your program with part8.o from the mini/ directory.
-		<li><b>Use printf(".2f", number)</b> to print a number to the precision of 2 decimal points.
+		<li><b>Use printf("%.2f", number)</b> to print a number to the precision of 2 decimal points.
 	<li><b>Write good tests.</b> In your unit tests, you should test with csv files with different rows and columns. Make sure you test cases when the input csv file contains a 
 large number of rows or a large number of columns. You can assume that you
 won't run out of memory storing all the floating points parsed from the file in the memory.
@@ -317,7 +340,7 @@ $ ./gameoflife example_seed 2
 own unit tests to check the correctness.  During grading, we'll test your program using seed files of our own choosing.  <span class=text-info>You may assume that the seed file used for testing contains a world of no more than 1000x1000</p>
 
 <p>Once finished, add relevant source files and Makefile to your git repo by typing <kbd>git add *.c *.h Makefile</kbd>. 
-Commit and push <kbd>git commit -am "gameoflife"; git push origin</kbd>
+Commit and push <kbd>git commit -am "gameoflife"; git push origin master</kbd>
 
 <h4 id="handin">Handin Procedure</h4>
 
@@ -325,7 +348,7 @@ To handin your files, simply commit and push them to github.com
 <p>
 <pre >
 $ git commit -am "hand in lab1"
-$ git push origin 
+$ git push origin master
 </pre>
 
 We will fetching your lab files from Github.com at the specified deadline and grade them.
