@@ -183,8 +183,8 @@ value of 256<sup>m</sup> by storing it in the long long variable pointed to by t
 the next rolling hash given the current RK hash according to (2). Suppose
 y<sub>i</sub> is the current RK hash covering substring Y[i...i+m-1), then one
 can compute y<sub>i+1</sub> over substring Y[i+1...i+m] by invoking
-rkhash_init(y<sub>i</sub>, h, Y[i], Y[i+m]). The second argument of rkhash_init must contain
-256<sup>m</sup>). 
+rkhash_next(y<sub>i</sub>, h, Y[i], Y[i+m]). The second argument of rkhash_next must contain
+256<sup>m</sup>. 
 
 <p>
 <div class="bd-callout bd-callout-danger">
