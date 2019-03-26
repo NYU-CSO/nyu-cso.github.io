@@ -196,7 +196,7 @@ tester will enforce this requirement for you.
 </ul>
 
 
-<h3 id="implicitlist">Implementing the implicit list</h3>
+<h3 id="implicitlist">Implement implicit-list malloc</h3>
 Before we let you go forth and design your own malloc, we will
 guide you in implementing an existing simple design, i.e. the
 implicit-list based malloc.
@@ -282,7 +282,7 @@ achieve great performance.
 
 <h3> Implement your own malloc</h3>
 
-After finishing implicit-list malloc, you are ready to implement your own malloc 
+<p> After finishing implicit-list malloc, you are ready to implement your own malloc 
 design. You can implement explicit-list, segregated explict-list, buddy system,
 or your own design. Additionally, you can add footer to enable coalescing with
 the previous chunk. 
@@ -298,37 +298,6 @@ your implementation in <tt>mm.c</tt>.
 $ ./mdriver -V
 </pre>
 
-<h3 id="heapconsistency">Checking Heap Consistency</h3>
-
-<p>Dynamic memory allocators are notoriously tricky beasts to program
-correctly and efficiently. They are difficult to program correctly
-because they involve a lot of untyped pointer manipulation.  We ask you 
-to write <tt>mm_checkheap</tt> to scan the heap and
-checks it for consistency.
-
-<p>Some examples of what a heap checker might check are:
-<ul>
-<li> Is every block in the free list marked as free?
-<li> Are there any contiguous free blocks that somehow escaped
-coalescing?
-<li> Is every free block actually in the free list?
-<li> Do the pointers in the free list point to valid free blocks?
-<li> Do any allocated blocks overlap?
-<li> Do the pointers in a heap block point to valid heap
-addresses?
-</ul>
-
-<p>Your heap checker will consists of the function <tt>void mm_heapcheck(int
-verbose)</tt>, to be implemented in <tt>mm.c</tt>.  It will check any invariants or
-consistency conditions you consider prudent.  It returns a nonzero value if and
-only if your heap is consistent.  You are not limited to the listed suggestions
-nor are you required to check all of them.  
-
-<p>This consistency checker is for your own debugging during development.
-When you submit <tt>mm.c</tt>, make sure to remove any calls to
-<tt>mm_checkheap</tt> as they will slow down your throughput.  Style points will be
-given for your <tt>mm_checkheap</tt> function. 
-
 <h3>Programming Advice</h3>
 
 <p>Your code should have a header comment that describes the
@@ -342,7 +311,7 @@ gives you an example of modular implementation. Follow it.
 While the textbook is useful for reviewing the malloc design, <b>I do not recommend follow the textbook programming style</b> of doing pointer arithmetic everywhere and using C macros instead of regular functions.  It makes the code harder to read and debug. Define structs to represent chunk meta-data and use regular helper functions, as demonstrated in <tt>mm-implicit.c</tt>
 
 <p> Your heap consistency checker <tt>mm_checkheap</tt> should be
-thorough.<p>Some examples of what a heap checker might check are:
+thorough. Some examples of what a heap checker might check are:
 <ul>
 <li> Is every block in the free list marked as free?
 <li> If you are coalescing with both previous and next free chunk, there should not be any contiguous free blocks.
@@ -354,8 +323,8 @@ addresses?
 </ul>
 
 <p>Write unit tests (in <tt>mm-unittest.c</tt>) in the style of
-<tt>mm-implicit-unittest.c</tt>. They might seem tedious, but they are crucial to 
-help with debugging. 
+<tt>mm-implicit-unittest.c</tt>. They might seem tedious, but they are crucial 
+for debugging. 
 
 <p>When testing with trace-based tester, use simple workloads first to debug correctness. 
 We provide two very simple trace files <tt>short{1,2}.rep</tt> to simplify debugging.
