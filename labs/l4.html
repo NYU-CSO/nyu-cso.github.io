@@ -316,19 +316,20 @@ makes the code harder to read and debug. Define structs to represent chunk
 meta-data and use regular helper functions, as demonstrated in
 <tt>mm-implicit.c</tt>
 
-<p>
-
-	<li> Your heap consistency checker <tt>mm_checkheap</tt> should be
+<div class="bd-callout bd-callout-warning">
+	<h5>Heap consistency checker:</h5>
+<p> Your heap consistency checker <tt>mm_checkheap</tt> should be
 thorough. Some examples of what a heap checker might check are:
 <ul>
 <li> Is every block in the free list marked as free?
-<li> If you are coalescing with both previous and next free chunk, there should not be any contiguous free blocks.
+<li> If you are coalescing with both previous and next free chunk, there should not be any contiguous free blocks. Is this property always true?
 <li> Is every free block in the free list?
 <li> Do the pointers in the free list point to valid free blocks?
 <li> Do any allocated blocks overlap?
 <li> Do the pointers in a heap block point to valid heap
 addresses?
 </ul>
+</div>
 
 	<li>Write unit tests (in <tt>mm-unittest.c</tt>) in the style of
 <tt>mm-implicit-unittest.c</tt>. They might seem tedious, but they are crucial 
