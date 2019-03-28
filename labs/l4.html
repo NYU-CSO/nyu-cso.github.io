@@ -299,12 +299,14 @@ $ ./mdriver -V
 
 <h3>Programming Advice</h3>
 
-<p>Your code should have a header comment that describes the
+<ul>
+
+	<li>Your code should have a header comment that describes the
 overall design of your malloc implementation: e.g. the organization of the
 free list.  Each function should also have a header comment that describes what
 the function does.
 
-<p> Define your chunk header as structs and modularize your implementation 
+	<li> Define your chunk header as structs and modularize your implementation 
 using helper functions. The skeleton code of <tt>mm-implicit.c</tt>
 gives you an example of modular implementation. Follow it.
 While the textbook is useful for reviewing the malloc design, <b>I do not
@@ -324,7 +326,7 @@ meta-data and use regular helper functions, as demonstrated in
 
 <h3 id="heapconsistency">Heap Consistency Checker</h3>
 
-<p> Your heap consistency checker <tt>mm_checkheap</tt> should be
+	<li> Your heap consistency checker <tt>mm_checkheap</tt> should be
 thorough. Some examples of what a heap checker might check are:
 <ul>
 <li> Is every block in the free list marked as free?
@@ -336,16 +338,16 @@ thorough. Some examples of what a heap checker might check are:
 addresses?
 </ul>
 
-<p>Write unit tests (in <tt>mm-unittest.c</tt>) in the style of
+	<li>Write unit tests (in <tt>mm-unittest.c</tt>) in the style of
 <tt>mm-implicit-unittest.c</tt>. They might seem tedious, but they are crucial 
 for debugging. 
 
-<p>When testing with trace-based tester, use simple workloads first to debug correctness. 
+	<li>When testing with trace-based tester, use simple workloads first to debug correctness. 
 We provide two very simple trace files <tt>short{1,2}.rep</tt> to simplify debugging.
 Type <tt>mdriver -f ./traces/short1.rep</tt> to test your memory allocator on 
 one of these workloads first.
 
-<p>The first 9 traces
+	<li>The first 9 traces
 contain requests to <tt>malloc</tt> and <tt>free</tt>.  The last 2 traces
 contain requests for <tt>realloc</tt>, <tt>malloc</tt>, and <tt>free</tt>. We
 recommend that you start by getting your <tt>malloc</tt> and <tt>free</tt>
@@ -356,10 +358,13 @@ existing <tt>malloc</tt> and <tt>free</tt> implementations. But to get
 really good performance, you will need to build a stand-alone <tt>
 realloc</tt>.
 
-<p>Use gdb. It
+	<li>Use gdb. It
 will help you isolate and identify out of bounds memory references.
 
-<p>For advanced students, you should consider learning to use a profiler, such as <tt>gprof</tt>, to understand and optimize the performance of your program. 
+	<li>For advanced students, you should consider learning to use a profiler, 
+such as <tt>gprof</tt>, to understand and optimize the performance of your program. 
+
+</ul>
 
 <h3 id="eval">Evaluation</h3>
 
