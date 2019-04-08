@@ -1,0 +1,434 @@
+<html>
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no, content=no-cache">
+
+	<!-- Bootstrap CSS -->
+	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.3/css/bootstrap.min.css" integrity="sha384-Zug+QiDoJOrZ5t4lssLdxGhVrurbmBWopoEl+M6BdEfwnCJZtKxi1KgxUyJq13dy" crossorigin="anonymous">
+	<link rel="stylesheet" href="../sty2.css">
+
+  <title>Computer Systems Organization (Fall 2018) </title>
+</head>
+
+<body>
+<br>
+    <main role="main" class="container">
+      <header class="header clearfix">
+        <nav>
+          <ul class="nav nav-pills float-left">
+            <li class="nav-item">
+              <a class="nav-link " href="../index.html">Home <span class="sr-only">(current)</span></a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="../schedule.html">Schedule</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link active" href=".">Lab</a>
+            </li>
+          </ul>
+        </nav>
+	<div class="row">
+		<div class="col-sm-3"><img src="../org.png" width=150></div>
+		<div class="col-sm-9">
+		<div class="row">
+        <h3 class="text-muted">Computer Systems Organization</h3>
+		</div>
+		<div class="row">
+			CSCI-UA.0201(001), Spring 2019
+		</div>
+		</div>
+	</div>
+      </header>
+
+<div id="content">
+<hr>
+
+<h2> Lab-4: Malloc lab</h2>
+<h5>Due: 5/1</h5>
+
+
+<a name="labs">
+<h3>Introduction</h3>
+
+In this lab you will be writing a dynamic storage allocator for C
+programs, i.e., your own version of the <tt>malloc</tt>, <tt> free</tt> and
+<tt>realloc</tt> routines. You are encouraged to explore the design space
+creatively and implement an allocator that is correct, efficient and
+fast.
+
+<p> This is an individual lab. </p>
+
+<h3>Obtaining the lab</h3>
+
+<pre>
+$ cd cso-labs
+$ git pull upstream master
+</pre>
+
+This creates a number of new files in subdirectory <tt>malloclab/</tt>.
+<div class="bd-callout bd-callout-warning">
+	<h5>Files you can modify</h5>
+	<p>The only files you should modify for this lab are <tt>mm-implicit.c</tt>, <tt>mm.c</tt>, <tt>mm.h</tt>, <tt>mm-unittest.c</tt>. 
+<ul>
+</div>
+
+<h3>Malloc API</h3>
+
+The API of your malloc consists of the following 5 functions (declared in <tt>mm-common.h</tt>:
+<pre>
+int    mm_init(void);
+void*  mm_malloc(size_t size);
+void   mm_free(void *ptr);
+void*  mm_realloc(void *ptr, size_t size);
+heap_info_t mm_checkheap(bool verbose);
+</pre>
+
+Any malloc implementation must complete the above 5 functions. Their 
+semantics are as follows:
+
+<ul>
+	<li><p><tt>mm_init</tt>: Before calling <tt>mm_malloc</tt> <tt>mm_realloc</tt> or <tt>mm_free</tt>, the application program (i.e., the
+trace-driven driver program that you will use to evaluate your
+implementation) calls <tt>mm_init</tt> to perform any necessary
+initializations.  The return value is -1 if there was a problem in
+performing the initialization, 0 otherwise.
+  
+<li><p><tt>mm_malloc</tt>: The <tt>mm_malloc</tt> routine returns a pointer to
+	an allocated block payload of at least <tt>size</tt> bytes.  The entire
+	allocated block should lie within the heap region and should not
+	overlap with any other allocated chunk.
+
+<p>We will comparing your implementation to the version of <tt>malloc</tt>
+supplied in the standard C library. Since the 
+standard C library malloc always returns payload pointers that are 
+aligned to 16 bytes, your malloc implementation should do likewise
+and always return 16-byte aligned pointers.
+  
+<li><p><tt>mm_free</tt>: The <tt>mm_free</tt> routine frees the block
+pointed to by ptr.  It returns nothing. This routine is only
+guaranteed to work when the passed pointer ptr was returned by
+an earlier call to <tt>mm_malloc</tt> or <tt>mm_realloc</tt> and has not
+yet been freed.
+
+<li><p><tt>mm_realloc</tt>: The <tt>mm_realloc</tt> routine returns a pointer
+to an allocated region of at least <tt>size</tt> bytes  with the following 
+constraints. 
+
+<ul>
+	<li>if <tt>ptr</tt> is NULL, the call is equivalent to <tt>mm_malloc(size)</tt>
+
+	<li>if <tt>size</tt> is equal to zero, the call is equivalent to <tt>mm_free(ptr)}</tt>;
+
+	<li> if <tt>ptr</tt> is not NULL, it must have been returned by an
+       	earlier call to <tt>mm_malloc</tt> or <tt>mm_realloc</tt>. The call to
+	<tt>mm_realloc</tt> changes the size of the memory block pointed to by
+	<tt>ptr</tt> (i.e.the old block) to <tt>size</tt> bytes and returns the
+	address of the new block. Notice that the address of the new block
+	might be the same as the old block, or it might be different,
+	depending on your implementation, the amount of internal fragmentation
+	in the old block, and the size of the <tt>realloc</tt> request.
+
+	<li> The contents of the new block are the same as those of the old
+	<tt>ptr</tt> block, up to the minimum of the old and new sizes.
+	Everything else is uninitialized. For example, if the old block is 8
+	bytes and the new block is 12 bytes, then the first 8 bytes of the new
+	block are identical to the first 8 bytes of the old block and the last
+	4 bytes are uninitialized.  Similarly, if the old block is 8 bytes and
+	the new block is 4 bytes, then the contents of the new block are
+	identical to the first 4 bytes of the old block.  
+</ul> 
+
+<li><p>Lastly, <tt>mm_checkheap</tt>: The <tt>mm_cheapheap</tt> routine is an 
+auxilary routine that checks <a href="#heapconsistency">the consistency of 
+	your heap</a>. The function argument <tt>bool verbose</tt> can be used to 
+turn on/off verbose debug printing.
+</ul>
+
+<p>The mm_malloc, mm_free, mm_realloc semantics match the the semantics of the C standard library's malloc, realloc, and free routines.
+Type <tt>man malloc</tt> for the complete documentation.
+
+
+<p>When implementing <tt>mm_init</tt>, <tt>mm_free</tt>,
+<tt>mm_malloc</tt><tt>mm_realloc</tt> functions, you need to invoke the
+following functions which simulate the the memory system for your dynamic memory allocator. They are defined in <tt>memlib.c</tt>:
+
+<ul>
+	<li><p><tt> void *mem_sbrk(int incr)</tt>:   
+Expands the heap by incr bytes, where incr is a positive
+non-zero integer and returns a generic pointer to the first byte of
+the newly allocated heap area. The semantics are identical to the Unix
+<tt>sbrk</tt> function, except that <tt>mem_sbrk</tt> accepts only a
+positive non-zero integer argument.
+
+<li><p><tt> void *mem_heap_lo(void)</tt>:
+Returns a generic pointer to the first byte in the heap.
+
+<li><p><tt> void *mem_heap_hi(void)</tt>:
+Returns a generic pointer to the last byte in the heap.
+
+<li><p><tt> size_t mem_heapsize(void)</tt>:
+Returns the current size of the heap in bytes.
+
+<li><p><tt> size_t mem_pagesize(void)</tt>:
+Returns the system's page size in bytes 
+</ul>
+
+<p> Your implementation must observe the following rules:
+<ul>
+<li> You should not invoke any memory-management related library
+calls or system calls, i.e. you <b>cannot</b> use malloc, calloc, free, realloc, sbrk,
+brk or any variants of these calls in your code. You <b>may</b> use 
+memcpy and other C library functions that are not related to memory-management. In case of 
+doubt, please check with the staff on Piazza.
+
+<li> 
+You should not use any dynamically sized data
+structures such as dynamically-sized arrays, trees, or lists in your 
+program.  Yes, you can define a global array of a fixed number of elements 
+of structs, pointers or other scalars. 
+
+<li>
+For consistency with the C standard library's malloc package, which
+returns blocks aligned on 16-byte boundaries, your allocator must
+always return pointers that are aligned to 16-byte boundaries.  The
+tester will enforce this requirement for you.
+</ul>
+
+
+<h3 id="implicitlist">Implement implicit-list malloc</h3>
+Before we let you go forth and design your own malloc, we will
+guide you in implementing an existing simple design, i.e. the
+implicit-list based malloc.
+
+<p>To implement implicit-list, you shall work from the skeleton 
+code given to you in <tt>mm-implicit.{c,h}</tt>. You are supposed to
+modify only <tt>mm-implicit.c</tt> while leaving <tt>mm-implicit.h</tt> unchanged.
+
+<p>In <tt>mm-implicit.h</tt>, we give you the definition of chunk header in 
+the implicit list design.  For simplicity, we make the header (16-byte)
+aligned. As a result, we can use an 8-byte integer (<tt>size_t</tt>) to store the chunk
+size (including chunk header) and another 8-byte integer to store the status on
+whether the chunk is allocated or free. Since our implementation frequently
+refers to the size of the header, we set global variable <tt>hdr_size =
+sizeof(header_t)</tt>, and use <tt>hdr_size</tt> later in the code.
+We don't have a footer in the chunk, so coalescing is only done with the next
+but not the previous free chunk.
+
+<p>You shall complete the implicit list implementation in the following 3 steps:
+<ol>
+	<li> Complete helper function <tt>next_chunk</tt> and use it to complete the heap checker function <tt>mm_heapcheck</tt>. You can test these two functions by compiling <kbd>make</kbd> and running the unit test <kbd>./implicit-unittest</kbd>. The unit test should finish its first 2 tests, <tt>test_next_chunk</tt> and <tt>test_mm_checkheap</tt> and fails at the 3rd test (since you've not implemented the rest yet). Please read the unit test file <tt>mm-implicit-unittest.c</tt> to understand what the unit test is doing.
+	<li>Complete helper functions <tt>ask_os_for_chunk</tt>, <tt>split</tt>, <tt>first_fit</tt> and use them to implement <tt>mm_malloc</tt>.  Perform unit test on your implementation.
+	<li>Complete helper functions <tt>payload2header</tt>, <tt>coalesce</tt> and use them to implement <tt>mm_free</tt>.
+</ol>
+
+<p>After you've completed your implemementation, make sure that all unit tests pass.
+<pre>
+$ make
+$ ./implicit-unittest
+start test_next_chunk
+start test_mm_checkheap
+start test_ask_os_for_chunk
+start test_split
+start test_first_fit
+start test_mm_malloc
+start test_payload2header
+start test_coalesce
+start test_mm_free
+start test_mm_realloc
+all unit tests passed...
+</pre>
+
+<p>Now you are ready to run our trace-based tester.
+The tester program is provided as <tt> mdriver.c</tt> which is linked to your
+malloc implementation and tests it for correctness, space utilization, and
+throughput. We name the tester that's been linked with the
+implicit-list malloc as <tt>implicit-mdriver</tt>.
+
+<p>The tester <tt>implicit-mdriver</tt> reads a set of <i>trace files</i>, each of which
+contains a sequence of allocate, reallocate, and free events corresponding
+to some example application workload.  It then </tt> calls your
+<tt>mm_malloc</tt>, <tt>mm_realloc</tt>, and <tt>mm_free</tt> routines
+according to the sequence of events. 
+
+<p>To run the tester, type:
+<pre>
+$ ./implicit-mdriver -V
+</pre>
+
+<p>The <tt>-V</tt> turns on verbose printing in the tester. 
+
+<p>To run the tester on one specific tracefile instead of all of the default tracefiles, type:
+<pre>
+$./implicit-mdriver -V -f tracefile
+</pre>
+
+<p>All the tracefiles can be found in the <tt>traces/</tt> subdirectory.
+
+<p>You can type <tt>$./implicit-mdriver -h</tt> to 
+see a full list of command line options. 
+
+Here's the example output if the tester runs successfully.
+<pre>
+$ ./implicit-mdriver
+Using default tracefiles in ./traces/
+Performance index = 60.0 * util + 40.0 * (your throughput)/(libc's throughput)
+11 out of 11 traces passed, average performance index 48.4 (out of 100.0)
+</pre>
+
+You can refer to <a href="l4.html#eval">here</a> to understand how the performance 
+index is calculated.  As we expect, the implicit list design works but does not
+achieve great performance.
+
+<h3> Implement your own malloc</h3>
+
+<p> After finishing implicit-list malloc, you are ready to implement your own malloc 
+design. You can implement explicit-list, segregated explict-list, buddy system,
+or your own design. Additionally, you can add footer to enable coalescing with
+the previous chunk. 
+
+<p>You are supposed to modify only these files: <tt>mm.c</tt> <tt>mm.h</tt>
+<tt>mm-unittest.c</tt>. This time, we no longer provide the unit test
+implementation nor any skeleton code. You should write your own unit test  (<tt>mm-unittest.c</tt>)
+in the style of <tt>mm-implicit-unittest.c</tt> to test the correctness of 
+your implementation in <tt>mm.c</tt>. The given makefile compiles your unit test <tt>mm-unittest.c</tt> into binary executable <tt>unittest</tt> which you can invoke.
+
+<p>Once you finish the implementation, invoke the trace-based tester as follows:
+<pre>
+$ ./mdriver -V
+</pre>
+
+<h3>Programming Advice</h3>
+
+<ul>
+
+	<li>Your code should have a header comment that describes the
+overall design of your malloc implementation: e.g. the organization of the
+free list.  Each function should also have a header comment that describes what
+the function does.
+
+	<li> Define your chunk header as structs and modularize your implementation 
+using helper functions. The skeleton code of <tt>mm-implicit.c</tt>
+gives you an example of modular implementation. Follow it.
+While the textbook is useful for reviewing the malloc design, <b>I do not
+recommend follow the textbook programming style</b> of doing pointer
+arithmetic everywhere and using C macros instead of regular functions.  It
+makes the code harder to read and debug. Define structs to represent chunk
+meta-data and use regular helper functions, as demonstrated in
+<tt>mm-implicit.c</tt>
+
+<div class="bd-callout bd-callout-warning">
+	<h5 id="heapconsistency">Heap consistency checker:</h5>
+<p> Your heap consistency checker <tt>mm_checkheap</tt> should be
+thorough. Some examples of what a heap checker might check are:
+<ul>
+<li> Is every block in the free list marked as free?
+<li> If you are coalescing with both previous and next free chunk, there should not be any contiguous free blocks. Is this property always true?
+<li> Is every free block in the free list?
+<li> Do the pointers in the free list point to valid free blocks?
+<li> Do any allocated blocks overlap?
+<li> Do the pointers in a heap block point to valid heap
+addresses?
+</ul>
+</div>
+
+	<li>Write unit tests (in <tt>mm-unittest.c</tt>) in the style of
+<tt>mm-implicit-unittest.c</tt>. They might seem tedious, but they are crucial 
+for debugging. 
+
+	<li>When testing with trace-based tester, use simple workloads first to debug correctness. 
+We provide two very simple trace files <tt>short{1,2}.rep</tt> to simplify debugging.
+Type <tt>mdriver -f ./traces/short1.rep</tt> to test your memory allocator on 
+one of these workloads first.
+
+	<li>The first 9 traces
+contain requests to <tt>malloc</tt> and <tt>free</tt>.  The last 2 traces
+contain requests for <tt>realloc</tt>, <tt>malloc</tt>, and <tt>free</tt>. We
+recommend that you start by getting your <tt>malloc</tt> and <tt>free</tt>
+routines working correctly and efficiently on the first 9 traces. Only
+then should you turn your attention to the <tt>realloc</tt>
+implementation.  For starters, build <tt>realloc</tt> on top of your
+existing <tt>malloc</tt> and <tt>free</tt> implementations. But to get
+really good performance, you will need to build a stand-alone <tt>
+realloc</tt>.
+
+	<li>Use gdb. It
+will help you isolate and identify out of bounds memory references.
+
+	<li>For advanced students, you should consider learning to use a profiler, 
+such as <tt>gprof</tt>, to understand and optimize the performance of your program. 
+
+</ul>
+
+<h3 id="eval">Evaluation</h3>
+
+<div class="bd-callout bd-callout-warning">
+	<h5>Programming style:</h5>
+    <p>As is the case with previous labs, you will be graded for style and we
+    will deduct up to 20% of total lab points for bad style based on our
+    subjective evaluation.
+</div>
+
+<p>You will receive <b>zero points</b> if you break any of the rules or
+your code is buggy and crashes the tester.  Otherwise, your grade will
+be calculated as follows:
+
+<ul>
+	<li><p><b>Correctness of implicit-list (20 points)</b>.
+To achieve full score, your implicit list implementation must pass both the 
+unit test <tt>implicit-unittest</tt> and trace-based test <tt>implicit-mdriver</tt>.
+
+<li><p><b>Performance of your malloc (80 points)</b>.  
+Two performance metrics will be used to evaluate your solution:
+
+<ul>
+	<li><p>Space utilization: The peak ratio between the aggregate
+amount of memory used by the tester (i.e., allocated via
+<tt>mm_malloc</tt> or <tt>mm_realloc</tt> but not yet freed via
+<tt>mm_free</tt>) and the size of the heap used by your allocator. The
+optimal ratio equals to 1.  You should find good policies to minimize
+fragmentation in order to make this ratio as close as possible to the
+optimal.
+
+<li><p>Throughput: The average number of operations completed per second.
+
+</ul>
+<p>The tester program summarizes the performance of your
+allocator by computing a <i>performance index</i>, which is a
+weighted sum of the space utilization (U) and throughput (T)
+<pre>
+Performance index = 0.6*U + 0.4*min(1, T/T_libc)
+</pre>
+
+where U is your space utilization, T is your throughput, and
+T_libc is the measured throughput of Standard C library's malloc on your
+system on the default traces.
+</ul>
+
+<p>Observing that both memory and CPU cycles are expensive system
+resources, we adopt this formula to encourage balanced optimization of
+both memory utilization and throughput.  To receive a good score,
+you must achieve a balance between utilization and throughput.
+Ideally, the performance
+index could reach 100%, but that is very difficult. A score above 75 is 
+typically considered to be very good.
+
+<p>We will take the best average performance index of <tt>implicit-mdriver</tt> 
+and <tt>mdriver</tt>. 
+
+<h3>Handin Procedure</h3>
+
+To handin your files, simply commit and push them to github.com 
+<pre>
+$ git commit -am "Finish lab4"
+$ git push origin master
+</pre>
+
+We will fetching your lab files from Github.com at the specified deadline and grade them.
+
+<p>
+<hr>
+
+</body>
+</html>
+
+
