@@ -57,7 +57,7 @@ def output_header():
 	<!-- Bootstrap CSS -->
 	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.3/css/bootstrap.min.css" integrity="sha384-Zug+QiDoJOrZ5t4lssLdxGhVrurbmBWopoEl+M6BdEfwnCJZtKxi1KgxUyJq13dy" crossorigin="anonymous">
 
-  <title>Computer Systems Organization (Spring 2019) </title>
+  <title>Computer Systems Organization (Fall 2019) </title>
 </head>
 
 <body>
@@ -78,13 +78,13 @@ def output_header():
           </ul>
         </nav>
 	<div class="row">
-		<div class="col-sm-3"><img src="org.png" width=150></div>
+		<div class="col-sm-3"><img src="org2.png" width=150></div>
 		<div class="col-sm-9">
 		<div class="row">
         <h3 class="text-success">Computer Systems Organization</h3>
 		</div>
 		<div class="row">
-			CSCI-UA.0201(001), Spring 2019
+			CSCI-UA.0201(007), Fall 2019
 		</div>
 		</div>
 	</div>
@@ -126,12 +126,12 @@ if __name__ == '__main__':
     special_dates = get_special_dates(special_fname)
     lab_due_dates = get_lab_due_dates(lab_fname)
 
-    semester_start = datetime.date(2019,1,28) # enter first day of semester
-    semester_end = datetime.date(2019,5,15)
+    semester_start = datetime.date(2019,9,2) # enter first day of semester
+    semester_end = datetime.date(2019,12,18)
     lec_day0 = 0 # enter lecture day of week
     lec_day1 = 2 # enter lecture day of week
-    recitation_start = datetime.date(2019,1,19)
-    recitation_end = datetime.date(2019,5,7)
+    recitation_start = datetime.date(2019,9,5)
+    recitation_end = datetime.date(2019,12,13)
     rec_day0 = 1 # enter recitation day of week
 
     line = """

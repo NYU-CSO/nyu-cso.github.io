@@ -1,4 +1,5 @@
-2/18;0;President's day (no class)
-3/18;0;Spring break (no class)
-3/20;0;Spring break (no class)
-5/15;0;Final exam (10-11:50am, Room TBA)
+10/14;0;Fall recess (no class)
+10/15;1;Class following Monday schedule
+11/27;0;Thanksgiving
+12/16;0;Exam week
+12/18;1;Final exam (Schedule tentative)
