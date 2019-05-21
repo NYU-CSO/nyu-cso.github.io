@@ -137,10 +137,10 @@ if __name__ == '__main__':
     line = """
 <div class=\"row\">
 <div class=\"col-sm-2\"><b>Date</b></div> 
-<div class=\"col-sm-3\"><b>Lecture</b></div> 
+<div class=\"col-sm-4\"><b>Lecture</b></div> 
 <div class=\"col-sm-2\"><b>Reading</b></div> 
 <div class=\"col-sm-2\"><b>Lab Due</b></div>
-<div class=\"col-sm-3\"><b>Bonus Reading</b></div>
+<div class=\"col-sm-2\"><b>Bonus Reading</b></div>
 """
     print(line)
     which = 0
@@ -189,14 +189,14 @@ if __name__ == '__main__':
         if lec != "":
             print("<div class=\"row\">")
             print("   <div class=\"col-sm-2\">%d/%d</div>" % (d.month, d.day))
-            print("   <div class=\"col-sm-3\">%s " % (lec))
+            print("   <div class=\"col-sm-4\">%s " % (lec))
             if note != "":
                 print("  [<a href=\"notes/%s\">note</a>]</div>" % (note))
             else:
                 print("</div>\n")
             print("   <div class=\"col-sm-2\">%s</div>" % (prepare))
             print("   <div class=\"col-sm-2\">%s</div>"  % (labinfo))
-            print("   <div class=\"col-sm-3\">%s</div>"  % (bonus))
+            print("   <div class=\"col-sm-2\">%s</div>"  % (bonus))
             print("</div>\n")
 
         # Deal with recitations  on thu
@@ -204,14 +204,14 @@ if __name__ == '__main__':
             print("<div class=\"row\">")
             print("   <div class=\"col-sm-2\">%d/%d</div>" % (d.month, d.day))
             if specialLec is None:
-                print("   <div class=\"col-sm-3\"><a href=\"https://github.com/nyu-cso-sp19/cso19-recitations/tree/slides/r%02d/r%02d.pdf\"><em>recitation%02d</em></a></div>" % (recitation, recitation, recitation))
+                print("   <div class=\"col-sm-4\"><a href=\"https://github.com/nyu-cso-sp19/cso19-recitations/tree/slides/r%02d/r%02d.pdf\"><em>recitation%02d</em></a></div>" % (recitation, recitation, recitation))
                 print("   <div class=\"col-sm-2\"><em></em></div> ")
                 recitation = recitation + 1
             else:
-                print("   <div class=\"col-sm-3\">%s</div> " % specialLec['lec'])
+                print("   <div class=\"col-sm-2\">%s</div> " % specialLec['lec'])
                 print("   <div class=\"col-sm-2\"></div> ")
             print("   <div class=\"col-sm-2\">%s</div>"  % (labinfo))
-            print("   <div class=\"col-sm-3\">%s</div>"  % (bonus))
+            print("   <div class=\"col-sm-2\">%s</div>"  % (bonus))
             print("</div>\n")
         if d.weekday() == 6: # terminate week container on Sunday
             print("</div> <!--dark/light-->\n")
