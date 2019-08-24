@@ -164,7 +164,7 @@ to get started.
 	<li><b>Cloning your lab repo locally</b>
 <p>In a VirtualBox terminal, clone your repo by typing the following:
 <pre >
-$ git clone https://github.com/nyu-cso-sp19/labs-&lt;YourGithubUsername&gt;.git  cso-labs
+$ git clone https://github.com/nyu-cso-fa19/labs-&lt;YourGithubUsername&gt;.git  cso-labs
 $ cd cso-labs
 </pre>
 
@@ -174,7 +174,7 @@ You will see that a directory named <tt>cso-labs</tt> has been created under you
 
 <li><b>Setting up the upstream repo</b>
 		<p>The lab skeleton code are kept in the repo <a
-      href="https://github.com/nyu-cso/cso-labs"><tt>https://github.com/nyu-cso-sp19/cso-labs</tt></a>
+      href="https://github.com/nyu-cso/cso-labs"><tt>https://github.com/nyu-cso-fa19/cso-labs</tt></a>
 managed by the course staff. Therefore, the first thing you need to do is to
 set up your own lab repo to track the changes made in the <tt>cso-labs</tt> repo.
 In the git world, <tt>cso-labs</tt> would be your "upstream" repo from which changes 
@@ -182,12 +182,12 @@ should ``flow'' into your own lab repo.
 
 <p>Type <kbd>git remote add</kbd> to add the upstream repo, and <kbd>git remote -v</kbd> to check that <tt>cso-labs</tt> is indeed an upstream for your own lab repo.
 <pre >
-$ git remote add upstream https://github.com/nyu-cso-sp19/cso-labs.git
+$ git remote add upstream https://github.com/nyu-cso-fa19/cso-labs.git
 $ git remote -v
-origin	https://github.com/nyu-cso-sp19/labs-YourGithubUsername.git (fetch)
-origin	https://github.com/nyu-cso-sp19/labs-YourGithubUsername.git (push)
-upstream	https://github.com/nyu-cso-sp19/cso-labs.git (fetch)
-upstream	https://github.com/nyu-cso-sp19/cso-labs.git (push)
+origin	https://github.com/nyu-cso-fa19/labs-YourGithubUsername.git (fetch)
+origin	https://github.com/nyu-cso-fa19/labs-YourGithubUsername.git (push)
+upstream	https://github.com/nyu-cso-fa19/cso-labs.git (fetch)
+upstream	https://github.com/nyu-cso-fa19/cso-labs.git (push)
 </pre>
 
 <p>Immediately, you should check if the upstream cso-labs repo has additional changes not present in your repo. You can check for and merge in those changes by typing:
