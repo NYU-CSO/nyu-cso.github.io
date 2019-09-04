@@ -132,7 +132,7 @@ if __name__ == '__main__':
     lec_day1 = 2 # enter lecture day of week
     recitation_start = datetime.date(2019,9,5)
     recitation_end = datetime.date(2019,12,13)
-    rec_day0 = 1 # enter recitation day of week
+    rec_day0 = 3 # enter recitation day of week
 
     line = """
 <div class=\"row\">
