@@ -163,15 +163,21 @@ to get started.
 <p>
 <ul>
 	<li><b>Cloning your lab repo locally</b>
-		<p> First, click on the Lab invitation link posted in Piazza. Select your NYU email address to link your github account and create your lab repository.
+		<p> We recommend you keep your all lab code in a local directory called <tt>cso-labs</tt>. Create it by typing the following command in the terminal.
+		<pre>
+		$ mkdir cso-labs
+		</pre>
+
+		<p> Now you are ready to initialize your lab repository. First, click on each lab's invitation link (posted in Piazza). Select your NYU email address to link your github account and create your lab repository on Github.
 
 <p>Next, in a VirtualBox terminal, clone your repo by typing the following (the following example is for Lab1):
 <pre >
-$ git clone https://github.com/nyu-cso-fa19/lab1-&lt;YourGithubUsername&gt;.git  cso-labs
+$ cd cso-labs
+$ git clone https://github.com/nyu-cso-fa19/lab1-&lt;YourGithubUsername&gt;.git  lab1
 </pre>
 
 <p>
-You will see that a directory named <tt>lab1-&lt;YourGithubUsername&gt;</tt> has been created under your home directory.  
+You will see that a directory named <tt>lab1</tt> has been created under the <tt>cso-labs</tt> directory.
 This is the git repo for your lab assignment 1. Other labs are created similarly by cloning respective repositories.
 </li>
 <!--
