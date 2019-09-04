@@ -1,12 +1,12 @@
-Overview;01-overview.pdf;[BO] 1;
-Bits,Bytes,Ints;02-bits_bytes_int.pdf;[BO]2.1-2.3;
-Floats;03-floats.pdf;[BO]2.4; <a href="https://www.itu.dk/~sestoft/bachelor/IEEE754_article.pdf">[GoldBerg91]</a>
-Floats continued;03-floats.pdf;[BO]2.4;
+Overview;01-overview.pdf;[PH] 1;
+Bits,Bytes,Ints;02-bits_bytes_int.pdf;[PH]2.4;
+Floats;03-floats.pdf;[PH]3.5; <a href="https://www.itu.dk/~sestoft/bachelor/IEEE754_article.pdf">[GoldBerg91]</a>
+Floats continued;03-floats.pdf;[PH]3.5;
 C: Basics, Bitwise Operator;04-C_Basics.pdf; [KR]1-4;
 C: Scope rules, pointers, arrays;05-pointer_array.pdf;[KR]5;<a href="https://www.recurse.com/blog/5-learning-c-with-gdb">[C with GDB]</a>
 C: Strings;06-string-struct-malloc.pdf; [KR]5;
 C: Strings, Structs, Malloc;07-structs_malloc_2d.pdf; [KR]5,7;
-C: Program organization, I/O ;07-largec-io.pdf;[BO] 7,8;
+C: Program organization, I/O ;07-largec-io.pdf;;
 Quiz 1;;;
 Machine Prog: Basics;07-Machine_Basic.pdf; [BO] 3.1-3.5;
 Machine Prog: Control;08-Machine_Control.pdf; [BO] 3.6;
