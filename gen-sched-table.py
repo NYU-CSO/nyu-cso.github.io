@@ -204,7 +204,7 @@ if __name__ == '__main__':
             print("<div class=\"row\">")
             print("   <div class=\"col-sm-2\">%d/%d</div>" % (d.month, d.day))
             if specialLec is None:
-                print("   <div class=\"col-sm-4\"><a href=\"https://github.com/nyu-cso-sp19/cso19-recitations/tree/slides/r%02d/r%02d.pdf\"><em>recitation%02d</em></a></div>" % (recitation, recitation, recitation))
+                print("   <div class=\"col-sm-4\"><a href=\"https://github.com/nyu-cso-fa19/cso-recitations/blob/slides/r%02d/r%02d.pdf\"><em>recitation%02d</em></a></div>" % (recitation, recitation, recitation))
                 print("   <div class=\"col-sm-2\"><em></em></div> ")
                 recitation = recitation + 1
             else:
