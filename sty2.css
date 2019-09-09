@@ -11,6 +11,11 @@ margin: 1em;
 padding: 1em;
 }
 
+div.figure img {
+    border: 1px solid #aaa;
+    display: block;
+}
+
 .bd-callout{
 	padding:1.25rem;
 	margin-top:1.25rem;
