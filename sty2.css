@@ -11,8 +11,8 @@ margin: 1em;
 padding: 1em;
 }
 
-img {
-    border: 1px solid #aaa;
+img.btn {
+    border: 5px solid #bdbbbb;
     display: block;
 }
 
