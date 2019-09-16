@@ -2,4 +2,4 @@
 10/15;1;Class following Monday schedule
 11/27;0;Thanksgiving
 12/16;0;Exam week
-12/18;1;Final exam (Schedule tentative)
+12/18;1;Final exam (12:00-1:50pm)
