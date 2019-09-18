@@ -13,6 +13,7 @@ padding: 1em;
 
 img.btn {
     border: 5px solid #bdbbbb;
+    background-color:#bdbbbb;
     display: block;
 }
 
