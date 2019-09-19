@@ -1,3 +1,4 @@
+10/3;0; Quiz 1 (during recitation class)
 10/14;0;Fall recess (no class)
 10/15;1;Class following Monday schedule
 11/27;0;Thanksgiving
