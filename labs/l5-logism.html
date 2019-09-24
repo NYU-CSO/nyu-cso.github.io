@@ -47,106 +47,129 @@
 <h5>Due: 11/10</h5>
 
 
-      <h3>Setup</h3>
-      <p>Clone the Lab 5 repository by clicking on the Github classroom invitation link</p>
+<h4>Acknowledgements</h4>
+This lab is borrowed and adapted from Berkeley's CS61c class.
+
+<h3>Setup</h3>
+<p>Clone the Lab 5 repository by clicking on the Github classroom invitation link</p>
 
 
-      <p>All the work in this lab will be done from the program Logisim Evolution, which is included in the lab starter files. 
-      Logisim is a Java program, so you'll need to download the Java runtime environment. Open a terminal in the lab virtual machine, 
-      and type the following (When prompted for password, type in the login password for user "lab"):
-      <pre>
-      $ sudo apt-get install default-jre
-      </pre>
+<p>All the work in this lab will be done from the program Logisim Evolution, which is included in the lab starter files. 
+Logisim is a Java program, so you'll need to download the Java runtime environment. Open a terminal in the lab virtual machine, 
+and type the following (When prompted for password, type in the login password for user "lab"):
+<pre>
+$ sudo apt-get install default-jre
+</pre>
 
-      <p>Launch Logism by typing the following in your lab5 repo:
-      <pre>$ java -jar logisim-evolution.jar</pre>
-      Note that <i>you must use the .jar file we've given you, and not any other version</i> 
+<p>Launch Logism by typing the following in your lab5 repo:
+<pre>$ java -jar logisim-evolution.jar</pre>
+Note that <i>you must use the .jar file we've given you, and not any other version</i> 
 
-      <div class="bd-callout bd-callout-danger"><h5>Warning: Save often with Logism</h5>
-      Logisim does not have autosave, i.e. it does not save your work as you go along. 
-      It also does not automatically create a new .circ file when you open it! 
-      Save when you start, and save frequently as you work.</p>
-      </div>
+<div class="bd-callout bd-callout-danger"><h5>Warning: Save often with Logism</h5>
+  Logisim does not have autosave, i.e. it does not save your work as you go along. 
+  It also does not automatically create a new .circ file when you open it! 
+  Save when you start, and save frequently as you work.</p>
+</div>
 
-      <h3>Warm-up on the basics</h3>
-      <p>We begin by creating a very simple circuit just to get the feel for placing
-        gates and wires. Before you start, take note of a useful feature: the zoom function! It's in the bottom left corner, and will make your life with Logisim much easier. </p>
+<h3>Warm-up on the basics</h3>
+<p>We begin by creating a very simple circuit just to get the feel for placing
+gates and wires. Before you start, take note of a useful feature: the zoom function! It's in the bottom left corner, and will make your life with Logisim much easier. </p>
 
 <p align=center><img src="zoom.png" width=470></p>
 
-      <ol>
-        <li><img class="btn" src="and.gif"> Start by clicking
-          the &quot;AND gate&quot;  button (located on the toolbox bar immediately below the menu bar). This will cause the shadow of an AND gate
-          to follow your cursor around. Click once within the main schematic window to
-          place an AND gate.</li>
+<ol>
+  <li><img class="btn" src="and.gif"> Start by clicking
+    the &quot;AND gate&quot;  button (located on the toolbox bar immediately below the menu bar). This will cause the shadow of an AND gate
+    to follow your cursor around. Click once within the main schematic window to
+    place an AND gate.</li>
 
-        <li><img class="btn" src="input.gif"> Click the &quot;Input Pin&quot; button.
-          Now, place two input pins somewhere to the left of your AND gate.</li>
+  <li><img class="btn" src="input.gif"> Click the &quot;Input Pin&quot; button.
+    Now, place two input pins somewhere to the left of your AND gate.</li>
 
-        <li><img class="btn" src="output.gif"> Click the &quot;Output Pin&quot; button.
-          Then place an output pin somewhere to the right of your AND gate. Your
-          schematic should look something like this at this point:
-          <p><center>
-            <img style="position:relative; top: 6px;" src="schematic1.gif">
-          </center></p>
-        </li>
+  <li><img class="btn" src="output.gif"> Click the &quot;Output Pin&quot; button.
+    Then place an output pin somewhere to the right of your AND gate. Your
+    schematic should look something like this at this point:
+    <p><center>
+      <img style="position:relative; top: 6px;" src="schematic1.gif">
+    </center></p>
+  </li>
 
-        <li><img class="btn" src="selection.gif"> Click the &quot;Select tool&quot;
-          button. Click and drag to connect the input pins to the left side of the AND
-          gate. This will take several steps, as you can only draw vertical and
-          horizontal wires. Just draw a wire horizontally, release the mouse button,
-          then click and drag down starting from the end of the wire to continue
-          vertically. You can attach the wire to any pin on the AND gate on the left
-          side. Repeat the same procedure to connect the output (right side) of the
-          And Gate to the LED. After completing these steps your schematic should look
-          roughly like this:
-          <p><center>
-            <img style="position:relative; top: 6px;" src="schematic2.gif">
-          </center></p>
-                    <p>You can also change the number of inputs of the &quot;AND gate&quot; by clicking it using the select tool and changing the properties in the bottom left segment of the window. This can also be done before you put down the component.</p>
-        </li>
+  <li><img class="btn" src="selection.gif"> Click the &quot;Select tool&quot;
+    button. Click and drag to connect the input pins to the left side of the AND
+    gate. This will take several steps, as you can only draw vertical and
+    horizontal wires. Just draw a wire horizontally, release the mouse button,
+    then click and drag down starting from the end of the wire to continue
+    vertically. You can attach the wire to any pin on the AND gate on the left
+    side. Repeat the same procedure to connect the output (right side) of the
+    And Gate to the LED. After completing these steps your schematic should look
+    roughly like this:
+    <p><center>
+      <img style="position:relative; top: 6px;" src="schematic2.gif">
+    </center></p>
+    <p>You can also change the number of inputs of the &quot;AND gate&quot; by clicking it using the select tool and changing the properties in the bottom left segment of the window. This can also be done before you put down the component.</p>
+  </li>
 
-        <li><img class="btn" src="poke.gif"> Finally, click the &quot;Poke&quot; tool
-          and try clicking on the input pins in your schematic. Observe what happens.
-          Does this match with what you think an AND Gate should do?</p>
-      </ol>
+  <li><img class="btn" src="poke.gif"> Finally, click the &quot;Poke&quot; tool
+    and try clicking on the input pins in your schematic. Observe what happens.
+    Does this match with what you think an AND Gate should do?</p>
 
-      <h3>Part 1: Sub-Circuits</h3>
-      <p>Just as C programs can contain helper functions, a schematic can contain
-        subcircuits. In this part of the lab, we will create several subcircuits to
-        demonstrate their use.</p>
-      <u><strong>IMPORTANT NOTE:</strong></u> Logisim Evolution guidlines say you <i>cannot</i> name a subcircuit after a keyword (e.g. "NAND"), also circuit names must start with "A-Za-z", so no numbers.
+</ol>
+
+<h3>Part 1: Sub-Circuits</h3>
+<p>Just as C programs can contain helper functions, a schematic can contain
+subcircuits. In this part of the lab, we will create several subcircuits to
+demonstrate their use.</p>
+
+<div class="bd-callout bd-callout-info"><h5>Subcircuit naming:</h5>
+  Logisim Evolution won't let you name a subcircuit after a keyword (e.g. "NAND", "NOR"). 
+  Additionally, circuit names must start with "A-Za-z", so no starting with numbers.
+</div>
+
+<p>
+Warm-up:
       <ol>
         <li>Create a new schematic (File-&gt;New) for your work.</li>
         <li>Create a new subcircuit (Project-&gt;Add Circuit ). You will be prompted for
-          a name for the subcircuit; call it NAND1 (note the 1 at the end; because there is a component called NAND, you <i>cannot</i> call it NAND).</li>
-        <li>In the new schematic window that you see create a simple NAND circuit with 2
-          input pins on the left side and an output pin on the right side. Do this <b>without</b> using the built-in NAND gate from the Gates folder (i.e. only use the AND, OR, and NOT gates provided next to the selection tool icon). You can change the labels for the inputs and output by selecting the input/output using the select tool and changing the property &quot;Label&quot; in the bottom left of the window.</li>
+          a name for the subcircuit; call it AND1 (note the 1 at the end; because there is a component called AND, you <i>cannot</i> call it NAND).</li>
+        <li>In the new schematic window that you see create a simple AND circuit with 4
+          input pins on the left side and an output pin on the right side. Do this by using only 
+          the built-in AND gate with 2 inputs only. You can change the labels for the inputs and output by selecting the input/output using the select tool and changing the property &quot;Label&quot; in the bottom left of the window.</li>
         <li>Go back to your &quot;main&quot; schematic by double-clicking &quot;main&quot;
           in the circuit selector at the left of the screen. Your original (blank)
-          schematic will now be displayed, but your NAND circuit has been stored.</li>
-        <li>Now, single click the word &quot;NAND1&quot; in the list. This will tell
-          Logisim that you wish to add your &quot;NAND1&quot; circuit into your
+          schematic will now be displayed, but your AND1 circuit has been stored.</li>
+        <li>Now, single click the word &quot;AND1&quot; in the list. This will tell
+          Logisim that you wish to add your &quot;AND1&quot; circuit into your
           &quot;main&quot; circuit. </li>
-        <li>Try placing your NAND circuit into the &quot;main&quot; schematic. If you did
-          it correctly, you should see a gate with 2 input pins on the left and one
+        <li>Try placing your AND1 circuit into the &quot;main&quot; schematic. If you did
+          it correctly, you should see a gate with 4 input pins on the left and one
           output pin on the right. Try hooking input pins and output pins up to these and
           see if it works as you expect.</li>
-        <li>Repeat these steps to create several more subcircuits: NOR, XOR, 2-to-1 MUX,
-          and 4-to-1 MUX. Do not use any built in gates other than AND, OR, and NOT.
-          However, once you've built a subcircuit, you may use it to build others.</li>
-        <p>Hint: Try writing a truth table. You might also find the lecture slides useful for a refresher on how to build these.
-          <em>You may want to consider using some of your custom subcircuits when
-          designing the others.</em> </p>
       </ol>
 
-            <div class='checkoff'>
-      <h4><a name="checkoff">Checkoff [1/6]</a></h4>
-      <ul><li>Show your five circuits (NAND, NOR, XOR, 2-to-1 MUX, and 4-to-1 MUX) to your TA. Make sure you took note of the bolded word in step 3. </li></ul>
-            </div>
+<p>Exercise:
+Now, you are ready to complete the exercises for part1.
+<ol>
+  <li> Open the given schematic file called part1.circ (File-&gt;Open..)</li>
+  <li> At the left of the screen, you'll see a set of existing subcircuits that have already been created for you.  Please 
+    complete these subcircuits <b>using only AND, OR, and NOT gates and not the built-in NAND, NOR, XOR, Decoder, Multiplexer circuits</b>: 
+    <ol>
+      <li> NAND1: a NAND gate</li>
+      <li>NOR1: a NOR gate</li>
+      <li>Mux2to1: a 2-to-1 multiplexer</li>
+      <li>Dec2to4: a 2-to-4 decoder </li>
+      <li>Mux4to1: a 4-to-1 multiplexer. Hint: you may want to use the Dec2to4 subcuirt</li>
+    </ol>
+</ol>
+
+<h4> Part1 Test:</h4>
+<p>Test your part1 circuits by typing
+<pre>
+$./test.sh
+</pre>
 
 
-      <h3>Part 2: Storing State</h3>
+
+<h3>Part 2: Storing State</h3>
       <p>Let's implement the circuit we've been talking about in lecture that increments a
         value ad infinitum. The difference between this circuit and the circuits you've built
         for lab so far is that you need some registers. The following will show you how to add
