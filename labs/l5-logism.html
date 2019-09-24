@@ -48,9 +48,6 @@
 <h5>Due: 11/10</h5>
 
 
-<h4>Acknowledgements</h4>
-This lab is borrowed and adapted from Berkeley's CS61c class.
-
 <h3>Setup</h3>
 <p>Clone the Lab 5 repository by clicking on the Github classroom invitation link</p>
 
@@ -126,7 +123,7 @@ demonstrate their use.</p>
   Additionally, circuit names must start with "A-Za-z", so no starting with numbers.
 </div>
 
-<h4>Warm-up on subcircuits</h4>
+<h4>Warm-up:</h4>
       <ul>
         <li>Create a new schematic (File-&gt;New) for your work.</li>
         <li>Create a new subcircuit (Project-&gt;Add Circuit ). You will be prompted for
@@ -148,11 +145,11 @@ demonstrate their use.</p>
 
 <h4>Part 1 exercise:</h4>
 Now, you are ready to complete the exercises for part1.
-<ol>
+<ul>
   <li> Open the given schematic file called part1.circ (File-&gt;Open..)</li>
   <li> At the left of the screen, you'll see a set of existing subcircuits that have already been created for you.  Please 
-    complete these subcircuits <b>using only AND, OR, and NOT gates and not the built-in NAND, NOR, XOR, Decoder, Multiplexer circuits</b>: 
-    <ol>
+    complete these subcircuits <b>using only AND, OR, and NOT gates and not the built-in NAND, NOR, XOR, Decoder, Multiplexer circuits</b>. The subcircuits you are asked to implement are: 
+    <ul>
       <li> NAND1: a NAND gate</li>
       <li>NOR1: a NOR gate</li>
       <li>XOR1: a XOR gate</li>
@@ -160,11 +157,11 @@ Now, you are ready to complete the exercises for part1.
       <li>Mux2to1: a 2-to-1 multiplexer</li>
       <li>Dec2to4: a 2-to-4 decoder </li>
       <li>Mux4to1: a 4-to-1 multiplexer. Hint: you may want to use the Dec2to4 subcuirt</li>
-    </ol>
+    </ul>
     <li>In order to faciliate testing of your subcircuits, we have fixed the locations of your subcircuits' input and output pins, using the Logisim functionality Tunnel. When implementing NegSign and Dec2to4, you will also need to use Logisim functionality Splitter.  Read about <a href="#tunnel">Tunnel</a> and <a href="#splitter">Splitter</a> in the Logisim advanced feature section.
-</ol>
+</ul>
 
-<h4> Part1 Test:</h4>
+<h4> Testing Part1</h4>
 <p>Test your part1 circuits by typing
 <pre>
 $./test.sh
@@ -172,23 +169,26 @@ $./test.sh
 
 
 
-<h3>Part 2: Storing State</h3>
-      <p>Let's implement the circuit we've been talking about in lecture that increments a
+<h3>Part 2: FSMs to digital logic</h3>
+
+<h4>Warm-up: AddMachine</h4>
+      <p>Let's implement a circuit that increments a
         value ad infinitum. The difference between this circuit and the circuits you've built
-        for lab so far is that you need some registers. The following will show you how to add
+        in part1 is that you need some registers. The following will show you how to add
         registers to your circuit.
 
       <ol>
-        <li>Create a new subcircuit (Project->Add Circuit). Name this new subcircuit,
+        <li>Do the warm-up in a new schematic file (File-&gt;New)</li>
+        <li>Create a new subcircuit (Project-&gt;Add Circuit). Name this new subcircuit,
           AddMachine.</li>
-        <li>Load in the Arithmetic Library if it is not already loaded (go to Project->Load
-          Library->Built in Library and select "Arithmetic"). This library contains elements
+        <li>Load in the Arithmetic Library if it is not already loaded (go to Project-&gt;Load
+          Library-&gt;Built in Library and select "Arithmetic"). This library contains elements
           that will perform basic mathematical operations. When you load the library, the circuit
           browser at left will have a new "Arithmetic" folder.
           <p><center><img src=arithmetic.png width=200></center></p></li>
         <li>Select the adder subcircuit from the "Arithmetic" library and place the adder into
           your AddMachine subcircuit.</li>
-        <li>Load in the Memory Library if it is not already loaded (go to Project->Load Library->Built in Library and select
+        <li>Load in the Memory Library if it is not already loaded (go to Project-&gt;Load Library-&gt;Built in Library and select
           "Memory"). This library contains memory elements used to keep state in a circuit. A new
           "Memory" folder will appear in the circuit browser.</li>
         <li>Select the register from the "Memory" folder and place one register into your
@@ -233,19 +233,19 @@ $./test.sh
           is the <b><u>ONLY</u></b> method to preserve state (i.e. keep register values at its current value). Double-clicking on the circuit at
           the circuit browser at left makes logisim think you want to edit the circuit instead
           of just checking what state the circuit has.</p>
-          <p><i>Note: You can use Simulate->Go In To State->*Circuit Name*, but that allows
+          <p><i>Note: You can use Simulate-&gt;Go In To State-&gt;*Circuit Name*, but that allows
           you go into the first circuit of that type. If you placed two Fib8 circuits down,
           it only takes you to the first Fib8 circuit you put down.</i></p>
         </li>
         <li>Initialize the register value to 1. You can do this by first, clicking on the
           register value with the poke tool. Then, type the hex value in.</li>
-        <li>To return to the main circuit while preserving state, go to Simulate->Go Out To
-          State->main. Alternatively, you can hold the Command key (control on windows) and
+        <li>To return to the main circuit while preserving state, go to Simulate-&gt;Go Out To
+          State-&gt;main. Alternatively, you can hold the Command key (control on windows) and
           press Up-Arrow.</li>
-        <li>Now start running your circuit by going to Simulate->Ticks Enabled (or Command/Control + K). Your circuit
+        <li>Now start running your circuit by going to Simulate-&gt;Ticks Enabled (or Command/Control + K). Your circuit
           should now be outputting a counter in binary form.</li>
         <li>If you want to run your circuit faster, you can change the tick frequency in
-          Simulate->Tick Frequency.</li>
+          Simulate-&gt;Tick Frequency.</li>
       </ol>
 
             <div class='checkoff'>
@@ -253,14 +253,14 @@ $./test.sh
       <ul><li>Show your AddMachine circuit to your TA.</li></ul>
             </div>
 
-      <h3>Part 3: FSMs to Digital Logic</h3>
+ <h4>Part 2 exercise</h4>
 
-      <p>Now we're ready to do something really cool; translate a FSM into a digital logic
+ <p>Now you are ready to do something really cool; translate a FSM (Finite State Machine) into a digital logic
         circuit.</p>
-      <p>For those of you who need a reminder, FSM stands for Finite State Machine. FSM's keep track of inputs given,
+      <p>FSM's keep track of inputs given,
       moves between states based on these inputs, and outputs something everytime something is input.</p>
-      <p>If you've been paying attention in lecture you've noticed that the circuit we built
-        in part 2 looks eerily similar to the diagram of a general FSM circuit.
+      <p>In particular, the AddMachine we just built
+        for the warm-up looks eerily similar to the diagram of a general FSM circuit.
         The skeleton file we give you contains a similar circuit. Modify this circuit to implement the following FSM:</p>
 
       <p><i>If two ones in a row or two zeroes in a row have ever been seen, output zeros
@@ -398,6 +398,11 @@ $./test.sh
           </div>
 
     </div>
-    </div>
-  </body>
+
+<h4>Acknowledgements</h4>
+This lab is borrowed and adapted from Berkeley's CS61c class.
+
+
+</div>
+</body>
 </html>
