@@ -126,7 +126,7 @@ demonstrate their use.</p>
 </div>
 
 <p>
-Warm-up:
+Warm-up on subcircuits:
       <ol>
         <li>Create a new schematic (File-&gt;New) for your work.</li>
         <li>Create a new subcircuit (Project-&gt;Add Circuit ). You will be prompted for
@@ -146,7 +146,7 @@ Warm-up:
           see if it works as you expect.</li>
       </ol>
 
-<p>Exercise:
+<p>Part 1 exercise:
 Now, you are ready to complete the exercises for part1.
 <ol>
   <li> Open the given schematic file called part1.circ (File-&gt;Open..)</li>
@@ -155,10 +155,13 @@ Now, you are ready to complete the exercises for part1.
     <ol>
       <li> NAND1: a NAND gate</li>
       <li>NOR1: a NOR gate</li>
+      <li>XOR1: a XOR gate</li>
+      <li>NegSign: Negate the most significant bit (sign bit) of an 8-bit number, represented as "sign and magnitude" (instead of 2's complement).
       <li>Mux2to1: a 2-to-1 multiplexer</li>
       <li>Dec2to4: a 2-to-4 decoder </li>
       <li>Mux4to1: a 4-to-1 multiplexer. Hint: you may want to use the Dec2to4 subcuirt</li>
     </ol>
+  <li>In order to faciliate testing of your subcircuits, we have fixed the locations of your subcircuits' input and output pins, using tunnels.
 </ol>
 
 <h4> Part1 Test:</h4>
@@ -320,18 +323,12 @@ $./test.sh
           behaves correctly.</li>
       </ul>
             </div>
-      <h2>Advanced Logisim</h2>
-      <h3>Setup</h3>
-      <p>Feel free to do each part as separate sub-circuits in the same Logisim file.</p>
 
-      <p>The following parts will introduce you to more advanced techniques/concepts in Logisim.
-        <div class="content">
-          <h3>Advanced Features</h3>
-          <p> Here are three Logisim features that should both save you a lot of time and make your circuits look much cleaner.</p>
 
-	  <div class="section">
-	  <h3>Splitters</h3>
-	  <p>Splitters allow you to take a multi-bit value and split it up into smaller parts, or (despite the name) combine multiple values that are one or more bits into a single value. Here, we split the 4-bit binary number "1001" into "10" and "01", then recombine it with "11" into the final 6-bit number "111001": </p>
+
+      <h3>Advanced Logisim features</h3>
+	  <h4>Splitters</h4>
+	  <p>Splitters allow you to take a multi-bit value and split it up into smaller parts, or (despite the name) combine multiple values that are one or more bits into a single value. For example, we split the 4-bit binary number "1001" into "10" and "01", then recombine it with "11" into the final 6-bit number "111001": </p>
 	  <img src="splitter_intro.png" width=350>
     <p>Click on a splitter to get its menu in the sidebar. You can use this menu to determine the number of arms on your splitter and how many bits should go on each arm. For the circuit above, the left splitter's menu looks like this:</p>
 	  <img src="left_split_menu.png" width=350>
@@ -342,8 +339,8 @@ $./test.sh
 	  <img src="orange_error.png" width=350>
 	  </div>
 
-          <div class="section">
-            <h3>Tunnels</h3>
+    <div class="section">
+            <h4>Tunnels</h4>
             <p>A tunnel allows you draw an "invisible wire" to bind two
               points together. Tunnels are grouped by case-sensitive
               labels give to a wire.  They are used to connect wires
@@ -363,7 +360,7 @@ $./test.sh
           </div>
 
 	<div class="section">
-            <h3>Extenders</h3>
+            <h4>Extenders</h4>
             <p>When changing the width of a wire, you should use a bit extender for clarity.
               For example, consider the following implementation of extending an 8-bit wire
               into a 16-bit wire:</p>
