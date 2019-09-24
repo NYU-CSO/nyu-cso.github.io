@@ -161,7 +161,7 @@ Now, you are ready to complete the exercises for part1.
       <li>Dec2to4: a 2-to-4 decoder </li>
       <li>Mux4to1: a 4-to-1 multiplexer. Hint: you may want to use the Dec2to4 subcuirt</li>
     </ol>
-  <li>In order to faciliate testing of your subcircuits, we have fixed the locations of your subcircuits' input and output pins, using tunnels.
+    <li>In order to faciliate testing of your subcircuits, we have fixed the locations of your subcircuits' input and output pins, using the Logisim functionality Tunnel. When implementing NegSign and Dec2to4, you will also need to use Logisim functionality Splitter.  Read about <a href="#tunnel">Tunnel</a> and <a href="#splitter">Splitter</a> in the Logisim advanced feature section.
 </ol>
 
 <h4> Part1 Test:</h4>
@@ -324,85 +324,7 @@ $./test.sh
       </ul>
             </div>
 
-
-
-      <h3>Advanced Logisim features</h3>
-	  <h4>Splitters</h4>
-	  <p>Splitters allow you to take a multi-bit value and split it up into smaller parts, or (despite the name) combine multiple values that are one or more bits into a single value. For example, we split the 4-bit binary number "1001" into "10" and "01", then recombine it with "11" into the final 6-bit number "111001": </p>
-	  <img src="splitter_intro.png" width=350>
-    <p>Click on a splitter to get its menu in the sidebar. You can use this menu to determine the number of arms on your splitter and how many bits should go on each arm. For the circuit above, the left splitter's menu looks like this:</p>
-	  <img src="left_split_menu.png" width=350>
-	  <p>While the right splitter's menu looks like this:</p>
-	  <img src="right_split_menu.png" width=350>
-    <p><b>Notice that there's an option called "facing".</b> You can use this to rotate your splitter. Above, see that the splitter on the right is facing West while the splitter on the left is facing East.</p>
-	  <p>If you see an error wire that is orange, this means that your bit width in does not match your bit width out. Make sure that if you're connecting two components with a wire, you correctly set the bit width in that component's menu.</p>
-	  <img src="orange_error.png" width=350>
-	  </div>
-
-    <div class="section">
-            <h4>Tunnels</h4>
-            <p>A tunnel allows you draw an "invisible wire" to bind two
-              points together. Tunnels are grouped by case-sensitive
-              labels give to a wire.  They are used to connect wires
-              like so:</p>
-            <img src="tunnels1.png">
-            <p>Which has an effect such as the following:</p>
-            <img src="tunnels2.png">
-            <p>Some care should be taken as to which wires are connected with tunnels to
-              which other wires, such as in this case:</p>
-            <img src="tunnels3.png">
-            <p>Which in turn has the following effect:</p>
-            <img src="tunnels4.png">
-
-            <p>
-            We <em>strongly</em> recommend you use tunnels with Logisim, because they make your circuits much cleaner looking, and therefore easier to debug.
-            </p>
-          </div>
-
-	<div class="section">
-            <h4>Extenders</h4>
-            <p>When changing the width of a wire, you should use a bit extender for clarity.
-              For example, consider the following implementation of extending an 8-bit wire
-              into a 16-bit wire:</p>
-            <img src="extend1.png">
-            <p>Whereas the following is much simpler, easier to read, and less error-prone:</p>
-            <img src="extend2.png">
-            <p>Additionally consider the case of throwing out bits. In this example, an 8-bit
-              wire is being converted into a 4-bit wire by throwing out the other bits:</p>
-            <img src="extend3.png">
-            <p>Despite the implications of its name, a bit extender can also do this same
-              operation:</p>
-            <img src="extend4.png">
-          </div>
-
-          
-
-      <h3>Part 4: Practice with Splitters</h3>
-
-	<p>We're going to construct a circuit that manipulates an 8-bit number.</p>
-
-      <ol>
-        <li>Create a new subcircuit and name it "Ex4".
-        <li>Add an 8-bit input pin to your circuit and label it "In1".
-        <li>Add a 1-bit output pin labeled "Out1" and an 8-bit output pin labeled "Out2" to your circuit.
-        <li>Go to the Wiring folder and select the Splitter circuit. This circuit will take a wire and split it into a set of wires of smaller width. Conversely, it can also take many sets of wires and combine them into a larger bus.
-        <li>Before you place your circuit, change the "Bit Width In" property (bus width) to 8, and "Fan Out" property (# of branches) to 3. If you move your cursor over the schematic, your cursor should look as follows: <img style="position:relative; top:5px;" src=splitter.gif>
-        <li>Now, select which bits to send out to which part of your fan. The least significant bit is bit 0 and the most significant bit is bit 7. Bit 0 should come out on fan arm 0, bits 1, 2, 3, 4, 5 and 6 should come out on fan arm 1, and bit 7 should come out on fan arm 2. FYI: the "None" option means that the selected bit will not come out on ANY of the fan arms.
-        <li>Once you configure your splitter, you can place your splitter into your circuit.
-        <li>Route "In" to the splitter. Attach a 2-input AND gate to fan arms 0 and 2 and route the output of the AND gate to Out1.
-        <li>Now, interpret the input as a "sign and magnitude" number. Place logic gates and other circuits to make Out2 to be the negative "sign and magnitude" value of the input. <a href="https://en.wikipedia.org/wiki/Signed_number_representations#Signed_magnitude_representation">Sign and magnitude</a> is an alternate way of representing signed values - like 2s complement, but simpler! The combinational logic should be straight-forward.
-        <li>We will need another splitter to recombine the fans into a single 8-bit bus.  Place another splitter with the proper properties (Bit Width In: 8, Fan Out: 3, correct fan widths).  Play with the Facing and Appearance properties to make your final circuit as clean-looking as possible.
-      </ol>
-
-      <div class='checkoff'>
-      <h4><a name="checkoff">Checkoff [4/6]</a></h4>
-      <ul>
-        <li>Show your Ex4 circuit to your TA.</li>
-        <li>If we decide to take the input and interpret it as a 2's complement number, what inputs will produce Out1 = 1? <i>Hint: What do the first and last bits of a two's complement number being 1 tell you about the number?</i> </li>
-      </ul>
-      </div>
-
-      <h3>Part 5: Rotate Right</h3>
+<h3>Bonus exercise: Rotate Right</h3>
       With your knowledge of splitters and your knowledge and experience with multiplexers from way back in Lab 3, you are ready to implement a non-trivial combinational logic block: <code>rotr</code>, which stands for &quot;Rotate Right&quot;. The idea is that <code>rotr A,B</code> will &quot;rotate&quot; the bit pattern of input A to the right by B bits. So, if A were 0b10110101011<strong>10011</strong> and B were 0b0101 (5 in decimal), the output of the block would be 0b<strong>10011</strong>10110101011. Notice that the rightmost 5 bits were rotated off the right end of the value and back onto the left end. In RTL, the operation would be something like &quot;<code>R = A >> B | A << (16 - B)</code>&quot;.
       <p>
         You must implement a subcircuit named &quot;rotr&quot; with the following inputs:
@@ -426,15 +348,54 @@ $./test.sh
       </ul>
       </div>
 
-<h3>Part 6: iClicker Question</h3>
-<div class='checkoff'>
-<h4>Check-off [6/6]</h4>
-<ul>
-  <li>Answer one clicker question from lecture given by your TA. This will cover content from the past M, F, W Lectures 10/22 (State, State Machines), 10/24 (Combinational Logic), and 10/26 (Combinational Logic Blocks). Be prepared to explain the thinking behind your answer! </li>
-</ul>
+      <h3>Advanced Logisim features</h3>
+	  <h4 id="splitter">Splitters</h4>
+	  <p>Splitters allow you to take a multi-bit value and split it up into smaller parts, or (despite the name) combine multiple values that are one or more bits into a single value. For example, we split the 4-bit binary number "1001" into "10" and "01", then recombine it with "11" into the final 6-bit number "111001": </p>
+	  <img src="splitter_intro.png" width=350>
+    <p>Click on a splitter to get its menu in the sidebar. You can use this menu to determine the number of arms on your splitter and how many bits should go on each arm. For the circuit above, the left splitter's menu looks like this:</p>
+	  <img src="left_split_menu.png" width=350>
+	  <p>While the right splitter's menu looks like this:</p>
+	  <img src="right_split_menu.png" width=350>
+    <p><b>Notice that there's an option called "facing".</b> You can use this to rotate your splitter. Above, see that the splitter on the right is facing West while the splitter on the left is facing East.</p>
+	  <p>If you see an error wire that is orange, this means that your bit width in does not match your bit width out. Make sure that if you're connecting two components with a wire, you correctly set the bit width in that component's menu.</p>
+	  <img src="orange_error.png" width=350>
+	  </div>
 
-</div>
+    <div class="section">
+            <h4 id="tunnel">Tunnels</h4>
+            <p>A tunnel allows you draw an "invisible wire" to bind two
+              points together. Tunnels are grouped by case-sensitive
+              labels give to a wire.  They are used to connect wires
+              like so:</p>
+            <img src="tunnels1.png">
+            <p>Which has an effect such as the following:</p>
+            <img src="tunnels2.png">
+            <p>Some care should be taken as to which wires are connected with tunnels to
+              which other wires, such as in this case:</p>
+            <img src="tunnels3.png">
+            <p>Which in turn has the following effect:</p>
+            <img src="tunnels4.png">
 
+            <p>
+            We <em>strongly</em> recommend you use tunnels with Logisim, because they make your circuits much cleaner looking, and therefore easier to debug.
+            </p>
+          </div>
+
+	<div class="section">
+            <h4 id="extender">Extenders</h4>
+            <p>When changing the width of a wire, you should use a bit extender for clarity.
+              For example, consider the following implementation of extending an 8-bit wire
+              into a 16-bit wire:</p>
+            <img src="extend1.png">
+            <p>Whereas the following is much simpler, easier to read, and less error-prone:</p>
+            <img src="extend2.png">
+            <p>Additionally consider the case of throwing out bits. In this example, an 8-bit
+              wire is being converted into a 4-bit wire by throwing out the other bits:</p>
+            <img src="extend3.png">
+            <p>Despite the implications of its name, a bit extender can also do this same
+              operation:</p>
+            <img src="extend4.png">
+          </div>
 
     </div>
     </div>
