@@ -124,7 +124,7 @@ demonstrate their use.</p>
 </div>
 
 <h4>Warm-up:</h4>
-      <ul>
+      <ol>
         <li>Create a new schematic (File-&gt;New) for your work.</li>
         <li>Create a new subcircuit (Project-&gt;Add Circuit ). You will be prompted for
           a name for the subcircuit; call it AND1 (note the 1 at the end; because there is a component called AND, you <i>cannot</i> call it NAND).</li>
@@ -141,7 +141,7 @@ demonstrate their use.</p>
           it correctly, you should see a gate with 4 input pins on the left and one
           output pin on the right. Try hooking input pins and output pins up to these and
           see if it works as you expect.</li>
-</ul>
+</ol>
 
 <h4>Part 1 exercise:</h4>
 Now, you are ready to complete the exercises for part1.
@@ -153,7 +153,7 @@ Now, you are ready to complete the exercises for part1.
       <li> NAND1: a NAND gate</li>
       <li>NOR1: a NOR gate</li>
       <li>XOR1: a XOR gate</li>
-      <li>NegSign: Negate the most significant bit (sign bit) of an 8-bit number, represented as "sign and magnitude" (instead of 2's complement).
+      <li>NegSign: Negate the most significant bit (sign bit) of an 8-bit number. You can think of the 8-bit number as representing a signed integer in the "sign and magnitude" format (instead of 2's complement), thus this circuit negates the number.
       <li>Mux2to1: a 2-to-1 multiplexer</li>
       <li>Dec2to4: a 2-to-4 decoder </li>
       <li>Mux4to1: a 4-to-1 multiplexer. Hint: you may want to use the Dec2to4 subcuirt</li>
@@ -165,6 +165,18 @@ Now, you are ready to complete the exercises for part1.
 <p>Test your part1 circuits by typing
 <pre>
 $./test.sh
+</pre>
+If you pass all tests, the output will look like this:
+<pre>
+$./test.sh
+Copy part1.circ to tests/
+Checking NAND... OK
+Checking NOR... OK
+Checking XOR... OK
+Checking Mux2to1... OK
+Checking NegSign... OK
+Checking Dec2to4... OK
+Checking Mux4to1... OK
 </pre>
 
 
