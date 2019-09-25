@@ -1,4 +1,4 @@
-9/29;<a href="labs/l1.html">Lab 1</a> due
+10/2;<a href="labs/l1.html">Lab 1</a> due
 10/12;<a href="labs/l2.html">Lab 2</a> due
 10/20;<a href="labs/l3.html">Lab 3</a> due
 11/10;<a href="labs/l4.html">Lab 4</a> due
