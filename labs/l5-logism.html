@@ -335,12 +335,12 @@ Checking FSM...OK
 
 <h3>Bonus exercise: Logical Shift Right</h3>
 As a bonus, you are to implement a non-trivial combinational logic block: <code>shr</code>, which is the logical right shift operation.  <code>shr A, B</code> will shift the bit pattern of input A to the right by B bits, filling 0-bits from the left.  In C, this amounts to calculating <code> R = A &gt;&gt; B</code>
-      <p>We have provided you with a starter Logisim circuit called <code>shr.circ</code>. Implement your logical right shift operator in the <code>shr</code> subcircuit.  Play with and test your <code>shr</code> subcircuit in the TestMain subcircuit.
+      <p>We have provided you with a starter Logisim circuit file called <code>shr.circ</code>. Implement your logical right shift operator in the <code>shr</code> subcircuit.  Play with and test your <code>shr</code> subcircuit in the TestMain subcircuit.
 
-      <p>Your <code>shr</code>subcircuit has the following inputs:
+      <p>Your <code>shr</code> subcircuit has the following inputs:
         <ul>
           <li><strong>A</strong>, 8 bits, the input to be shifted </li>
-          <li><strong>B</strong>, 3 bits, the shift amount (Why 3 bits?)</li>
+          <li><strong>B</strong>, 3 bits, the shift amount</li>
         </ul>
 
         <p>
@@ -348,7 +348,7 @@ As a bonus, you are to implement a non-trivial combinational logic block: <code>
       </p>
 
       <p>
-      <b>Hint:</b> Just because we gave you an RTL representation doesn't mean it's the best way to look at this problem. Think about the input bits of <strong>B</strong> and think about how to effectively use splitters! Can you do something with the binary form? Remember why binary is good for use in computers: a 1 is easy to represent as an "ON" signal, and a 0 is easy to represent as an "OFF" signal. Let's say we want to rotate 9 times. 9 is 1001 in binary, or 1x8 + 0x4 + 0x2 + 1x1. Can you use this to make a cleaner circuit?</p>
+      <b>Hint:</b> Just because we gave you an RTL representation doesn't mean it's the best way to look at this problem. Think about the input bits of <strong>B</strong> and think about how to effectively use splitters! Can you do something with the binary form? Remember why binary is good for use in computers: a 1 is easy to represent as an "ON" signal, and a 0 is easy to represent as an "OFF" signal. Let's say we want to rotate 6 times. 6 is 110 in binary, or 1*0x4 + 1*0x2 + 0*0x1. Can you use this to make a cleaner circuit?</p>
       <p>
 
 <h4> Testing shr</h4>
