@@ -168,7 +168,7 @@ $./test.sh
 </pre>
 If you pass all tests, the output will look like this:
 <pre>
-$./test.sh
+$./test.sh part1
 Copy part1.circ to tests/
 Checking NAND... OK
 Checking NOR... OK
@@ -177,10 +177,7 @@ Checking Mux2to1... OK
 Checking NegSign... OK
 Checking Dec2to4... OK
 Checking Mux4to1... OK
-Checking FSM...circuit is incomplete (i.e. result contains x characters)
 </pre>
-Do not worry about the last line for now, you'll complete the FSM circuit next.
-
 
 <h3>Part 2: FSMs to digital logic</h3>
 
@@ -331,35 +328,40 @@ $./test.sh
 </pre>
 If you pass all tests, the output will look like this:
 <pre>
-$./test.sh
-Copy part1.circ to tests/
-Checking NAND... OK
-Checking NOR... OK
-Checking XOR... OK
-Checking Mux2to1... OK
-Checking NegSign... OK
-Checking Dec2to4... OK
-Checking Mux4to1... OK
+$./test.sh FSM
+Copy FSM.circ to tests/
 Checking FSM...OK
 </pre>
 
 <h3>Bonus exercise: Rotate Right</h3>
-      As a bonus, you are to implement a non-trivial combinational logic block: <code>rotr</code>, which stands for &quot;Rotate Right&quot;. The idea is that <code>rotr A,B</code> will &quot;rotate&quot; the bit pattern of input A to the right by B bits. So, if A were 0b10110101011<strong>10011</strong> and B were 0b0101 (5 in decimal), the output of the block would be 0b<strong>10011</strong>10110101011. Notice that the rightmost 5 bits were rotated off the right end of the value and back onto the left end. In C, the operation would be something like &quot;<code>R = A >> B | A << (16 - B)</code>&quot;.
-      <p>
-        You must implement a subcircuit named &quot;rotr&quot; with the following inputs:
+As a bonus, you are to implement a non-trivial combinational logic block: <code>shr</code>, which is the logical right shift operation.  <code>shr A, B</code> will shift the bit pattern of input A to the right by B bits, filling 0-bits from the left.  In C, this amounts to calculating <code> R = A &gt;&gt; B</code>
+      <p>We have provided you with a starter Logisim circuit called <code>shr.circ</code>. Implement your logical right shift operator in the <code>shr</code> subcircuit.  Play with and test your <code>shr</code> subcircuit in the TestMain subcircuit.
+
+      <p>Your <code>shr</code>subcircuit has the following inputs:
         <ul>
-          <li><strong>A</strong>, 16 bits, the input to be rotated</li>
-          <li><strong>B</strong>, 4 bits, the rotation amount (Why 4 bits?)</li>
+          <li><strong>A</strong>, 8 bits, the input to be shifted </li>
+          <li><strong>B</strong>, 3 bits, the shift amount (Why 3 bits?)</li>
         </ul>
-        The output should be A rotated right by B bit positions, as outlined above. You are <strong>NOT</strong> allowed to use Logisim shifters in your solution, though all other combinational logic (MUXes, constants, gates, adders, etc.) is allowed. Logisim's built-in MUXes (find them under the Plexers menu) might be especialy helpful. Your solution shouldn't involve a clock or any clocked elements, like registers.
+
+        <p>
+        You are <strong>NOT allowed</strong> to use Logisim shifters in your solution, though all other combinational logic (MUXes, constants, gates, adders, etc.) is allowed. Logisim's built-in MUXes (find them under the Plexers menu) might be especialy helpful. Your solution shouldn't involve a clock or any clocked elements, like registers.
       </p>
-      <p>We have provided you with a starter Logisim circuit called <code>rotr.circ</code>. Implement your <code>rotr</code> in the ROTR subcircuit.  Play with and test your <code>rotr</code> subcircuit in the TestMain subcircuit.
+
       <p>
-        <b>Hint:</b> Before you start wiring, you should think veeeery carefully about how you might decompose this problem into smaller ones and join them together. You should feel very free to use subcircuits when implementing <code>rotr</code>. If you don't, expect to regret it.
-      </p>
+      <b>Hint:</b> Just because we gave you an RTL representation doesn't mean it's the best way to look at this problem. Think about the input bits of <strong>B</strong> and think about how to effectively use splitters! Can you do something with the binary form? Remember why binary is good for use in computers: a 1 is easy to represent as an "ON" signal, and a 0 is easy to represent as an "OFF" signal. Let's say we want to rotate 9 times. 9 is 1001 in binary, or 1x8 + 0x4 + 0x2 + 1x1. Can you use this to make a cleaner circuit?</p>
       <p>
-      <b>Hint, the second:</b> Just because we gave you an RTL representation doesn't mean it's the best way to look at this problem. Think about the input bits of <strong>B</strong> and think about how to effectively use splitters! Can you do something with the binary form? Remember why binary is good for use in computers: a 1 is easy to represent as an "ON" signal, and a 0 is easy to represent as an "OFF" signal. Let's say we want to rotate 9 times. 9 is 1001 in binary, or 1x8 + 0x4 + 0x2 + 1x1. Can you use this to make a cleaner circuit?</p>
-      <p>
+
+<h4> Testing shr</h4>
+<p>Test your shr circuits by typing
+<pre>
+$./test.sh shr
+</pre>
+If you pass all tests, the output will look like this:
+<pre>
+$./test.sh shr
+Copy shr.circ to tests/
+Checking shr... OK
+</pre>
 
       <h3>Must-learn Logisim features</h3>
 	  <h4 id="splitter">Splitters</h4>
