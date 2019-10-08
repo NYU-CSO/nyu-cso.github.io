@@ -159,8 +159,8 @@ Note that in order to achieve constant time calculation, we have to remember the
 
 <p>
 Now we've seen how rolling hash works.  The only fly in the ointment is that these base-256 hash values are too
-huge to work with efficiently and conveniently. Therefore, we perform 
-all the computation in modulo q, where q is chosen to be a
+huge to work with efficiently and conveniently. Therefore, <b>we perform 
+  all the computation in modulo q</b>, where q is chosen to be a
 large prime (for those with a joint math major: why a prime instead of non-prime?).
 
 <p>With RK hashes, collisions are infrequent, but still possible.  Therefore
