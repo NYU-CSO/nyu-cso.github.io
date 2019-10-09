@@ -271,9 +271,8 @@ To help you implement <tt> bloom_add</tt> and <tt>bloom_query</tt>,
 we provide you with a specific hash function implementation to map a value into a 
 bitmap position, i.e. <tt>int hash_i(int i, long long x)</tt>.  This function will hash a given
 Rabin-Karp hash value x into an <tt>int</tt> value according to the i-th hash
-function.   The number of hash functions that you should use is given by <tt>
-BLOOM_HASH_NUM</tt>, a global constant defined in file <tt> bloom.c</tt>.  Note
-that you need to confine the resulting hash value to the appropriate range [0,
+function, where i ranges from <tt>0</tt> to <tt>BLOOM_HASH_NUM-1</tt> (<tt>BLOOM_HASH_NUM</tt> is a global constant specifying the 
+number of hash functions that you should use.) Note that you need to confine the resulting hash value to the appropriate range [0,
 bloom_bitmap_size) by using the modulo operation.
 
 <p>
