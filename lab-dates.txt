@@ -1,4 +1,6 @@
-10/2;<a href="labs/l1.html">Lab 1</a> due
-10/12;<a href="labs/l2.html">Lab 2</a> due
-10/20;<a href="labs/l3.html">Lab 3</a> due
-11/10;<a href="labs/l4.html">Lab 4</a> due
+10/2;<a href="labs/l1.html">Lab 1</a>due
+10/19;<a href="labs/l2.html">Lab 2</a>due
+11/10;<a href="labs/l3.html">Lab 3</a>due
+11/24;<a href="labs/l5.html">Lab 5</a>due
+12/15;<a href="labs/l6.html">Lab 6</a>due
+12/18;<a href="labs/l4.html">Bonus Malloclab</a> due
