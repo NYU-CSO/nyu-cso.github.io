@@ -174,7 +174,7 @@ if __name__ == '__main__':
             while ldate.weekday() != lec_day0:
                 labDue = is_special(lab_due_dates, ldate)
                 if labDue is not None:
-                    labinfo = labDue['lab'] + " " + str(d.month) + "/" + str(d.day)
+                    labinfo = labDue['lab'] + " " + str(ldate.month) + "/" + str(ldate.day)
                 ldate = ldate + datetime.timedelta(1)
 
         # classes are on Monday and Wed
