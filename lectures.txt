@@ -27,4 +27,3 @@ Architecture: Pipelined impl;; [BO];
 Architecture: Pipelined impl cont;; [BO];
 Memory, Cache;16-Memory_Cache.pdf;[BO] 6.2-6.4;
 Memory, Cache;16-Memory_Cache.pdf;[BO] 6.2-6.4;
-Final Review;final18.pdf;;
