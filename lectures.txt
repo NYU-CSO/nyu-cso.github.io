@@ -14,6 +14,7 @@ Machine Prog: Data;09-Machine_Data.pdf; [PH]2.13-2.14;
 Machine Prog: Procedures;10-Machine_Procedure.pdf; [PH] 2.8;
 Machine Prog: SegFault and Buffer Overflow;11-machine-layout-overflow.pdf;;
 Linking;13-optimization-linking.pdf;[PH]2.12;
+Midterm review (on past Quiz-2);;;
 Quiz 2;;;
 Dynamic Memory Allocation;14-Dynamic_Allocator.pdf;[KR] 8.7;
 Dynamic Memory Allocation Cont;;[KR] 8.7;
