@@ -105,7 +105,7 @@ will be implementing the ALU and Regfile in Logisim.
 
     <p>... and one output:</p>
 
-    <table>
+    <table class="table table-dark table-striped thead-light table-sm">
       <thead>
         <tr>
           <td>Output Name</td>
@@ -124,7 +124,7 @@ will be implementing the ALU and Regfile in Logisim.
 
     <p>Below is the list of ALU operations for you to implement, along with their associated ALUSel values. All of them are required with the exception of mulh, which will take some extra effort to implement (but you're certainly up to the task!) You are allowed and encouraged to use built-in Logisim blocks to implement the arithmetic operations.</p>
 
-    <table>
+    <table class="table table-dark table-striped thead-light table-sm">
       <thead>
           <tr>
               <td>Switch Value</td>
@@ -242,7 +242,7 @@ $ <span class="input">diff alu-add-ref.out alu-add-student.out</span>
     <p>Your RegFile should be able to write to or read from these registers specified in a given RISC-V instruction without affecting any other registers. There is one notable exception: your RegFile should NOT write to x0, even if an instruction try. Remember that the zero register should ALWAYS have the value 0x0. You should NOT gate the clock at any point in your RegFile: the clock signal should ALWAYS connect directly to the clock input of the registers without passing through ANY combinational logic.</p>
 
     <p> The registers and their corresponding numbers are listed below. </p>
-    <table>
+  <table class="table table-dark table-striped thead-light table-sm">
       <thead>
         <tr>
           <td>Register #</td>
@@ -291,7 +291,8 @@ $ <span class="input">diff alu-add-ref.out alu-add-student.out</span>
 
 
     <p> You are provided with the skeleton of a register file in <tt>regfile.circ</tt>. The register file circuit has six inputs:</p>
-    <table>
+  <table class="table table-dark table-striped thead-light table-sm">
+
       <thead>
         <tr>
           <td>Input Name</td>
@@ -335,7 +336,9 @@ $ <span class="input">diff alu-add-ref.out alu-add-student.out</span>
 
     <p> The register file also has the following outputs:</p>
 
-    <table>
+
+<table class="table table-dark table-striped thead-light table-sm">
+
       <thead>
           <tr>
             <td>Output Name</td>
