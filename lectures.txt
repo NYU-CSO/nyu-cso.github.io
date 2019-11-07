@@ -18,7 +18,7 @@ Midterm review (on past Quiz-2);;;
 Quiz 2;;;
 Dynamic Memory Allocation;14-Dynamic_Allocator.pdf;[KR] 8.7;
 Dynamic Memory Allocation Cont;;[KR] 8.7;
-Code optimization;13-optimization-linking.pdf;5.1-5.6;
+Dynamic Memory Allocation Cont;;[KR] 8.7;
 Architecture: Overview;; [BO];
 Architecture: Logic Design;; [BO];
 Architecture: Logic Design cont;; [BO];
