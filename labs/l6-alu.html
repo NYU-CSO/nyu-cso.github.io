@@ -62,13 +62,6 @@ will be implementing the ALU and Regfile in Logisim.
   Save when you start, and save frequently as you work.</p>
 </div>
 
-<div class="bd-callout bd-callout-info"><h5>Important information: Please Read!</h5>
-    <ul>
-      <li>You are allowed to use any of Logisim's built-in blocks for all parts of this project.</li>
-      <li>Don't move around the given inputs and outputs in your circuit; this could lead to issues with the autograder.</li>
-    </ul> 
-  </div>
-
 <h2>Exercise 1: Arithmetic Logic Unit (ALU)</h2>
 
   <p>Your first task is to create an ALU that supports all the operations needed by the instructions in our ISA (which is described in further detail in the next section). Please note that we treat overflow as RISC-V does with unsigned instructions, meaning that we ignore overflow.</p>
@@ -122,7 +115,7 @@ will be implementing the ALU and Regfile in Logisim.
         </tbody>
     </table>
 
-    <p>Below is the list of ALU operations for you to implement, along with their associated ALUSel values. All of them are required with the exception of mulh, which will take some extra effort to implement (but you're certainly up to the task!) You are allowed and encouraged to use built-in Logisim blocks to implement the arithmetic operations.</p>
+    <p>Below is the list of ALU operations for you to implement, along with their associated ALUSel values. All of them are required with the exception of mulh, which is a bonus exercise. You are allowed and encouraged to use built-in Logisim blocks to implement the arithmetic operations.</p>
 
     <table class="table table-dark table-striped thead-light table-sm">
       <thead>
@@ -197,9 +190,9 @@ will be implementing the ALU and Regfile in Logisim.
         </tbody>
   </table>
 
-    <p> When implementing <tt>mul</tt> and <tt>mulh</tt>, notice that the multiply block has a "Carry Out" output (the adder block also has this, but you will not need this) located here:</p> 
-    <img src="./l6-alu_files/carry.png" alt="Carry Out in Multiply Block" width="400" align="center">
-    <p> Experiment a bit with it, and see what you get for both the result and carryout with negative and positive 2's complement numbers. You should realize why we made mulh extra credit.</p>
+    <p> When implementing <tt>mul</tt> (or <tt>mulh</tt> for the bonus exercise), notice that the multiply block has a "Carry Out" output (the adder block also has this, but you will not need this) located here:</p> 
+    <img src="./carry.png" alt="Carry Out in Multiply Block" width="400" align="center">
+    <p> Experiment with it, and see what you get for both the result and carryout with negative and positive 2's complement numbers. You should realize why we made mulh extra credit.</p>
 
     <strong>Hints:</strong>
     <ul>
