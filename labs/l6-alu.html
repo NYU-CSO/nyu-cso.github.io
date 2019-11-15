@@ -218,7 +218,7 @@ $ wget https://nyu-cso.github.io/labs/logisim-evolution.jar
     
  <h3>Testing</h3>
 
- <p>Test your ALU implementing by typing the following (the output shows a successful test):
+ <p>Test your ALU by typing the following (the output shows a successful test):
 
  <pre>
 $ ./test.sh alu
@@ -253,7 +253,7 @@ $ python binary_to_hex_alu.py reference_output/alu-add-ref.out
 </pre>
 
 <p>By comparing against the two outputs, you can understand why your ALU fails.  Sometimes, it is difficult to eyeball the difference.
-To make the difference more obvious, you can run the UNIX <tt>diff</tt> commandline tool, e.g. by doing the following steps:
+To make the difference more obvious, you can run the UNIX commandline tool <kbd>diff</kbd> commandline tool, e.g. by doing the following steps:
 </p>
 
 <pre>
@@ -440,7 +440,7 @@ $ diff alu-add-ref.out alu-add-student.out
     <ul>
 	<li>Take advantage of copy-paste! It might be a good idea to make one register completely and use it as a template for the others to avoid repetitive work.</li>
 	<li>Because of the naming conventions that Logisim Evolution requires, because the outputs are named ra, sp, etc., you will not be able to name your registers ra, sp, etc. We suggest that you instead name them with numerical name of the register, e.g. x1, x2.</li>
-    	<li>You should not use the ``enable input'' on your MUXes. In fact, you can turn that feature off. I would also advise you to also turn ``three-state'' to off. Take a look at all the inputs to a Logisim register and see what they all do. </li>
+    	<li>You should not use the ``enable input'' on your MUXes. In fact, you can turn that feature off. You are advised to also turn ``three-state'' to off. Take a look at all the inputs to a Logisim register and see what they all do. </li>
     	<li>Again, MUXes are your friend, but also DeMUXes. </li>
     	<li>Think about what happens in the register file after a single instruction is executed. Which values change? Which values stay the same? Registers are clock-triggered--what does that mean? </li>
     	<li>Keep in mind registers have an "enable" input available, as well as a clock input.</li>
@@ -449,21 +449,35 @@ $ diff alu-add-ref.out alu-add-student.out
 
   <h3>Testing</h3>
 
-  <p>When you run <tt>./test.sh</tt>, the RegFile tests will produce output in the <tt>tests/student_output</tt> directory. We've provided a python script called <tt>binary_to_hex_regfile.py</tt> that can interpret this output in a readable format for you. </p>
+<p>Test your Regfile by typing the following (the output shows a successful test):
+
+ <pre>
+$ ./test.sh regfile 
+Copy regfile.circ to tests/
+Testing files...
+	PASSED test: RegFile insert test
+	PASSED test: RegFile zero test
+	PASSED test: RegFile x0 test
+	PASSED test: RegFile all registers test
+Passed 4/4 tests
+ </pre>
+
+
+  <p>Like with ALU tests, when you run <tt>./test.sh regfile</tt>, the tester will produce output in the <tt>tests/student_output</tt> directory. We've provided a python script called <tt>binary_to_hex_regfile.py</tt> that can interpret this output in a readable format for you. For example, suppose your Regfile fails the ``RegFile x0 test''. To examine the output of your Regfile on this test, do the following:</p>
 
 <pre>
 cd tests
-python binary_to_hex_regfile.py PATH_TO_OUT_FILE
+python binary_to_hex_regfile.py student_output/regfile-x0-student.out
 </pre>
 
-<p>For example, to see reference_output/regfile-x0-ref.out in readable format, you would do this:</p>
+<p>To see what the expected output of a correct test, do this:</p>
 
 <pre>
 $ cd tests
 $ python binary_to_hex_regfile.py reference_output/regfile-x0-ref.out
 </pre>
 
-<p>If you want to see the difference between your output and the reference solution, put the readable outputs into new <tt>.out</tt> files and diff them. For example, for the regfile-x0 test, take the following steps: 
+<p>To use the UNIX tool <kbd>diff</kbd> to discover the difference between your output and the reference solution, take the following steps: 
 
 </p><pre class="output">$ <span class="input">cd tests</span>
 $ <span class="input">python binary_to_hex_regfile.py reference_output/regfile-x0-ref.out &gt; regfile-x0-ref.out</span>
@@ -473,9 +487,14 @@ $ <span class="input">diff regfile-x0-ref.out regfile-x0-student.out</span>
 
  <h3>Handin Procedure</h3>
 
+To run both ALU and Regfile tests together, type:
+<pre>
+$ ./test.sh 
+</pre>
+
 To handin your files, simply commit and push them to github.com 
 <pre>
-$ git commit -am "Finish lab5"
+$ git commit -am "Finish lab6"
 $ git push origin master
 </pre>
 
