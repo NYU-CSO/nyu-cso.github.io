@@ -57,6 +57,11 @@ will be implementing the ALU and Regfile in Logisim.
 <h3>Setup</h3>
 <p>Clone the Lab 6 repository by clicking on the Github classroom invitation link</p>
 
+<p>Download the Logisim jar file into your lab6 repository:
+<pre>
+$ cd lab6-&lt;YourGithubUsername&gt;
+$ wget https://nyu-cso.github.io/labs/logisim-evolution.jar
+</pre>
 
 <div class="bd-callout bd-callout-danger"><h5>Warning: Save often with Logism</h5>
   Logisim does not have autosave, i.e. it does not save your work as you go along. 
@@ -204,25 +209,52 @@ will be implementing the ALU and Regfile in Logisim.
     	<li>A multiplexer (MUX) might be useful when deciding which block output you want to ouput. In other words, consider simply processing the input in all blocks, and then outputing the one of your choice.</li>
     </ul>
 
-    <p> <strong>NOTE:</strong> Your ALU must be able to fit in the provided harness <tt>alu_harness.circ</tt>.
-    Follow the same instructions as the register file regarding rearranging inputs and outputs of the ALU. In particular, you should ensure that your ALU is correctly loaded by a fresh copy of <tt>alu_harness.circ</tt> before you submit.<br></p>
+    <p> <strong>NOTE:</strong> 
+    <ul>
+      <li>You should only modify <tt>alu.circ</tt>. Do not create any other *.circ file. You may (and are encouraged to) add new sub-circuits within the <tt>alu.circ</tt> file. 
+        <li>Do not modify the locations of inputs/outputs in the <tt>alu.circ</tt> file.  Your ALU must be able to fit in the provided harness <tt>alu_harness.circ</tt>.
+    In fact, you should ensure that your ALU is correctly loaded by a fresh copy of <tt>alu_harness.circ</tt> before you submit.<br>
+    </ul>
+    </p>
 
  <h3>Testing</h3>
 
-<p>When you run <tt>./test.sh</tt>, the ALU tests will produce output in the <tt>tests/student_output</tt> directory. We've provided a python script called <tt>binary_to_hex_alu.py</tt> that can interpret this output in a readable format for you. To use it, do the following:</p>
+ <p>Test your ALU implementing by typing the following (the output shows a successful test):
+
+ <pre>
+$ ./test.sh alu
+Copy alu.circ to tests/
+Testing files...
+	PASSED test: ALU add test
+	PASSED test: ALU div and rem test
+	PASSED test: ALU logic test
+	PASSED test: ALU shift test
+	PASSED test: ALU select, sub, BSel test
+	PASSED test: ALU comprehensive test
+	PASSED test: ALU mult/mulhu test
+	PASSED test: ALU mulh test (extra credit)
+Passed 8/8 tests
+ </pre>
+
+ <p>More often than not, when you type <tt>./test.sh alu</tt>, some test fails and you need to debug the failed test.
+The tester runs your ALU circuit and produces output in the <tt>tests/student_output</tt> directory, with different files 
+corresponding to the output of different ALU test cases.  We've provided a python script called <tt>binary_to_hex_alu.py</tt> 
+that can interpret this output in a readable format for you. 
+
+Suppose your ALU fails the ''ALU add test'', you can examine your ALU's output by typing the following:</p>
 
 <pre class="output">$ <span class="input">cd tests</span>
-$ <span class="input">python binary_to_hex_alu.py PATH_TO_OUT_FILE</span>
+$ <span class="input">python binary_to_hex_alu.py student_output/alu-add-student.out</span>
 </pre>
 
-<p>For example, to see reference_output/alu-add-ref.out in readable format, you would do this:</p>
+<p>The correct ALU output can be seen by typing the following: </p>
 
 <pre>
-$ cd tests
 $ python binary_to_hex_alu.py reference_output/alu-add-ref.out
 </pre>
 
-<p>If you want to see the difference between your output and the reference solution, put the readable outputs into new <tt>.out</tt> files and diff them. For example, for the alu-add test, take the following steps: 
+<p>By comparing against the two outputs, you can understand why your ALU fails.  Sometimes, it is difficult to eyeball the difference.
+To make the difference more obvious, you can run the UNIX <tt>diff</tt> commandline tool, e.g. by doing the following steps:
 </p>
 
 <pre>
