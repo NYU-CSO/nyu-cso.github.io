@@ -200,7 +200,13 @@ $ wget https://nyu-cso.github.io/labs/logisim-evolution.jar
     <img src="./carry.png" alt="Carry Out in Multiply Block" width="400" align="center">
     <p> Experiment with it, and see what you get for both the result and carryout with negative and positive 2's complement numbers. You should realize why we made mulh extra credit.</p>
 
-    <strong>Hints:</strong>
+    <p> <strong>NOTE:</strong> </p>
+    <ul>
+      <li>You should only modify <tt>alu.circ</tt>. Do not create any other *.circ file. You may (and are encouraged to) add new sub-circuits within the <tt>alu.circ</tt> file. 
+<li>The <tt>alu.circ</tt> that you submit <em>must</em> fit into the <tt>alu_harness.circ</tt> file we have provided for you. You should take care not to move inputs or outputs. To verify changes you have made didn't break anything, you can open <tt>alu_harness.circ</tt> and ensure there are no errors and that the circuit functions well. (The tests use a slightly modified copy of <tt>alu_harness.circ</tt>.) 
+         </ul>
+
+            <p><strong>Hints:</strong></p>
     <ul>
     	<li><tt>Add</tt> is already made for you, and feel free to use a similar structure when implementing your other blocks.</li>
     	<li>You can hover your cursor over an output/input on a block to get more detailed information about that input/output.</li>
@@ -209,14 +215,7 @@ $ wget https://nyu-cso.github.io/labs/logisim-evolution.jar
     	<li>A multiplexer (MUX) might be useful when deciding which block output you want to ouput. In other words, consider simply processing the input in all blocks, and then outputing the one of your choice.</li>
     </ul>
 
-    <p> <strong>NOTE:</strong> 
-    <ul>
-      <li>You should only modify <tt>alu.circ</tt>. Do not create any other *.circ file. You may (and are encouraged to) add new sub-circuits within the <tt>alu.circ</tt> file. 
-        <li>Do not modify the locations of inputs/outputs in the <tt>alu.circ</tt> file.  Your ALU must be able to fit in the provided harness <tt>alu_harness.circ</tt>.
-    In fact, you should ensure that your ALU is correctly loaded by a fresh copy of <tt>alu_harness.circ</tt> before you submit.<br>
-    </ul>
-    </p>
-
+    
  <h3>Testing</h3>
 
  <p>Test your ALU implementing by typing the following (the output shows a successful test):
@@ -430,9 +429,12 @@ $ diff alu-add-ref.out alu-add-student.out
         </tbody>
     </table>
 
-    <p>The DEBUG/TEST outputs are present for testing and debugging purposes. If you were implementing a real register file, you would omit those outputs. In our case, be sure they are included correctly--if they are not, you will not pass.</p>
+    <p>The DEBUG/TEST outputs are present for testing and debugging purposes. If you were implementing a real register file, you would omit those outputs. In our case, be sure they are included correctly--if they are not, you will not pass the tests.</p>
 
-    <p>You can make any modifications to <tt>regfile.circ</tt> you want, but the outputs must obey the behavior specified above. In addition, your <tt>regfile.circ</tt> that you submit <em><font color="red">must</font></em> fit into the <tt>regfile_harness.circ</tt> file we have provided for you. This means that you should take care not to move inputs or outputs. To verify changes you have made didn't break anything, you can open <tt>regfile_harness.circ</tt> and ensure there are no errors and that the circuit functions well. (The tests use a slightly modified copy of <tt>regfile_harness.circ</tt>.) 
+    <p><strong>Note:</strong></p>
+    <ul><li>You should only modify <tt>regfile.circ</tt>. Do not create any new *.circ files. 
+      <li>The <tt>regfile.circ</tt> that you submit <em>must</em> fit into the <tt>regfile_harness.circ</tt> file we have provided for you. You should take care not to move inputs or outputs. To verify changes you have made didn't break anything, you can open <tt>regfile_harness.circ</tt> and ensure there are no errors and that the circuit functions well. (The tests use a slightly modified copy of <tt>regfile_harness.circ</tt>.) 
+    </ul>
 
     </p><p><strong>Hints:</strong></p>
     <ul>
