@@ -23,7 +23,7 @@ Architecture: Overview;arch-overview.pdf; [PH]1.4-1.6, A.1-A.3;
 Architecture: ALU;arch-alu.pdf; [PH]1.4-1.6, A.1-A.3;
 Architecture: Sequential Logic;arch-seq.pdf; [PH]A.7-A.8, A.10;
 Architecture: Sequential impl;arch-cpu-simple.pdf; [PH]4.1-4.4;
-Architecture: Pipelined impl;; [PH]4.5-4.7;
+Architecture: Pipelined impl;arch-cpu-pipeline.pdf; [PH]4.5-4.7;
 Architecture: Pipelined impl cont;; [PH]4.8-4.9;
 Memory, Cache;16-Memory_Cache.pdf;[PH] 5.1-5.4;
 Memory, Cache;16-Memory_Cache.pdf;[BO] 5.5-5.8;
