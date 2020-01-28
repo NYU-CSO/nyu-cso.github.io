@@ -100,6 +100,12 @@ $ ./rkgrep_test -a naive
 </pre>
 
 </div>
+<div class="bd-callout bd-callout-warning">
+	<h5>Naive test should not be too slow</h5>
+  <p>If it takes more than a few seconds to finish <kbd>./rkgrep_test -a naive</kbd>, you are doing something <i>very inefficient</i>,
+  such as using <tt>strlen</tt> (which runs in O(n) time) in the loop condition.  Check that it is not the case.  
+</div>
+
 
 
 <h3>Part II: Rabin-Karp Substring Matching</h3>
