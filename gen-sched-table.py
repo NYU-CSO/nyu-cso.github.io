@@ -96,6 +96,7 @@ def output_header():
 <div class="row">
 For Zoom links/recording, please refer to <a href="https://newclasses.nyu.edu/portal/site/efb7fea9-4c14-480d-b31b-a4ca333d4cff/page/91986010-c5e4-46ee-9587-6abcf79e387a">NYU classes</a>
 </div>
+<div class="row"></div>
 """
 
     print(line)
@@ -192,6 +193,7 @@ if __name__ == '__main__':
             else:
                 lec = specialLec['lec']
         elif specialLec is not None and specialLec['regular'] == "1":
+            print "HAHAHA"
             l = lectures[which]
             which = which+1
             lec = specialLec['lec']+"<br>"+l['lec']
@@ -216,7 +218,7 @@ if __name__ == '__main__':
             print("<div class=\"row\">")
             print("   <div class=\"col-sm-2\">%d/%d</div>" % (d.month, d.day))
             if specialLec is None:
-                print("   <div class=\"col-sm-4\"><a href=\"rec-notes/r%02d.pdf\"><em>recitation%02d</em></a></div>" % (recitation, recitation))
+                print("   <div class=\"col-sm-4\"><a href=\"rec-notes/r%02d.pdf\"><em>zoom-recitation%02d</em></a></div>" % (recitation, recitation))
                 print("   <div class=\"col-sm-2\"><em></em></div> ")
                 recitation = recitation + 1
             else:
