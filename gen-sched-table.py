@@ -7,11 +7,15 @@ def get_lectures(fname):
     lectures = []
     for line in fh:
         f = line.rstrip('\n').split(';')
-        if len(f) != 4:
+        if len(f) < 3:
             print(line, " does not have exactly 4 fields")
             sys.exit(1)
-
-        l = {'lec':f[0], 'note':f[1], 'prepare':f[2],'bonus':f[3]}
+        l = {}
+        l['lec'] = f[0]
+        l['note'] = f[1]
+        l['prepare'] = f[2]
+        if len(f) >=4: 
+            l['bonus']=f[3]
         lectures.append(l)
     return lectures
 
