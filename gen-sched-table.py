@@ -127,12 +127,12 @@ if __name__ == '__main__':
     special_dates = get_special_dates(special_fname)
     lab_due_dates = get_lab_due_dates(lab_fname)
 
-    semester_start = datetime.date(2019,9,2) # enter first day of semester
-    semester_end = datetime.date(2019,12,18)
+    semester_start = datetime.date(2020,9,2) # enter first day of semester
+    semester_end = datetime.date(2020,12,13)
     lec_day0 = 0 # enter lecture day of week
     lec_day1 = 2 # enter lecture day of week
-    recitation_start = datetime.date(2019,9,5)
-    recitation_end = datetime.date(2019,12,13)
+    recitation_start = datetime.date(2020,9,3)
+    recitation_end = datetime.date(2020,12,13)
     rec_day0 = 3 # enter recitation day of week
 
     line = """
@@ -213,7 +213,7 @@ if __name__ == '__main__':
             print("<div class=\"row\">")
             print("   <div class=\"col-sm-2\">%d/%d</div>" % (d.month, d.day))
             if specialLec is None:
-                print("   <div class=\"col-sm-4\"><a href=\"https://github.com/nyu-cso-fa19/cso-recitations/blob/slides/r%02d/r%02d.pdf\"><em>recitation%02d</em></a></div>" % (recitation, recitation, recitation))
+                print("   <div class=\"col-sm-4\"><a href=\"rec-notes/r%02d.pdf\"><em>recitation%02d</em></a></div>" % (recitation, recitation))
                 print("   <div class=\"col-sm-2\"><em></em></div> ")
                 recitation = recitation + 1
             else:
