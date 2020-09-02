@@ -1,6 +1,6 @@
-10/2;<a href="labs/l1.html">Lab 1</a>due
-10/19;<a href="labs/l2.html">Lab 2</a>due
-11/10;<a href="labs/l3.html">Lab 3</a>due
-11/27;<a href="labs/l5.html">Lab 5</a>due
-12/15;<a href="labs/l6.html">Lab 6</a>due
-12/18;<a href="labs/l4.html">Bonus Malloclab</a> due
+9/30;<a href="labs/clab-part1.html">Lab 1</a>due
+10/14;<a href="labs/clab-part2.html">Lab 2</a>due
+11/2;<a href="labs/tba.html">Lab 3</a>due
+11/18;<a href="labs/malloclab.html">Lab 4</a>due
+11/30;<a href="labs/l5-logism.html">Lab 5</a>due
+12/10;<a href="labs/l6-alu.html">Lab 6</a> due
