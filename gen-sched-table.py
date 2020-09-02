@@ -151,7 +151,7 @@ if __name__ == '__main__':
     line = """
 <div class=\"row\">
 <div class=\"col-sm-2\"><b>Date</b></div> 
-<div class=\"col-sm-6\"><b>Lecture</b></div> 
+<div class=\"col-sm-4\"><b>Lecture</b></div> 
 <div class=\"col-sm-2\"><b>Reading</b></div> 
 <div class=\"col-sm-2\"><b>Lab Due</b></div>
 """
@@ -217,7 +217,7 @@ if __name__ == '__main__':
                 print("</div>\n")
             print("   <div class=\"col-sm-2\">%s</div>" % (prepare))
             print("   <div class=\"col-sm-2\">%s</div>"  % (labinfo))
-            print("   <div class=\"col-sm-2\">%s</div>"  % (bonus))
+        #    print("   <div class=\"col-sm-2\">%s</div>"  % (bonus))
             print("</div>\n")
 
         # Deal with recitations  on thu
