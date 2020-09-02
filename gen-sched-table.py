@@ -58,7 +58,7 @@ def output_header():
 	<!-- Bootstrap CSS -->
 	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.3/css/bootstrap.min.css" integrity="sha384-Zug+QiDoJOrZ5t4lssLdxGhVrurbmBWopoEl+M6BdEfwnCJZtKxi1KgxUyJq13dy" crossorigin="anonymous">
 
-  <title>Computer Systems Organization (Fall 2019) </title>
+  <title>Computer Systems Organization (Fall 2020) </title>
 </head>
 
 <body>
@@ -85,7 +85,7 @@ def output_header():
         <h3 class="text-success">Computer Systems Organization</h3>
 		</div>
 		<div class="row">
-			CSCI-UA.0201(007), Fall 2019
+			CSCI-UA.0201(007), Fall 2020
 		</div>
 		</div>
 	</div>
