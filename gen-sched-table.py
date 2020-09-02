@@ -97,7 +97,7 @@ def output_header():
   <ul>
     <li>For Zoom links/recording, please refer to <a href="https://newclasses.nyu.edu/portal/site/efb7fea9-4c14-480d-b31b-a4ca333d4cff/page/91986010-c5e4-46ee-9587-6abcf79e387a">NYU classes</a></li>
     <li>
-    <ul>
+    <ul> Reading shorthands:
       <li>[KR] refers to Kernighan/Richie's book.
       <li>[BO] refers to Bryant/O'Hallaron's book.
       <li>[PH] refers to Patterson/Henessy's book.
@@ -152,7 +152,7 @@ if __name__ == '__main__':
 <div class=\"row\">
 <div class=\"col-sm-2\"><b>Date</b></div> 
 <div class=\"col-sm-4\"><b>Lecture</b></div> 
-<div class=\"col-sm-2\"><b>Reading</b></div> 
+<div class=\"col-sm-4\"><b>Reading</b></div> 
 <div class=\"col-sm-2\"><b>Lab Due</b></div>
 """
     print(line)
@@ -215,7 +215,7 @@ if __name__ == '__main__':
                 print("  [<a href=\"notes/%s\">note</a>]</div>" % (note))
             else:
                 print("</div>\n")
-            print("   <div class=\"col-sm-2\">%s</div>" % (prepare))
+            print("   <div class=\"col-sm-4\">%s</div>" % (prepare))
             print("   <div class=\"col-sm-2\">%s</div>"  % (labinfo))
         #    print("   <div class=\"col-sm-2\">%s</div>"  % (bonus))
             print("</div>\n")
@@ -226,11 +226,11 @@ if __name__ == '__main__':
             print("   <div class=\"col-sm-2\">%d/%d</div>" % (d.month, d.day))
             if specialLec is None:
                 print("   <div class=\"col-sm-4\"><a href=\"rec-notes/r%02d.pdf\"><em>zoom-recitation%02d</em></a></div>" % (recitation, recitation))
-                print("   <div class=\"col-sm-2\"><em></em></div> ")
+                print("   <div class=\"col-sm-4\"><em></em></div> ")
                 recitation = recitation + 1
             else:
-                print("   <div class=\"col-sm-2\">%s</div> " % specialLec['lec'])
-                print("   <div class=\"col-sm-2\"></div> ")
+                print("   <div class=\"col-sm-4\">%s</div> " % specialLec['lec'])
+                print("   <div class=\"col-sm-4\"></div> ")
             print("   <div class=\"col-sm-2\">%s</div>"  % (labinfo))
             print("</div>\n")
         if d.weekday() == 6: # terminate week container on Sunday
