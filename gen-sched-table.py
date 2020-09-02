@@ -181,8 +181,14 @@ if __name__ == '__main__':
                     labinfo = labDue['lab'] + " " + str(ldate.month) + "/" + str(ldate.day)
                 ldate = ldate + datetime.timedelta(1)
 
+        if specialLec is not None and specialLec['regular'] == "1":
+            l = lectures[which]
+            which = which+1
+            lec = specialLec['lec']+"<br>"+l['lec']
+            note = l['note']
+            prepare=l['prepare']
         # classes are on Monday and Wed
-        if d.weekday() == lec_day0 or d.weekday() == lec_day1:
+        elif d.weekday() == lec_day0 or d.weekday() == lec_day1:
             if specialLec is None:
                 l = lectures[which]
                 which=which+1
@@ -192,14 +198,7 @@ if __name__ == '__main__':
                 bonus=l['bonus']
             else:
                 lec = specialLec['lec']
-        elif specialLec is not None and specialLec['regular'] == "1":
-            print "HAHAHA"
-            l = lectures[which]
-            which = which+1
-            lec = specialLec['lec']+"<br>"+l['lec']
-            note = l['note']
-            prepare=l['prepare']
-
+        
         if lec != "":
             print("<div class=\"row\">")
             print("   <div class=\"col-sm-2\">%d/%d</div>" % (d.month, d.day))

@@ -4,6 +4,7 @@ Floats;03-floats.pdf;[PH]3.5; <a href="https://www.itu.dk/~sestoft/bachelor/IEEE
 Floats continued;03-floats.pdf;[PH]3.5;
 C: Basics, Bitwise Operator;04-C_Basics.pdf; [KR]1-4;
 C: Scope rules, pointers, arrays;05-pointer_array.pdf;[KR]5;<a href="https://www.recurse.com/blog/5-learning-c-with-gdb">[C with GDB]</a>
+C: Scope rules, pointers, arrays;05-pointer_array.pdf;[KR]5;<a href="https://www.recurse.com/blog/5-learning-c-with-gdb">[C with GDB]</a>
 C: Strings;06-string-struct-malloc.pdf; [KR]5 [PH]2.9;
 C: Strings, Structs, Malloc;07-structs_malloc_2d.pdf; [KR]5,7 [PH]2.9;
 C: Strings, Structs, Malloc;07-structs_malloc_2d.pdf; [KR]5,7 [PH]2.9;
