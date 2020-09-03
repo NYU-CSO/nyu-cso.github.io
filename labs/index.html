@@ -92,7 +92,7 @@ We have also put a copy of the image on Dropbox <a href="https://dropbox.com/s/x
 item "File", click on "Import appliance...", and choose the previously downloaded lubuntu18.04.ova file
 when prompted.
 <li><b>Step 4. Launch Lubuntu Linux and install necessary packages</b>. After importing, start the virtual machine named "lubuntu" and log in using 
-the username and password given in Piazza). Once you are logged in, 
+the username and password given in Campuswire). Once you are logged in, 
 start a terminal once you logged in by clicking the "LXterminal" icon on the desktop (alternatively, use the short-cut key combination "Ctrl-Alt-t").
 <!--Type <kbd>sudo apt-get install gcc gdb make git</kbd> to install GNU C compiler, make builder, gdb debugger, git source management tool--></li>
 <!---username=lab lab12345-->
@@ -100,15 +100,17 @@ start a terminal once you logged in by clicking the "LXterminal" icon on the des
 
 <p>For more advanced tune-ups to help your productivity, do the following:
 <ul>
+<li><b>Enable Larger VM screen</b>
+<p>Launch class VM image and log in.  
+<p>Under the "Devices" menu, click "Insert Guest Additions CD".
+<p>Start LXterminal, type <kbd>cd /media/lab/VBox_GAs_6.0.10/</kbd>. Type type <kbd>sudo ./VBoxLinuxAdditions.run</kbd> using the password given to you.
+<img src="guestaddition.png" width=900></img>
+Restart Virtual box and re-launch class VM. Now you should be able to resize the VM desktop and do full-screen by clicking the "View" menu on the VM window.
+
 <li><b>Enable copy-n-paste between your native OS (e.g. MacOS) and class VM</b>. First, click the settings button in the VirtualBox window, and then click "advanced" tab, change the pulldown button of "Shared Clipboard" and "Drag'n'Drop" to "Bidirectional".
 <p>
 <img src="vboxsettings.png" width=600></img>
-<p>Launch class VM image and log in.  
-<p>Under the "Devices" menu, click "Insert Guest Additions CD".
-<p>Start LXterminal, type <kbd>cd /media/lab/VBox_GAs_5.2.24/</kbd>. Become root by typing <kbd>sudo bash</kbd>. Afterwards, type <kbd>./VBoxLinuxAdditions.run</kbd>. 
-<img src="guestaddition.png" width=900></img>
-Restart Virtual box and re-launch class VM. Now you should be able to do copy-n-paste between native OS and class VM.
-</li>
+
 <li><b>Mount a folder in native-OS in class VM</b>. (Note that this option requires completing the previous option which installs the virtualbox guest additions.) Instead of writing code in class VM, you may want to write code in your native-OS (e.g. using sublime) and only execute the labs in class VM. In this case, you want to store lab files in a native folder (e.g. /User/jinyang/cso-labs) and mount the native folder in class VM, so changes made to lab files in native OS are instantly visible inside the class VM. 
 	<p>To mount a native folder in class VM, inside VirtualBox, click "Settings" button, and then click "Shared Folders" on the left. Click the add-share logo on the right hand side. Enter the "Folder path" in your native OS (e.g. <tt>/User/jinyang/cso-labs</tt> and "Folder name" (e.g. <tt>cso-labs</tt>) with "Auto-mount" selected.  
 	<img src="vboxmount.png" width=600></img>
