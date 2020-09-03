@@ -16,6 +16,8 @@ def get_lectures(fname):
         l['prepare'] = f[2]
         if len(f) >=4: 
             l['bonus']=f[3]
+        else:
+            l['bonus']=' '
         lectures.append(l)
     return lectures
 
