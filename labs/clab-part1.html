@@ -1,0 +1,166 @@
+<html>
+<head>
+	<meta charset="utf-8">
+  <link rel="shortcut icon" href="../favicon.ico" type="image/x-icon">
+	<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no, content=no-cache">
+
+	<!-- Bootstrap CSS -->
+	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.3/css/bootstrap.min.css" integrity="sha384-Zug+QiDoJOrZ5t4lssLdxGhVrurbmBWopoEl+M6BdEfwnCJZtKxi1KgxUyJq13dy" crossorigin="anonymous">
+	<link rel="stylesheet" href="../sty2.css">
+
+  <title>Computer Systems Organization (Fall 2020) </title>
+</head>
+
+<body>
+<br>
+    <main role="main" class="container">
+      <header class="header clearfix">
+        <nav>
+          <ul class="nav nav-pills float-left">
+            <li class="nav-item">
+              <a class="nav-link " href="../index.html">Home <span class="sr-only">(current)</span></a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="../schedule.html">Schedule</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link active" href=".">Lab</a>
+            </li>
+          </ul>
+        </nav>
+	<div class="row">
+		<div class="col-sm-3"><img src="../org.png" width=150></div>
+		<div class="col-sm-9">
+		<div class="row">
+        <h3 class="text-muted">Computer Systems Organization</h3>
+		</div>
+		<div class="row">
+			CSCI-UA.0201(007), Fall 2020
+		</div>
+		</div>
+	</div>
+      </header>
+
+<div id="content">
+<hr>
+
+<h2> Lab 1 (clab-part1): Basic C Programming</h2>
+<h5>Due: 9/30 11pm</h5>
+
+<p>
+This lab will get your hands dirty doing some basic C programming and
+debugging.   The lab asks you to write several simple C functions in programs
+whose skeleton code are already provided for you. 
+
+<p>
+<div class="bd-callout bd-callout-warning">
+	<h5>Before you start the lab:</h5>
+	<p><a href="index.html#vm">Set up</a> your VM environment. If you hit problems, read through <a href="index.html#vm-faq">Virtubox FAQs</a>.
+	<p>
+	<a href="index.html#repo">Set up</a> your lab git repository. Read through <a href="index.html#git-faq">git FAQs</a>.
+	</ul>
+</div>
+
+<p>
+<div class="bd-callout bd-callout-warning">
+	<h5>Programming style:</h5>
+	<p>For style, please read this <a href="http://cs61.seas.harvard.edu/wiki/2015/Style">style guide</a> and follow the advice.
+</div>
+
+<p> First, click on Lab1's github classroom invitation link (posted in Campuswire) and select your NYU NetID.  Next, clone your repo by typing the following
+<pre >
+$ cd cso-labs
+$ git clone https://github.com/nyu-cso-fa20/clab-part1-&lt;YourGithubUsername&gt;.git  lab1
+</pre>
+
+
+<div class="bd-callout bd-callout-danger"><h5>File modification</h5> For this lab,
+the only files that you should modify are <tt>bitfloat.c</tt>, <tt>ptr.c</tt> and <tt>array.c</tt>.
+You may read other files but you must not change them.</tt></span>.
+</div>
+
+<p>
+It is recommended that you complete and test each exercise individually. For example, suppose you have completed 
+the exercise in <tt>bitfloat.c</tt>.  Test by typing the following:
+<pre >
+$ make
+$ ./clab_test
+Bit at pos 0 of int 1 should be 1 (returned 23)
+---Start testing bitfloat.c
+      get_bit_at_pos...
+Aborted (core dumped)
+</pre>
+
+From the above error message, you can see that my implementation of <tt>get_bit_at_pos</tt> in bitfloat.c did not pass the test. Debug and try again.
+Complete and test each part individually before moving on to the next one.
+
+<p>Once you've passed all the tests, you should see this:
+<pre >
+$ ./clab_test
+---Start testing bitfloat.c
+      get_bit_at_pos...passed
+      set_bit_at_pos...passed
+      get_most_significant_byte...passed
+      sum_overflowed...passed
+      get_exponent_field...passed
+---Test bitfloat.c Passed
+---Start testing ptr.c
+      set_to_five...passed
+      initialize_ptr...passed
+      swap_int...passed
+---Test ptr.c Passed
+---Start testing array.c
+      array_sum...passed
+      array_cpy...passed
+      bubble_sort...passed
+      big_to_little_endian...passed
+---Test array.c Passed
+</pre>
+
+<p>
+
+<h4>Saving changes while you are working on Lab1</h4>
+You should frequently save your 
+work to protect against laptop failures and other unforeseen troubles. 
+You save the changes by first "committing" them to your local lab repo and then "pushing" 
+those changes to the repo stored on github.com
+<p>
+<pre >
+$ git commit -am "saving lab1 changes"
+$ git push origin master
+</pre>
+
+<p>The `-a` flag (as in the command `git commit -am ...`) tells git to add the changes you've made to existing files to the current commit.
+If you do not provide this flag, the changes you made to the existing files will not be committed.
+After you've pushed your changes with <kbd>git push</kbd>, they are safely stored on github.com.
+Even if your laptop catches on fire in the future, those pushed changes can still be retrieved.
+However, you must remember that <kbd>git commit</kbd> by itself does not save your changes on github.com 
+(it only saves your changes locally).  So, don't forget to type that <kbd>git
+  push origin master</kbd>.
+
+<p>
+<h4 id="debug">Debugging the lab</h4>
+
+Below are some advice on how to debug common problems encountered in doing this lab:
+
+<ul>
+	<li><b>Remember to recompile changed code</b>. Whenever you've changed a file, always type <kbd>make</kbd> to re-compile before executing again.</li>
+
+  <li><b>Read the test code in <tt>clab_test.c</tt> to understand what kind of tests are being conducted on your code.</li>
+		<li><b>Learn to use <tt>gdb</tt></b>.  It is absolutely essential that you learn to use <tt>gdb</tt>. This tool is a must for helping you handle ``segmentation fault'',
+		which you'll see a lot when doing labs.  Let's say you encounter "core dumped" when testing. Invoke <tt>gdb</tt> by typing:
+		<p>
+<pre >
+$ gdb clab_test
+(gdb) bt
+</pre>
+<tt>bt</tt> is the gdb command to print the stack trace which tells you where the problematic execution occurs and how the program got there.
+<a href="https://github.com/nyu-cso-fa16/recitation02#debug">Recitation 2</a> has covered the use of gdb.  There are also many tutorials online on gdb.
+</ul>
+ 
+<h4>Handin Procedure</h4>
+
+Follow these <a href="index.html#handin">instructions</a>.
+<p>
+<hr>
+</html>

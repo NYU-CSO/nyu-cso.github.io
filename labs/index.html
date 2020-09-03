@@ -178,17 +178,17 @@ to get started.
 		$ mkdir cso-labs
 		</pre>
 
-		<p> Now you are ready to initialize your lab repository. First, click on each lab's invitation link (posted in Piazza). Select your NYU email address to link your github account and create your lab repository on Github.
+		<p> Now you are ready to initialize your lab repository. First, click on each lab's invitation link (posted in Campuswire). Select your NYU NetID to link your github account and create your lab repository on Github.
 
-<p>Next, in a VirtualBox terminal, clone your repo by typing the following (the following example is for Lab1):
+<p>Next, in a VirtualBox terminal, clone your repo by typing the following (the following example is for the first lab):
 <pre >
 $ cd cso-labs
-$ git clone https://github.com/nyu-cso-fa19/lab1-&lt;YourGithubUsername&gt;.git  lab1
+$ git clone https://github.com/nyu-cso-fa20/clab-part1-&lt;YourGithubUsername&gt;.git lab1
 </pre>
 
 <p>
 You will see that a directory named <tt>lab1</tt> has been created under the <tt>cso-labs</tt> directory.
-This is the git repo for your lab assignment 1. Other labs are created similarly by cloning respective repositories.
+This is the git repo for your lab assignment 1. Other labs can be created similarly by cloning respective repositories.
 </li>
 <!--
 <li><b>Setting up the upstream repo</b>
@@ -246,15 +246,16 @@ To see if your local repo is up-to-date with your origin repo on github.com and 
 </li>
 </ul>
 
-<h4>Handin Procedure</h4>
+<h4 id="handin">Handin Procedure</h4>
 
-To handin your files, simply commit and push them to github.com by doing:
+First, commit and push all your code changes to github.com by doing:
 <pre >
-$ git commit -am "saving all my changes and handing in"
+$ git commit -am "finish lab"
 $ git push origin master
 </pre>
 
-We will fetch your lab files from Github.com at the specified deadline and grade them.
+Next, submit your lab via Gradescope. You access Gradescope by first logging into <a href="https://newclasses.nyu.edu/portal/site/efb7fea9-4c14-480d-b31b-a4ca333d4cff">NYU classes</a>.
+Click "Lessons" from the left menu bar.  Then, you will see the Gradescope link; click to access the course's Gradescope page.  Follow the instructions to submit your lab.
 
 <p>
 <div class="bd-callout bd-callout-info">
