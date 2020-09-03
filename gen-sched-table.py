@@ -98,6 +98,7 @@ def output_header():
       </header>
 
 <div id="content">
+<hr>
 <div class="row">
     For Zoom links/recording, please refer to <a href="https://newclasses.nyu.edu/portal/site/efb7fea9-4c14-480d-b31b-a4ca333d4cff/page/91986010-c5e4-46ee-9587-6abcf79e387a">NYU classes</a></li>
 </div>
@@ -108,7 +109,6 @@ def output_header():
       <li>[PH] refers to Patterson/Henessy's book.
     </ul>
 </div>
-
 <hr>
 <div class="row"></div>
 """
