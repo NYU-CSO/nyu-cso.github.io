@@ -149,13 +149,8 @@ if __name__ == '__main__':
     semester_end = datetime.date(2020,12,13)
     lec_day0 = 0 # enter lecture day of week
     lec_day1 = 2 # enter lecture day of week
-<<<<<<< HEAD
     recitation_start = datetime.date(2020,9,3)
     recitation_end = datetime.date(2020,12,13)
-=======
-    recitation_start = datetime.date(2019,9,3)
-    recitation_end = datetime.date(2019,12,13)
->>>>>>> stuff
     rec_day0 = 3 # enter recitation day of week
 
     line = """
