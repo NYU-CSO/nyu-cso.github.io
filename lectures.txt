@@ -1,6 +1,6 @@
 Overview;01-overview.pdf;[PH] 1;
 Bits,Bytes,Ints;02-bits_bytes_int.pdf;[PH]2.4 or [BO]2.1-2.3;
-Floats;03-floats.pdf;[PH]3.5; <a href="https://www.itu.dk/~sestoft/bachelor/IEEE754_article.pdf">[GoldBerg91]</a>
+Ints continued, Floats;02-bits_bytes_int_cont.pdf;;[PH]3.5; <a href="https://www.itu.dk/~sestoft/bachelor/IEEE754_article.pdf">[GoldBerg91]</a>
 Floats continued;03-floats.pdf;[PH]3.5 or [BO]2.4;
 C: Basics, Bitwise Operator;04-C_Basics.pdf; [KR]1-4;
 C: Scope rules, pointers, arrays;05-pointer_array.pdf;[KR]5;<a href="https://www.recurse.com/blog/5-learning-c-with-gdb">[C with GDB]</a>
