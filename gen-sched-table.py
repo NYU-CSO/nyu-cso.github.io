@@ -186,14 +186,7 @@ if __name__ == '__main__':
         labinfo = ""
         if labDue is not None:
             labinfo = labDue['lab'] + " " + str(d.month) + "/" + str(d.day)
-        elif d.weekday() == lec_day1:
-            ldate = d + datetime.timedelta(1)
-            while ldate.weekday() != lec_day0:
-                labDue = is_special(lab_due_dates, ldate)
-                if labDue is not None:
-                    labinfo = labDue['lab'] + " " + str(ldate.month) + "/" + str(ldate.day)
-                ldate = ldate + datetime.timedelta(1)
-
+        
         if specialLec is not None and specialLec['regular'] == "1":
             l = lectures[which]
             which = which+1
