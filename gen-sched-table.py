@@ -185,7 +185,7 @@ if __name__ == '__main__':
         labDue = is_special(lab_due_dates, d)
         labinfo = ""
         if labDue is not None:
-            labinfo = labDue['lab'] + " " + str(d.month) + "/" + str(d.day)
+            labinfo = labDue['lab']
         
         if specialLec is not None and specialLec['regular'] == "1":
             l = lectures[which]
