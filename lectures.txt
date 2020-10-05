@@ -6,8 +6,8 @@ Floats continued;03-floats-cont.pdf; [KR]1-4;
 C: overview, bitwise;04-C_Basics.pdf;[KR]5;<a href="https://www.recurse.com/blog/5-learning-c-with-gdb">[C with GDB]</a>
 C: Scope rules, pointers;05-pointer_array.pdf;[KR]5;<a href="https://www.recurse.com/blog/5-learning-c-with-gdb">[C with GDB]</a>
 C: arrays and pointers;05-pointer_array_cont.pdf; [KR]5 [PH]2.9;
-C: Strings, Structs, Malloc;06-string-struct-malloc.pdf; [KR]5,7 [PH]2.9;
-C: Strings, Structs, Malloc;07-structs_malloc_2d.pdf; [KR]5,7 [PH]2.9;
+C: characters and strings;06-string-struct-malloc.pdf; [KR]5,7 [PH]2.9;
+C: structs, malloc;07-structs_malloc_2d.pdf; [KR]5,7 [PH]2.9;
 C: Program organization, I/O ;07-largec-io.pdf;;
 Machine Prog: Basics;07-Machine_Basic.pdf; [BO] 3.1-3.5
 Machine Prog: Control;08-Machine_Control.pdf; [BO] 3.6;
