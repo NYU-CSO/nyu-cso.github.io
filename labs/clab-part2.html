@@ -52,15 +52,15 @@ This lab will continue to hone your C programming skills.
 The lab asks you to write a few C functions manipulating strings, and
 to write a hash table which can be used to lookup keys in O(1) time.
 
-<p> To set up your lab repo, click on Lab1's github classroom invitation link (posted in Campuswire) and select your NYU NetID.  Next, clone your repo locally by typing the following
+<p> To set up your lab repo, click on Lab2's github classroom invitation link (posted in Campuswire) and select your NYU NetID.  Next, clone your repo locally by typing the following
 <pre >
 $ cd cso-labs
-$ git clone https://github.com/nyu-cso-fa20/clab-part1-&lt;YourGithubUsername&gt;.git  lab1
+$ git clone https://github.com/nyu-cso-fa20/clab-part2-&lt;YourGithubUsername&gt;.git  lab2
 </pre>
 
 
 <div class="bd-callout bd-callout-danger"><h5>File modification</h5> For this lab,
-  the only files that you should modify are <tt>str.c</tt>, <tt>list.c</tt>, <tt>htable.c</tt>, <tt>parse_words.c</tt> and <tt>wordcount.c</tt>.
+  the only files that you should modify are <tt>str.c</tt>, <tt>list.c</tt> and <tt>htable.c</tt> (additionally for bonus, <tt>parse_words.c</tt> and <tt>wordcount.c</tt>).
 You may read other files but you must not change them.</tt></span>.
 </div>
 
@@ -78,23 +78,31 @@ $ ./clab2_test
       int_to_hex...passed
 ---Test str.c Passed
 </pre>
-You should see that you've passed the tests for <tt>str.c</tt> before moving on to the rest of the exercises.
+
+<p>
+You should make sure that you've passed the tests for <tt>str.c</tt> before moving on to the rest of the exercises.
+
+<p>
 
 <h3>Linked List</h3>
-You are to implement a linked list, where each node stores a key/value tuple (of type <tt>kv_t</tt>).  The linked list should be sorted alphbetically by each node's key.
+<p>You are to implement a linked list, where each node stores a key/value tuple (of type <tt>kv_t</tt>).  The linked list should be sorted alphbetically by each node's key.
 
-Read through the type definition of linked list node in file <tt>list.h</tt> Then, follow the instructions in <tt>list.c</tt> to implement the skeleton functions, <tt>list_init</tt>, <tt>list_insert_with_accum</tt>, <tt>list_find</tt> and <tt>list_get_all_tuples</tt>.
+<p>Read through the type definition of linked list node in file <tt>list.h</tt> Then, follow the instructions in <tt>list.c</tt> to implement the skeleton functions, <tt>list_init</tt>, <tt>list_insert_with_accum</tt>, <tt>list_find</tt> and <tt>list_get_all_tuples</tt>.
 
 <p>Test by typing <kbd>make; ./clab2_test</kbd>.  You should see that you've passed the tests for <tt>list.c</tt> before moving on to the rest of the exercises.
 
+<p>
 <h3>Hash table</h3>
-Now, you are ready to implement a hash table. In Python or Java, a hash table implementation is readily available to use as part of the language's core library (dictionary in Python, or HashTable from java.util.* in Java).  However, C's core library has no hash tale implementation and you must implement your own (or download a 3rd party library).
+<p>Now, you are ready to implement a hash table. In Python or Java, a hash table implementation is readily available to use as part of the language's core library (dictionary in Python, or HashTable from java.util.* in Java).  However, C's core library has no hash tale implementation and you must implement your own (or download a 3rd party library).
 
-Read through the type definition of our hash table in file <tt>htable.h</tt>.
+<p>Read through the type definition of our hash table in file <tt>htable.h</tt>.
 Below is a pictorial illustration of an example hash table.
-<img src="htable.png" alt="hash table illustration">
 
-Our hash table stores a collection of key/value tuples. It uses a hash function
+<div class="text-center">
+    <img src="htable.png" class="rounded" alt="hash table illustration">
+</div>
+
+<p>Our hash table stores a collection of key/value tuples. It uses a hash function
 (<tt>hashcode</tt>) to map a tuple according to its key to one entry among the
 hash table's array of entries (also called buckets).  The same key always maps
 to the same location, but different keys may also map to the same location, a 
@@ -107,24 +115,26 @@ the same entry at index 1. Therefore, these two tuples are chained together in
 a linked list of 2 nodes.  By contrast, there is no collision at index 5 and 
 tuple &lt;key="world", val=1&gt; is the only node in its linked list.
 
-You hash table implementation should make use your linked list implementation.
+<p>You hash table implementation should make use your linked list implementation.
+
 <p>Test by typing <kbd>make; ./clab2_test</kbd>.  You should see that you've
 passed the tests for <tt>htable.c</tt>.
 
+<p>
 <h3>Bonus: counting word frequencies</h3>
 
-This is a bonus exercise for those seeking extra practice on C.
+<p>This is a bonus exercise for those seeking extra practice on C.
 
-In this exercise, you are going to count the frequency of words occured in a
+<p>In this exercise, you are going to count the frequency of words occured in a
 text document in order the find the topK most frequent words.
 
-First, you will implement a splitter function <tt>parse_n_store_words</tt> (file <tt>parse_words.c</tt>) that parses a collection of words, separated by newline chracter '\n', and stores 
+<p>First, you will implement a splitter function <tt>parse_n_store_words</tt> (file <tt>parse_words.c</tt>) that parses a collection of words, separated by newline chracter '\n', and stores 
 them into the hash table that you've implemented earlier in this lab.
 
 <p>Test by typing <kbd>make; ./clab2_test</kbd>.  You should see that you've
 passed the tests for <tt>parse_words.c</tt>.
 
-<p>Next, read through the code in file <tt>wordcount.c</tt>. Complete the comparator function <tt>count_cmp</tt>.  Compile and run the program to find the top 10 most commonly used passwords from a subset of breached passwords stored in the file <tt>breached-passwds-2M.txt</tt>.  A much bigger collection of &gt;1 billion breached passwords can be found <a href="https://gist.github.com/scottlinux/9a3b11257ac575e4f71de811322ce6b3">here</a>.
+<p>Next, read through the code in file <tt>wordcount.c</tt>. Complete the comparator function <tt>count_cmp</tt>.  Compile and run the program to find the top 10 most commonly used passwords from a subset of breached passwords stored in the file <tt>breached-passwds-2M.txt</tt>.  A much bigger collection of &gt;1 billion breached passwords can be found <a href="https://gist.github.com/scottlinux/9a3b11257ac575e4f71de811322ce6b3">here</a> for your exploration at leisure time.
 
 <pre>
 $ make
@@ -133,7 +143,8 @@ $ ./wordcount breached-passwds-2M.txt
 
 <h4>Handin Procedure</h4>
 
-Follow these <a href="index.html#handin">instructions</a>.
+<p>Follow these <a href="index.html#handin">instructions</a>.
+
 <p>
 <hr>
 </html>
