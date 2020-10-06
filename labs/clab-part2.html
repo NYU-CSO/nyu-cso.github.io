@@ -137,12 +137,20 @@ them into the hash table that you've implemented earlier in this lab.
 <p>Test by typing <kbd>make; ./clab2_test</kbd>.  You should see that you've
 passed the tests for <tt>parse_words.c</tt>.
 
-<p>Next, read through the code in file <tt>wordcount.c</tt>. Complete the comparator function <tt>count_cmp</tt>.  Compile and run the program to find the top 10 most commonly used passwords from a subset of breached passwords stored in the file <tt>breached-passwds-2M.txt</tt>.  A much bigger collection of &gt;1 billion breached passwords can be found <a href="https://gist.github.com/scottlinux/9a3b11257ac575e4f71de811322ce6b3">here</a> for your exploration at leisure time.
+<p>Next, read through the code in file <tt>wordcount.c</tt>. Complete the comparator function <tt>count_cmp</tt>.  
 
+<p>Now let's download a file containing a list of 2 million breached passwords:
+<pre>
+$ wget https://nyu-cso.github.io/labs/breached-passwds-2M.txt
+</pre>
+Compile and run your wordcount program to find the top 10 most commonly used passwords in the file <tt>breached-passwds-2M.txt</tt>.  
 <pre>
 $ make
 $ ./wordcount breached-passwds-2M.txt 
 </pre>
+
+<p>If you are curious, a much bigger collection of &gt;1 billion breached passwords can be found <a href="https://gist.github.com/scottlinux/9a3b11257ac575e4f71de811322ce6b3">here</a> for your exploration at leisure time.
+
 
 <h4>Handin Procedure</h4>
 
