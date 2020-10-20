@@ -63,27 +63,28 @@ thing for each of the five functions.
 <p> First, click on Lab3's github classroom invitation link (posted on Campuswire) and select your NYU netid.  Next, clone your repo by typing the following
 <pre >
 $ cd cso-labs
-$ git clone https://github.com/nyu-cso-fa19/lab3-&lt;YourGithubUsername&gt;.git  lab3
+$ git clone https://github.com/nyu-cso-fa20/lab3-&lt;YourGithubUsername&gt;.git  lab3
 </pre>
 
 <p>
 This lab's files are 
-located in the <tt>lab3/</tt> subdirectory.  The files you will be modifying are <tt>ex{1-5}.c</tt>.
+located in the <tt>lab3/</tt> subdirectory.  You will write code for files <tt>ex{1-5}.c</tt>.
 
 <h3>Uncover the mystery of assembly</h3>
 <p>
-The object files whose assembly code you seek to understand are in the <tt>objs/</tt> subdirectory, with filenames <tt>ex1_sol.o</tt>, <tt>ex2_sol.o</tt> and so on.  
-Once you figre out what the mystery function does, write its corresponding C code 
-in files <tt>ex1.c</tt> (for mystery function <tt>ex1</tt>), <tt>ex2.c</tt> (for mystery function <tt>ex2</tt>).
+The object files whose assembly code you seek to understand are <tt>ex1_sol.o</tt>, <tt>ex2_sol.o</tt> and so on.  
+File <tt>ex1_sol.o</tt> implement mystery function <tt>ex1</tt>; file <tt>ex2_sol.o</tt> implement function <tt>ex2</tt> and so on.
+Your goal in this lab is to figre out what mystery function <tt>ex1</tt> does, and write its corresponding C code 
+in file <tt>ex1.c</tt>; figure out what mystery function <tt>ex2</tt> does, and write its corresponding C code in file <tt>ex2.c</tt>, and so on.
 
 <p>
-Suppose you set out to figure out what function <tt>ex1</tt> (implemented in <tt>objs/ex1_sol.o</tt>) does.  There are two approaches to do this. You should use them <b>both</b> to help uncover the mystery. 
+Suppose you set out to figure out what function <tt>ex1</tt> (implemented in <tt>ex1_sol.o</tt>) does.  There are two approaches to do this. You should use them <b>both</b> to help uncover the mystery. 
 
 <ul>
 	<li><b>Approach 1:</b> 
-		<p>Disassemble the object files. Read the assembly to get some initial understanding of what the function tries to achieve. To disassemble <tt>objs/ex1_sol.o</tt>, type:
+		<p>Disassemble the object files. Read the assembly to get some initial understanding of what the function tries to achieve. To disassemble <tt>ex1_sol.o</tt>, type:
 <pre>
-$ objdump -d objs/ex1_sol.o
+$ objdump -d ex1_sol.o
 </pre>
 	</li>
 
@@ -93,17 +94,15 @@ $ objdump -d objs/ex1_sol.o
 
 		<p>You might wonder how to run <tt>ex1</tt> in gdb, since not knowing the function signature of <tt>ex1</tt> makes it hard to write your own C code to correctly invoke <tt>ex1</tt>.  How to run <tt>ex1</tt> then?  It turns out that you can utilize the tester that we have given you to run <tt>ex1</tt> and observe how it executes.  
 
-<p>To run the test with the given <tt>ex1</tt> function, you need to link the test object file <tt>objs/tester.o</tt> together with the given <tt>objs/ex*-sol.o</tt> files.  We have made this step easy by including appropriate Makefile rules. When you type <tt>make</tt>, you will see that there are two binary executables being generated, <tt>tester</tt>, and <tt>tester-sol</tt>. The executable file <tt>tester</tt> links 
-our tester file with <b>your</b> object files <tt>ex*.o</tt> which are generated from your <tt>ex*.c</tt> files.  The executable file <tt>tester-sol</tt> links our tester file with the given object file <tt>objs/ex*-sol.o</tt>. Thus, when you run <tt>./tester-sol</tt>, the tester invokes the given 
-functions, and needless to say, all tests should pass. 
+    <p>To run the test with the given <tt>ex1</tt> function, you need to link the test object file <tt>tester.o</tt> together with the given <tt>ex{1-5}-sol.o</tt> files.  We have made this step easy by including appropriate Makefile rules. When you type <tt>make</tt>, you will see that it generates two binary executables: <tt>tester</tt>, and <tt>tester-sol</tt>. The executable file <tt>tester</tt> links <tt>tester.o</tt> with object files <tt>ex{1-5}.o</tt> which are generated from <b>your</b> <tt>ex{1-5}.c</tt> files.  The executable file <tt>tester-sol</tt> links <tt>tester.o</tt> with the given object files <tt>ex{1-5}_sol.o</tt>. Thus, when you run <tt>./tester_sol</tt>, the tester invokes the given functions, and needless to say, all tests should pass. 
 
-<p>Run <tt>gdb tester-sol</tt>.  Stop the execution when the function <tt>ex1</tt> is invoked.  Dissemble the function. Execute the instructions one by one. Form some hypothesis on what the function signature is and what it does.  Verify your hypothesis during execution by examining register values and memory contents.  To learn more about gdb, see our gdb tutorial <a href="https://github.com/NYU-CSO/recitation/tree/master/r5">here</a>.
+<p>Run <tt>gdb tester_sol</tt>.  Stop the execution when the function <tt>ex1</tt> is invoked.  Dissemble the function. Execute the instructions one by one. Form some hypothesis on what the function signature is and what it does.  Verify your hypothesis during execution by examining register values and memory contents.  To learn more about gdb, see our gdb tutorial <a href="https://github.com/NYU-CSO/recitation/tree/master/r5">here</a>.
 </ul>
 
 <p>
 <div class="bd-callout bd-callout-danger">
 	<h5>Do not try to match assembly</h5>
-<p>It is not the right approach to try to match the object code of your C function line-by-line to those contained in <tt>ex*-sol.o</tt>.
+  <p>It is not the right approach to try to match the object code of your C function line-by-line to those contained in <tt>ex{1-5}-sol.o</tt>.
 Doing so is painful and not necessary.  Differences in the compiler versions, compilation flags, and small differences in C code will 
 all result in different object code, although they do not affect the code's semantics.
 Therefore, trying to find a C function that generates the <i>same</i>
@@ -116,19 +115,19 @@ After you've finished each function (remember to remove the <tt>assert(0)</tt> s
 <pre>
 $ make
 $ ./tester
-Testing Ex1...
-Ex1: your implementation passes the test
-Testing Ex2...
-Ex2: your implementation passes the test
-Testing Ex3...
-Ex3: your implementation passes the test
-Testing Ex4...
-Ex4: your implementation passes the test
-Testing Ex5...
-Ex5: your implementation passes the test
+Testing ex1...
+ex1 passed
+Testing ex2...
+ex2 passed
+Testing ex3...
+ex3 passed 
+Testing ex4...
+ex4 passed
+Testing ex5...
+ex5 passed
 </pre>
 
-The above ouput ocurrs when all your ex* functions pass the test.
+The above ouput ocurrs when all your ex{1-5} functions pass the test.
 <p>
 To test multiple times, run <tt>./tester -r</tt> with the <tt>-r</tt> option. This runs the 
 tester using a new seed for its random number generator.  
@@ -178,7 +177,7 @@ Instruction <tt>movslq</tt> moves the 4-byte source operand to the 8-byte destin
 The two byte instruction "<tt>repz retq</tt>" behaves identically as the one byte instruction <tt>retq</tt>.
 
 <p>
-<li>If you disassemble an object file, (e.g. "objdump -d objs/ex1_sol.o"), you should <b>not</b> expect valid address for functions, because <a href="http://stackoverflow.com/questions/6264249/how-does-the-compilation-linking-process-work">linking</a> has not yet happened. If you want to see valid function addresses (i.e. those that appear as the operand for the <tt>call</tt> instruction), disassemble the binary executable (<tt>tester</tt> or <tt>tester-sol</tt>) or disassemble in gdb.
+<li>If you disassemble an object file, (e.g. "objdump -d ex1_sol.o"), you should <b>not</b> expect valid address for functions, because <a href="http://stackoverflow.com/questions/6264249/how-does-the-compilation-linking-process-work">linking</a> has not yet happened. If you want to see valid function addresses (i.e. those that appear as the operand for the <tt>call</tt> instruction), disassemble the binary executable (<tt>tester</tt> or <tt>tester-sol</tt>) or disassemble in gdb.
 </ul>
 
 <p>For those of you who want to go out in the world to explore other object files,
