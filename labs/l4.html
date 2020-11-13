@@ -8,7 +8,7 @@
 	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.3/css/bootstrap.min.css" integrity="sha384-Zug+QiDoJOrZ5t4lssLdxGhVrurbmBWopoEl+M6BdEfwnCJZtKxi1KgxUyJq13dy" crossorigin="anonymous">
 	<link rel="stylesheet" href="../sty2.css">
 
-  <title>Computer Systems Organization (Fall 2019) </title>
+  <title>Computer Systems Organization (Fall 2020) </title>
 </head>
 
 <body>
@@ -35,7 +35,7 @@
         <h3 class="text-muted">Computer Systems Organization</h3>
 		</div>
 		<div class="row">
-			CSCI-UA.0201(007), Fall 2019
+			CSCI-UA.0201(007), Fall 2020
 		</div>
 		</div>
 	</div>
@@ -44,8 +44,8 @@
 <div id="content">
 <hr>
 
-<h2> Lab-4 (Bonus lab) Malloc lab</h2>
-<h5>Due: 12/18</h5>
+<h2> Lab-4: Malloc lab</h2>
+<h5>Due: 11/28</h5>
 
 
 <a name="labs">
@@ -60,23 +60,24 @@ fast.
 <p> This is an individual lab. </p>
 
 <h3>Obtaining the lab</h3>
-<p> First, click on Lab4's github classroom invitation link (posted in Piazza) and select your NYU email address.  Next, clone your repo by typing the following
+<p> First, click on Lab4's github classroom invitation link (posted on Campuswire) and select your NYU NetID.  Next, clone your repo by typing the following
 <pre >
 $ cd cso-labs
-$ git clone https://github.com/nyu-cso-fa19/lab4-&lt;YourGithubUsername&gt;.git  lab4
+$ git clone https://github.com/nyu-cso-fa20/lab4-&lt;YourGithubUsername&gt;.git  lab4
 </pre>
 
 <p>
 This lab's files are 
 located in the <tt>lab4/</tt> subdirectory.  <div class="bd-callout bd-callout-warning">
 	<h5>Files you can modify</h5>
-	<p>The only files you should modify for this lab are <tt>mm-implicit.c</tt>, <tt>mm.c</tt>, <tt>mm.h</tt>, <tt>mm-unittest.c</tt>. 
+	<p>The only files you should modify for this lab are <tt>mm-implicit.c</tt>. If you are 
+  doing the bonus part of this lab, you'll also modify <tt>mm.c</tt>, <tt>mm.h</tt>, <tt>mm-unittest.c</tt>. 
 <ul>
 </div>
 
 <h3>Malloc API</h3>
 
-The API of your malloc consists of the following 5 functions (declared in <tt>mm-common.h</tt>:
+The API of your malloc library consists of the following 5 functions (declared in <tt>mm-common.h</tt>:
 <pre>
 int    mm_init(void);
 void*  mm_malloc(size_t size);
@@ -85,20 +86,21 @@ void*  mm_realloc(void *ptr, size_t size);
 heap_info_t mm_checkheap(bool verbose);
 </pre>
 
-Any malloc implementation must complete the above 5 functions. Their 
-semantics are as follows:
+Your malloc implementation must complete the above 5 functions.  Note that we
+use the prefix <tt>mm_*</tt> in the above APIs to distinguish your
+implementation from those come with the standard C library.  The API semantics
+are as follows:
 
 <ul>
-	<li><p><tt>mm_init</tt>: Before calling <tt>mm_malloc</tt> <tt>mm_realloc</tt> or <tt>mm_free</tt>, the application program (i.e., the
-trace-driven driver program that you will use to evaluate your
-implementation) calls <tt>mm_init</tt> to perform any necessary
-initializations.  The return value is -1 if there was a problem in
+	<li><p><tt>mm_init</tt>: This function is called to initialize your malloc library prior to any 
+  any <tt>mm_malloc</tt> and <tt>mm_free</tt> calls. 
+  In this lab, the given tester programs (<tt>mm_unittest.c</tt>, <tt>mdriver.c</tt>) 
+  invoke <tt>mm_init</tt>.  The return value is -1 if there was a problem in
 performing the initialization, 0 otherwise.
   
-<li><p><tt>mm_malloc</tt>: The <tt>mm_malloc</tt> routine returns a pointer to
-	an allocated block payload of at least <tt>size</tt> bytes.  The entire
-	allocated block should lie within the heap region and should not
-	overlap with any other allocated chunk.
+<li><p><tt>mm_malloc</tt>: This function allocates <tt>size</tt> bytes of contiguous space on the heap.  It returns a pointer to the allocated space.
+  The allocated space should lie within the heap region and should not
+	overlap with any other allocated space.
 
 <p>We will comparing your implementation to the version of <tt>malloc</tt>
 supplied in the standard C library. Since the 
@@ -106,14 +108,13 @@ standard C library malloc always returns payload pointers that are
 aligned to 16 bytes, your malloc implementation should do likewise
 and always return 16-byte aligned pointers.
   
-<li><p><tt>mm_free</tt>: The <tt>mm_free</tt> routine frees the block
-pointed to by ptr.  It returns nothing. This routine is only
-guaranteed to work when the passed pointer ptr was returned by
-an earlier call to <tt>mm_malloc</tt> or <tt>mm_realloc</tt> and has not
-yet been freed.
+<li><p><tt>mm_free</tt>: This function frees the corresponding chunk whose payload 
+is pointed to by <tt>ptr</tt>.  It returns nothing. This function assumes that
+the pointer <tt>ptr</tt> was returned by an earlier call to <tt>mm_malloc</tt>
+or <tt>mm_realloc</tt> and has not yet been freed.
 
-<li><p><tt>mm_realloc</tt>: The <tt>mm_realloc</tt> routine returns a pointer
-to an allocated region of at least <tt>size</tt> bytes  with the following 
+<li><p><tt>mm_realloc</tt>: This function allocates 
+<tt>size</tt> bytes of contiguious space, with the following 
 constraints. 
 
 <ul>
@@ -123,15 +124,16 @@ constraints.
 
 	<li> if <tt>ptr</tt> is not NULL, it must have been returned by an
        	earlier call to <tt>mm_malloc</tt> or <tt>mm_realloc</tt>. The call to
-	<tt>mm_realloc</tt> changes the size of the memory block pointed to by
-	<tt>ptr</tt> (i.e.the old block) to <tt>size</tt> bytes and returns the
+	<tt>mm_realloc</tt> changes the memory block pointed to by
+	<tt>ptr</tt> (i.e.the old block) to one with <tt>size</tt> bytes and returns the
 	address of the new block. Notice that the address of the new block
 	might be the same as the old block, or it might be different,
 	depending on your implementation, the amount of internal fragmentation
 	in the old block, and the size of the <tt>realloc</tt> request.
 
 	<li> The contents of the new block are the same as those of the old
-	<tt>ptr</tt> block, up to the minimum of the old and new sizes.
+	<tt>ptr</tt> block, up to the minimum of the old and new sizes (the new size 
+  can be either smaller or larger than the old size).
 	Everything else is uninitialized. For example, if the old block is 8
 	bytes and the new block is 12 bytes, then the first 8 bytes of the new
 	block are identical to the first 8 bytes of the old block and the last
@@ -142,17 +144,19 @@ constraints.
 
 <li><p>Lastly, <tt>mm_checkheap</tt>: The <tt>mm_cheapheap</tt> routine is an 
 auxilary routine that checks <a href="#heapconsistency">the consistency of 
-	your heap</a>. The function argument <tt>bool verbose</tt> can be used to 
+	your heap</a>. The function argument <tt>verbose</tt> can be used to 
 turn on/off verbose debug printing.
 </ul>
 
-<p>The mm_malloc, mm_free, mm_realloc semantics match the the semantics of the C standard library's malloc, realloc, and free routines.
-Type <tt>man malloc</tt> for the complete documentation.
+<p>The mm_malloc, mm_free, mm_realloc semantics match those of the C standard
+library's malloc, realloc, and free routines.  Type <tt>man malloc</tt> for the
+complete documentation.
 
 
 <p>When implementing <tt>mm_init</tt>, <tt>mm_free</tt>,
 <tt>mm_malloc</tt><tt>mm_realloc</tt> functions, you need to invoke the
-following functions which simulate the the memory system for your dynamic memory allocator. They are defined in <tt>memlib.c</tt>:
+following functions which emulate the OS' syscalls, instead of using the real ones (in order to 
+make testing easier).  These emulated syscalls are defined in <tt>memlib.c</tt> and described below:
 
 <ul>
 	<li><p><tt> void *mem_sbrk(int incr)</tt>:   
@@ -181,7 +185,7 @@ Returns the system's page size in bytes
 calls or system calls, i.e. you <b>cannot</b> use malloc, calloc, free, realloc, sbrk,
 brk or any variants of these calls in your code. You <b>may</b> use 
 memcpy and other C library functions that are not related to memory-management. In case of 
-doubt, please check with the staff on Piazza.
+doubt, please check with the staff on Campuswire.
 
 <li> 
 You should not use any dynamically sized data
@@ -197,18 +201,18 @@ tester will enforce this requirement for you.
 </ul>
 
 
-<h3 id="implicitlist">Implement implicit-list malloc</h3>
-Before we let you go forth and design your own malloc, we will
-guide you in implementing an existing simple design, i.e. the
-implicit-list based malloc.
+<h3 id="implicitlist">Implement implicit list malloc</h3>
+You are asked to implement an existing simple design, i.e. the
+implicit list based malloc (without footer).
 
 <p>To implement implicit-list, you shall work from the skeleton 
-code given to you in <tt>mm-implicit.{c,h}</tt>. You are supposed to
-modify only <tt>mm-implicit.c</tt> while leaving <tt>mm-implicit.h</tt> unchanged.
+code given to you in <tt>mm-implicit.{c,h}</tt>. You should only
+modify <tt>mm-implicit.c</tt> while leaving <tt>mm-implicit.h</tt> unchanged.
 
 <p>In <tt>mm-implicit.h</tt>, we give you the definition of chunk header in 
 the implicit list design.  For simplicity, we make the header (16-byte)
-aligned. As a result, we can use an 8-byte integer (<tt>size_t</tt>) to store the chunk
+aligned.  Unlike the header discussed in the lecture, we will simplify it 
+further and use an 8-byte integer (<tt>size_t</tt>) to store the chunk
 size (including chunk header) and another 8-byte integer to store the status on
 whether the chunk is allocated or free. Since our implementation frequently
 refers to the size of the header, we set global variable <tt>hdr_size =
@@ -281,12 +285,12 @@ You can refer to <a href="l4.html#eval">here</a> to understand how the performan
 index is calculated.  As we expect, the implicit list design works but does not
 achieve great performance.
 
-<h3> Implement your own malloc</h3>
+<h3> Bonus part: Implement your own malloc</h3>
 
-<p> After finishing implicit-list malloc, you are ready to implement your own malloc 
-design. You can implement explicit-list, segregated explict-list, buddy system,
-or your own design. Additionally, you can add footer to enable coalescing with
-the previous chunk. 
+<p> For extra challenge after finishing implicit-list malloc, you can implement
+your own malloc design, or do a variation of one of the designs taught in the lecture. 
+For example, you can implement explicit-list, segregated
+explict-list, buddy system, or invent your own! 
 
 <p>You are supposed to modify only these files: <tt>mm.c</tt> <tt>mm.h</tt>
 <tt>mm-unittest.c</tt>. This time, we no longer provide the unit test
@@ -311,7 +315,7 @@ the function does.
 	<li> Define your chunk header as structs and modularize your implementation 
 using helper functions. The skeleton code of <tt>mm-implicit.c</tt>
 gives you an example of modular implementation. Follow it.
-While the textbook is useful for reviewing the malloc design, <b>I do not
+While Bryant/O'Hallaron's textbook is useful for reviewing the malloc design, <b>I do not
 recommend follow the textbook programming style</b> of doing pointer
 arithmetic everywhere and using C macros instead of regular functions.  It
 makes the code harder to read and debug. Define structs to represent chunk
@@ -348,10 +352,10 @@ contain requests for <tt>realloc</tt>, <tt>malloc</tt>, and <tt>free</tt>. We
 recommend that you start by getting your <tt>malloc</tt> and <tt>free</tt>
 routines working correctly and efficiently on the first 9 traces. Only
 then should you turn your attention to the <tt>realloc</tt>
-implementation.  For starters, build <tt>realloc</tt> on top of your
-existing <tt>malloc</tt> and <tt>free</tt> implementations. But to get
+implementation.  For starters, build <tt>mm_realloc</tt> on top of your
+existing <tt>mm_malloc</tt> and <tt>mm_free</tt> implementations. But to get
 really good performance, you will need to build a stand-alone <tt>
-realloc</tt>.
+mm_realloc</tt>.
 
 	<li>Use gdb. It
 will help you isolate and identify out of bounds memory references.
@@ -365,7 +369,7 @@ such as <tt>gprof</tt>, to understand and optimize the performance of your progr
 
 <div class="bd-callout bd-callout-warning">
 	<h5>Programming style:</h5>
-    <p>As is the case with previous labs, you will be graded for style and we
+    <p>As is the case with previous labs, we reserve the right to critique your coding style and we
     will deduct up to 20% of total lab points for bad style based on our
     subjective evaluation.
 </div>
@@ -375,11 +379,11 @@ your code is buggy and crashes the tester.  Otherwise, your grade will
 be calculated as follows:
 
 <ul>
-	<li><p><b>Correctness of implicit-list (20 points)</b>.
+	<li><p><b>Correctness of implicit-list (50 points)</b>.
 To achieve full score, your implicit list implementation must pass both the 
 unit test <tt>implicit-unittest</tt> and trace-based test <tt>implicit-mdriver</tt>.
 
-<li><p><b>Performance of your malloc (80 points)</b>.  
+<li><p><b>Performance of your malloc (50 points)</b>.  
 Two performance metrics will be used to evaluate your solution:
 
 <ul>
@@ -403,7 +407,9 @@ Performance index = 0.6*U + 0.4*min(1, T/T_libc)
 
 where U is your space utilization, T is your throughput, and
 T_libc is the measured throughput of Standard C library's malloc on your
-system on the default traces.
+system on the default traces. Throughput is calculated as the number of 
+requests in a given trace divided by how long it takes 
+a malloc library to process all those requests.
 </ul>
 
 <p>Observing that both memory and CPU cycles are expensive system
@@ -411,23 +417,12 @@ resources, we adopt this formula to encourage balanced optimization of
 both memory utilization and throughput.  To receive a good score,
 you must achieve a balance between utilization and throughput.
 Ideally, the performance
-index could reach 100%, but that is very difficult. A score above 75 is 
-typically considered to be very good.
+index could reach 100%, but that is very difficult. 
 
-<p>We will take the best average performance index of <tt>implicit-mdriver</tt> 
-and <tt>mdriver</tt>. 
+<h4>Handin Procedure</h4>
 
-<h3>Handin Procedure</h3>
+Follow these <a href="index.html#handin">instructions</a>.
 
-To handin your files, simply commit and push them to github.com 
-<pre>
-$ git commit -am "Finish lab4"
-$ git push origin master
-</pre>
-
-We will fetching your lab files from Github.com at the specified deadline and grade them.
-
-<p>
 <hr>
 
 </body>
