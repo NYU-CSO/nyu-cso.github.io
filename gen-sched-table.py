@@ -146,12 +146,12 @@ if __name__ == '__main__':
     lab_due_dates = get_lab_due_dates(lab_fname)
 
     semester_start = datetime.date(2020,9,2) # enter first day of semester
-    semester_end = datetime.date(2020,12,13)
-    lec_day0 = 0 # enter lecture day of week
-    lec_day1 = 2 # enter lecture day of week
+    semester_end = datetime.date(2020,12,14)
+    lec_day0 = 1 # enter lecture day of week
+    lec_day1 = 3 # enter lecture day of week
     recitation_start = datetime.date(2020,9,3)
-    recitation_end = datetime.date(2020,12,13)
-    rec_day0 = 3 # enter recitation day of week
+    recitation_end = datetime.date(2020,12,14)
+    rec_day0 = 2 # enter recitation day of week
 
     line = """
 <div class=\"row\">
