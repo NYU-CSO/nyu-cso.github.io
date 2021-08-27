@@ -1,4 +1,3 @@
 9/6;0; Labor day (no class)
 10/12;0; No class (classes follow Monday schedule)
-9/9;1;Class following Monday schedule
 11/25;0;Thanksgiving
