@@ -220,7 +220,7 @@ if __name__ == '__main__':
             print("<div class=\"row\">")
             print("   <div class=\"col-sm-2\">%d/%d</div>" % (d.month, d.day))
             if specialLec is None:
-                print("   <div class=\"col-sm-4\"><a href=\"rec-notes/r%02d.pdf\"><em>zoom-recitation%02d</em></a></div>" % (recitation, recitation))
+                print("   <div class=\"col-sm-4\"><a href=\"rec-notes/r%02d.pdf\"><em>recitation%02d</em></a></div>" % (recitation, recitation))
                 print("   <div class=\"col-sm-4\"><em></em></div> ")
                 recitation = recitation + 1
             else:
