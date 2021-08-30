@@ -70,8 +70,9 @@ Lab 5 and 6 are due to Berkeley's CS61c.
 <div class="bd-callout bd-callout-warning">
 	<h5>You will be doing labs on the Courant's compute servers</h5>
 	<p>You should have received an email from CIMS Systems Support w.r.t. your account. 
-		You may visit <a href="https://cims.nyu.edu/webapps/password/reset">this link</a> 
-		to view the status of your account and to rest your password if needed.<a href="index.html#vm">Set up</a> your VM environment. If you hit problems, read through <a href="index.html#vm-faq">Virtubox FAQs</a>.
+	<p>You may visit <a href="https://cims.nyu.edu/webapps/password/reset">this link</a> 
+		to view the status of your account and to rest your password 
+		if needed.</p>
 	<p>
 	</ul>
 </div>
@@ -87,35 +88,40 @@ Lab 5 and 6 are due to Berkeley's CS61c.
 
 <h5>Windows laptop:</h5>
 
-You should use the Chrome secure shell extension to log into Courant servers.
+<p>You should use the Chrome secure shell extension to log into Courant servers.</p>
 
 <p>Make sure you have <a href="https://google.com/chrome">Google Chrome browser</a> installed.</p>
 
 <p>Download and install <a href="https://chrome.google.com/webstore/detail/secure-shell/iodihamcpbpeioajjeobimgagajmlibd?hl=en">Chrome secure shell extension</a> </p>
 
 <p>Launch Chrome, then open the extension by clicking the extension icon, 
-	followed by clicking "Connection Dialog". See Below</p>
-<img src="chrome_ext.png" width=900></img>
-<img src="chrome_ext_ssh.png" width=900></img>
+	followed by clicking "Connection Dialog". </p>
+<img src="chrome_ext.png" width=500></img>
+<img src="chrome_ext_ssh.png" width=500></img>
 
-<p>To log into Courant's Compute Server called snappy1.cims.nyu.edu, you must go through a gateway host called access.cims.nyu.edu first. 
-	Fill in the following information. 
-	Substitute <tt>your-cims-username</tt> with your Courant computer account username.</p>
+<p></p>
+
+<p>You should do the labs on Courant's Compute Server called 
+	<tt>snappy1.cims.nyu.edu</tt>. 
+	To log in snappy1, you must go through a gateway host called 
+	<tt>access.cims.nyu.edu</tt> first by 
+	filling in the following information after opening the secure shell extension. 
+	Note: Substitute <tt>your-cims-username</tt> with your Courant computer account username.</p>
 	
-<img src="ssh_access_cims.png" width=900></img>
+<img src="ssh_access_cims.png" width=500></img>
 
-<p>Now you are logged into access.cims.nyu.edu. Type in the following command to log into snappy1.cims.nyu.edu</p>
-<tt>ssh snappy1</tt></p>
+<p>After you have logged into <tt>access.cims.nyu.edu</tt>. Type in the following command to log into snappy1.cims.nyu.edu</p>
+<pre>ssh snappy1</pre></p>
 
 <h5>Mac Laptop:</h5>
 
-You can use the native Mac terminal to log into Courant servers.
+<p>You can use the native Mac terminal to log into Courant servers.</p>
 
 <p>Launch a Mac terminal</p>
 
 <p>Log into the Courant gateway host by typing the command <tt>ssh access.cims.nyu.edu</tt></p>
 
-<p>Continue on logging into snappy1 by typing <tt>ssh snappy1</tt></p>
+<p>Continue on logging into snappy1 by typing <pre>ssh snappy1</pre></p>
 
 <h4 id="repo">Setting up Git Repository</h4>
 For each student in the class, we have created for him/her a corresponding private
