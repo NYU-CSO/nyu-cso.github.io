@@ -35,7 +35,7 @@
         <h3 class="text-success">Computer Systems Organization</h3>
 		</div>
 		<div class="row">
-			CSCI-UA.0201(007), Fall 2021
+			CSCI-UA.0201(007), Fall 2020
 		</div>
 		</div>
 	</div>
@@ -66,56 +66,99 @@ Lab 5 and 6 are due to Berkeley's CS61c.
 
 <p>
 <h4>Lab Setup Instructions</h4>
-
-<div class="bd-callout bd-callout-warning">
-	<h5>You will be doing labs on the Courant's compute servers</h5>
-	<p>You should have received an email from CIMS Systems Support w.r.t. your account. 
-		You may visit <a href="https://cims.nyu.edu/webapps/password/reset">this link</a> 
-		to view the status of your account and to rest your password if needed.<a href="index.html#vm">Set up</a> your VM environment. If you hit problems, read through <a href="index.html#vm-faq">Virtubox FAQs</a>.
-	<p>
-	</ul>
-</div>
-
-<a href="#login">Log into Courant's servers from your laptop<br> 
+<a href="#vm">Set up VirtualBox</a><br> 
 <span class="glyphicon glyphicon-star"></span><a href="#vm-faq">FAQs on setting up VirtualBox</a><br>
 <a href="#repo">Set up Git repository</a><br>
 <span class="glyphicon glyphicon-star"></span><a href="#git-faq">FAQs on gits</a><br>
 
 
 <p>
-<h4 id="login">Log into CIMS servers from your laptop</h4>
+<h4 id="vm">Setting up Virtual Box</h4>
+We will grade your labs on an Ubuntu 18.04 machine.
+We recommend you do the labs in the 
+the class virtual machine (based on Ubuntu 18.04). 
 
-<h5>Windows laptop:</h5>
+<p>For a basic virtual machine setup, perform 
+the following four steps:
+<ul>
+<li><b>Step 1. Install VirtualBox.</b> Download the Virtualbox virtual machine monitor 6.0.10. 
+	If your laptop runs MacOS, download <a href="https://download.virtualbox.org/virtualbox/6.0.10/VirtualBox-6.0.10-132072-OSX.dmg">this</a>.  
+	If your laptop runs Windows, download <a href="https://download.virtualbox.org/virtualbox/6.0.10/VirtualBox-6.0.10-132072-Win.exe">this</a>.
 
-You should use the Chrome secure shell extension to log into Courant servers.
+<li><b>Step 2. Download class virtual machine image</b>. Download this <a href="http://tintin.news.cs.nyu.edu/lubuntu18.04.ova">file.</a> This file is fairly large (&gt;1.8GB), so you need to be patient.
+We have also put a copy of the image on Dropbox <a href="https://dropbox.com/s/xztomlkr7ocyyos/lubuntu18.04.ova">here</a>.
 
-<p>Make sure you have <a href="https://google.com/chrome">Google Chrome browser</a> installed.</p>
+<li><b>Step 3. Launch Virtualbox and import class VM image</b>.  On the Virtualbox application toolbar, under the Menu
+item "File", click on "Import appliance...", and choose the previously downloaded lubuntu18.04.ova file
+when prompted.
+<li><b>Step 4. Launch Lubuntu Linux and install necessary packages</b>. After importing, start the virtual machine named "lubuntu" and log in using 
+the username and password given in Campuswire). Once you are logged in, 
+start a terminal once you logged in by clicking the "LXterminal" icon on the desktop (alternatively, use the short-cut key combination "Ctrl-Alt-t").
+<!--Type <kbd>sudo apt-get install gcc gdb make git</kbd> to install GNU C compiler, make builder, gdb debugger, git source management tool--></li>
+<!---username=lab lab12345-->
+</ul>
 
-<p>Download and install <a href="https://chrome.google.com/webstore/detail/secure-shell/iodihamcpbpeioajjeobimgagajmlibd?hl=en">Chrome secure shell extension</a> </p>
+<p>For more advanced tune-ups to help your productivity, do the following:
+<ul>
+<li><b>Enable Larger VM screen</b>
+<p>Launch class VM image and log in.  
+<p>Under the "Devices" menu, click "Insert Guest Additions CD".
+<p>Start LXterminal, type <kbd>cd /media/lab/VBox_GAs_6.0.10/</kbd>. Type type <kbd>sudo ./VBoxLinuxAdditions.run</kbd> using the password given to you.
+<img src="guestaddition.png" width=900></img>
+Restart Virtual box and re-launch class VM. Now you should be able to resize the VM desktop and do full-screen by clicking the "View" menu on the VM window.
 
-<p>Launch Chrome, then open the extension by clicking the extension icon, 
-	followed by clicking "Connection Dialog". See Below</p>
-<img src="chrome_ext.png" width=900></img>
-<img src="chrome_ext_ssh.png" width=900></img>
+<li><b>Enable copy-n-paste between your native OS (e.g. MacOS) and class VM</b>. First, click the settings button in the VirtualBox window, and then click "advanced" tab, change the pulldown button of "Shared Clipboard" and "Drag'n'Drop" to "Bidirectional".
+<p>
+<img src="vboxsettings.png" width=600></img>
 
-<p>To log into Courant's Compute Server called snappy1.cims.nyu.edu, you must go through a gateway host called access.cims.nyu.edu first. 
-	Fill in the following information. 
-	Substitute <tt>your-cims-username</tt> with your Courant computer account username.</p>
-	
-<img src="ssh_access_cims.png" width=900></img>
+<li><b>Mount a folder in native-OS in class VM</b>. (Note that this option requires completing the previous option which installs the virtualbox guest additions.) Instead of writing code in class VM, you may want to write code in your native-OS (e.g. using sublime) and only execute the labs in class VM. In this case, you want to store lab files in a native folder (e.g. /User/jinyang/cso-labs) and mount the native folder in class VM, so changes made to lab files in native OS are instantly visible inside the class VM. 
+	<p>To mount a native folder in class VM, inside VirtualBox, click "Settings" button, and then click "Shared Folders" on the left. Click the add-share logo on the right hand side. Enter the "Folder path" in your native OS (e.g. <tt>/User/jinyang/cso-labs</tt> and "Folder name" (e.g. <tt>cso-labs</tt>) with "Auto-mount" selected.  
+	<img src="vboxmount.png" width=600></img>
+	<p>Launch class VM, open LXterminal once logged in. Create mount directory by typing <kbd>sudo mkdir /mnt/cso-labs</kbd>.  Mount by typing <kbd> sudo mount -t vboxsf -o uid=1000,gid=1000 cso-labs /mnt/cso-labs</kbd>. From now on, the <tt>/mnt/cso-labs</tt> directory refers to the <tt>/User/jinyang/cso-labs</tt> directory in your native OS.  If you reboot the VM, you will lose your mount. To keep it automatically mounted across reboots, add the following line (as root user) to your class VM's <tt>/etc/fstab</tt> file by typing:
+	<p>	<kbd>
+		sudo bash -c 'echo "cso-labs /mnt/cso-labs vboxsf uid=1000,gid=1000 0 0" >> /etc/fstab'
+</kbd>
+</li>
+</ul>
 
-<p>Now you are logged into access.cims.nyu.edu. Type in the following command to log into snappy1.cims.nyu.edu</p>
-<tt>ssh snappy1</tt></p>
+<p>Note that if you choose to do your labs outside of the class virtual machine,
+we will not provide any technical support should you encounter 
+any OS-related issues in doing the labs. Furthermore, should the results of your
+lab differ from what we have obtained by running the tests on Linux, we will use
+our test results in determining the grade.
 
-<h5>Mac Laptop:</h5>
-
-You can use the native Mac terminal to log into Courant servers.
-
-<p>Launch a Mac terminal</p>
-
-<p>Log into the Courant gateway host by typing the command <tt>ssh access.cims.nyu.edu</tt></p>
-
-<p>Continue on logging into snappy1 by typing <tt>ssh snappy1</tt></p>
+<div class="bd-callout bd-callout-info">
+<h5 id="vm-faq">FAQs on Virtual Box Setup</h5>
+<ul>
+	<li>
+		<b>VT-x/AMD-V hardware acceleration is not available.</b> 
+		<p>Virtualbox wants you to enable virtualization in BIOS. If you don't know how to do that, come to see one of the course staff.
+	</li>
+ 
+	<li><b>VM fails to launch and halts with either black screen or distorted image.</b> 
+		<p>You should try to allocate more video memory to your VM. Shutdown your VM first. Then open "Settings", click "Display", and change "Video Memory" to a larger value.
+	</li>
+       
+	<li><b>"Insert Guest Additions CD Image..." fails.</b>
+		<p>If on your VM desktop, there is an icon that appears like a CD, that means you inserted the CD image already. You cannot insert the CD image twice.
+       
+		<li><b>Mount shared folder fails and get "protocol error".</b></b>
+      <p>When you add a shared folder in VM settings, you will specify a folder name. If you folder name is abcdefg, then when you mount your shared folder inside VM, you should change the command to
+      <kbd>sudo mount -t vboxsf -o uid=1000,gid=1000 abcdefg /mnt/cso-labs</kbd>
+       
+      <li><b>When typing in password, nothing happens.</b>
+	      <p>That is a security feature. Terminal won't display your typed password because someone sitting next to you can see it and steal your password. Just continue to type your full password, and hit Enter
+      </li>
+       
+      <li><b>How to resize the VM to full screen?</b>
+	      <p>After you install the Guest Additions CD Image, in the VirtualBox Menu bar, click "View" then "Full-Screen Mode", then wait for a while. The first time switching to full screen requires patience. If it still does not work, uncheck "Full-Screen Mode" and then check "Full-Screen Mode", and wait for a while. Repeat until you run out of patience and decide to give up and use "Scaled Mode" instead...
+      </li>
+       
+      <li><b>The command sudo unable to resolve host.</b>
+	      <p>This is just a warning, you can ignore it. But if you really wants to get rid of the warning message, open up a terminal, type 
+      <kbd>sudo sh -c 'echo "127.0.1.1\tvbox" >> /etc/hosts'</kbd>
+</ul>
+</div>
 
 <h4 id="repo">Setting up Git Repository</h4>
 For each student in the class, we have created for him/her a corresponding private
@@ -140,7 +183,7 @@ to get started.
 <p>Next, in a VirtualBox terminal, clone your repo by typing the following (the following example is for the first lab):
 <pre >
 $ cd cso-labs
-$ git clone https://github.com/nyu-cso-fa21/clab-part1-&lt;YourGithubUsername&gt;.git lab1
+$ git clone https://github.com/nyu-cso-fa20/clab-part1-&lt;YourGithubUsername&gt;.git lab1
 </pre>
 
 <p>
