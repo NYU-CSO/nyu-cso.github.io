@@ -111,7 +111,7 @@ Lab 5 and 6 are due to Berkeley's CS61c.
 <p><img src="ssh_access_cims.png" width=500></img></p>
 
 <p>After you have logged into <tt>access.cims.nyu.edu</tt>. Type in the following command to log into snappy1.cims.nyu.edu</p>
-<pre>ssh snappy1</pre></p>
+<pre>$ ssh snappy1</pre></p>
 
 <h5>Mac Laptop:</h5>
 
@@ -119,7 +119,7 @@ Lab 5 and 6 are due to Berkeley's CS61c.
 
 <p>Launch a Mac terminal</p>
 
-<p>Log into the Courant gateway host by typing the command <tt>ssh access.cims.nyu.edu</tt></p>
+<p>Log into the Courant gateway host by typing the command <tt>$ ssh access.cims.nyu.edu</tt></p>
 
 <p>Continue on logging into snappy1 by typing <pre>ssh snappy1</pre></p>
 
@@ -128,7 +128,7 @@ For each student in the class, we have created for him/her a corresponding priva
 lab repository on Github.com. You will submit labs by pushing to your private
 repo on github.com (as many times as you want) and we will collect labs for
 grading after the lab deadline directly from Github.com.  Below are the steps
-for setting up your the lab environment on your laptop.  If you are not
+for setting up your the lab environment on <tt>>snappy1</tt>.  If you are not
 familiar with the <tt>git</tt> version control system,  follow the resources <a
 href="https://help.github.com/articles/good-resources-for-learning-git-and-github/">here</a>
 to get started.
@@ -136,17 +136,18 @@ to get started.
 <p>
 <ul>
 	<li><b>Cloning your lab repo locally</b>
-		<p> We recommend you keep your all lab code in a local directory called <tt>cso-labs</tt>. Create it by typing the following command in the terminal.
+		<p> Once you've logged into <tt>snappy1</tt>, we recommend create a directory to hold all your lab files. Type the following command in the terminal.
 		<pre>
-		$ mkdir cso-labs
+		snappy1$ mkdir cso-labs
 		</pre>
 
-		<p> Now you are ready to initialize your lab repository. First, click on each lab's invitation link (posted in Campuswire). Select your NYU NetID to link your github account and create your lab repository on Github.
+		<p> Now you are ready to initialize your lab repository. First, click on each lab's invitation link (posted in Campuswire). 
+			Select your NYU NetID to link your github account and create your lab repository on Github.
 
-<p>Next, in a VirtualBox terminal, clone your repo by typing the following (the following example is for the first lab):
+<p>Next, in the snappy1 terminal, clone your repo by typing the following (the following example is for the first lab):
 <pre >
-$ cd cso-labs
-$ git clone https://github.com/nyu-cso-fa21/clab-part1-&lt;YourGithubUsername&gt;.git lab1
+snappy1$ cd cso-labs
+snappy1$ git clone https://github.com/nyu-cso-fa21/clab-part1-&lt;YourGithubUsername&gt;.git lab1
 </pre>
 
 <p>
@@ -181,7 +182,14 @@ We will also remind you to fetch upstream on Piazza if we make changes/bug-fixes
 </li>
 -->
 
-<li><b>Saving changes while you are working on Labs</b>
+<li><b>Using a command line editor to modify files for your lab assignments. We recommend using <tt>nano</tt></b>. For example, if you want to change file <tt>array.c</tt>, type the following:
+<pre>
+	snappy1$ cd cso-labs/clab-part1
+	snappy1$ nano array.c
+</pre>
+</li>
+
+<li><b>Saving changes to Github while you are working on Labs</b>
 <p>
 As you modify the skeleton files to complete the labs, you should frequently save your 
 work to protect against laptop failures and other unforeseen troubles. 
