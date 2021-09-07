@@ -123,45 +123,69 @@ Lab 5 and 6 are due to Berkeley's CS61c.
 
 <p>Continue on logging into snappy1 by typing <pre>access$ ssh snappy1</pre></p>
 
-<h4 id="repo">Setting up Git Repository</h4>
-For each student in the class, we have created for him/her a corresponding private
-lab repository on Github.com. You will submit labs by pushing to your private
-repo on github.com (as many times as you want) and we will collect labs for
-grading after the lab deadline directly from Github.com.  Below are the steps
-for setting up your the lab environment on <tt>>snappy1</tt>.  If you are not
-familiar with the <tt>git</tt> version control system,  follow the resources <a
-href="https://help.github.com/articles/good-resources-for-learning-git-and-github/">here</a>
-to get started.
-
 <h5>Using commandline</h5>
 Once you've logged into snappy1, you'll need to use UNIX commands to navigate the file systems, launch programs, editors and so forth. Getting familiar with the UNIX commandline is an indispencible skill for any CS student. You can learn more about command line <a href="https://github.com/jlevy/the-art-of-command-line">here</a>.  You may also find this one-page <a href="linux_cheat_sheet">cheatcheet</a> handy.
 
 <p>
-<ul>
-	<li><b>Cloning your lab repo locally</b>
-		<p> Once you've logged into <tt>snappy1</tt>, we recommend create a directory to hold all your lab files. Type the following command in the terminal.
-		<pre>
-		snappy1$ mkdir cso-labs
-		</pre>
 
-		<p> Now you are ready to initialize your lab repository. First, click on each lab's invitation link (posted in Campuswire). 
-			Select your NYU NetID to link your github account and create your lab repository on Github.
-
-<p>Next, in the snappy1 terminal, clone your repo by typing the following (the following example is for the first lab):
-<pre >
-snappy1$ cd cso-labs
-snappy1$ git clone https://github.com/nyu-cso-fa21/clab-part1-&lt;YourGithubUsername&gt;.git clab-part1
-Username: your_github_username
-Password: your_github_personal_token
-</pre>
-
-<p><tt>your_github_personal_token</tt> refers to a personal access token you created at github.com.  This is needed because github no longer accepts your password for cloning and modifying repositories. Follow the instructions <a href="https://docs.github.com/en/github/authenticating-to-github/keeping-your-account-and-data-secure/creating-a-personal-access-token">here</a> to create a personal access token.
-
+<h4 id="repo">Setting up Git Repository</h4>
+<p>For each student in the class, we have created for him/her a corresponding private
+lab repository on Github.com. You will submit labs by pushing to your private
+repo on github.com (as many times as you want) and then submitting them via Gradescope.
 
 <p>
-You will see that a directory named <tt>lab1</tt> has been created under the <tt>cso-labs</tt> directory.
-This is the git repo for your lab assignment 1. Other labs can be created similarly by cloning respective repositories.
-</li>
+Below are the steps
+for setting up your the lab environment on <tt>snappy1</tt>.  If you are not
+familiar with the <tt>git</tt> version control system,  follow the resources <a
+href="https://help.github.com/articles/good-resources-for-learning-git-and-github/">here</a>
+to get started.
+
+<p><b>Preparation: set up ssh-based logins to github</b>.  This is needed as github no longer accepts password-based commandlines.
+<ul>
+  <li>On snappy1, generate a pair of ssh keys by typing:
+    <pre>
+    snappy1$ ssh-keygen
+    </pre>
+    <p>Hit [Enter] a couple of times until you see that the keys have been saved in the files, like the example below</p>
+      <p><img src="ssh-keygen.png" width=600></img></p>
+  </li>
+  <li>Display the contents of the public key portion of the key pair by typing the following. You'll need to copy-n-paste this content to github website</p>
+      <pre>
+      snappy1$ cat ~/.ssh/id_rsa.pub
+      </pre>
+    <img src="ssh-pub.png" width=800></img></p>
+
+  </li>
+  <li>Enter public key information in github.  To do so, use the browser on your laptop to log into <a href="https://github.com">github website</a>.  Click the icon on the top right corner to pull down a menu, then click "Settings".  On the settings page, click "SSH and GPG keys" on the left-side menu, then click the green button named "New SSH key".  Type <tt>snappy1</tt> in the textbox named "Title".  Copy-n-paste the content of your previously generated public key to the textbox named "Key". Then, click "Add SSH key".
+
+      <p><img src="github-ssh.png" width=900></img></p>
+  </li>
+</ul>
+
+<p> <b>Cloning your lab repo on snappy1</b>
+<p>
+	<li> Create a github private repository by clicking on each lab's invitation link (posted in Campuswire).  Select your NYU NetID to link your github account and create your lab repository on Github.
+  </li>
+
+  <p>
+  <li>On snappy1, we recommend you create a directory to hold all your cloned lab repositories. 
+  <pre>
+  snappy1$ mkdir cso-labs
+  </pre>
+  </li>
+
+  <li> On snapy1, clone your repo by typing the following (the following example is for the first lab).
+    <pre >
+snappy1$ cd cso-labs
+snappy1$ git clone git@github.com:nyu-cso-fa21/clab-part1-&lt;YourGithubUsername&gt;.git clab-part1
+    </pre>
+    <p>
+    You will see that a directory named <tt>lab1</tt> has been created under the <tt>cso-labs</tt> directory.
+    This is the git repo for your lab assignment 1. Other labs can be created similarly by cloning respective repositories.
+  </li>
+
+</ul>
+
 <!--
 <li><b>Setting up the upstream repo</b>
 		<p>The lab skeleton code are kept in the repo <a
@@ -190,14 +214,15 @@ We will also remind you to fetch upstream on Piazza if we make changes/bug-fixes
 </li>
 -->
 
-<li><b>Using a command line editor to modify files for your lab assignments. We recommend using <tt>nano</tt></b>. For example, if you want to change file <tt>array.c</tt>, type the following:
+<p><b>Using a command line editor to modify files for your lab assignments</b>. 
+
+<p>We recommend using <tt>nano</tt></b>. For example, if you want to change file <tt>array.c</tt>, type the following:
 <pre>
 	snappy1$ cd cso-labs/clab-part1
 	snappy1$ nano array.c
 </pre>
-</li>
 
-<li><b>Saving changes to Github while you are working on Labs</b>
+<p><b>Saving changes to Github while you are working on Labs</b>
 <p>
 As you modify the skeleton files to complete the labs, you should frequently save your 
 work to protect against laptop failures and other unforeseen troubles. 
@@ -222,8 +247,6 @@ However, you must remember that doing <kbd>git commit</kbd> by itself does not s
 <p>
 To see if your local repo is up-to-date with your origin repo on github.com and vice versa, type
 <kbd>git status</kbd>
-</li>
-</ul>
 
 <p>
 <div class="bd-callout bd-callout-info">
@@ -267,8 +290,7 @@ $ git push origin master
 </pre>
 
 <li>
-Next, submit your lab via Gradescope. You access Gradescope by first logging into <a href="https://newclasses.nyu.edu/portal/site/efb7fea9-4c14-480d-b31b-a4ca333d4cff">NYU classes</a>.
-Click "Lessons" from the left menu bar.  Then, you will see the Gradescope link; click to access the course's Gradescope page.  Follow the instructions to submit your lab.
+Next, submit your lab via Gradescope.  Log into Gradescope using your NYU email (the email containing your NYU id). Follow the instructions to submit your lab.
 </ul>
 
 
