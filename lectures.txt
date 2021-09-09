@@ -2,7 +2,7 @@ Overview;01-overview.pdf;[PH] 1;
 Bits,Bytes,Ints;02-bits_bytes_int.pdf;[PH]2.4 or [BO]2.1-2.3;
 Ints continued;02-bits_bytes_int_cont.pdf;;[PH]3.5; <a href="https://www.itu.dk/~sestoft/bachelor/IEEE754_article.pdf">[GoldBerg91]</a>
 Floats;03-floats.pdf;[PH]3.5 or [BO]2.4;
-Floats continued;03-floats-cont.pdf; [KR]1-4;
+Floats continued;03-floats.pdf; [KR]1-4;
 C: overview, bitwise;04-C_Basics.pdf;[KR]5;<a href="https://www.recurse.com/blog/5-learning-c-with-gdb">[C with GDB]</a>
 C: Scope rules, pointers;05-pointer_array.pdf;[KR]5;<a href="https://www.recurse.com/blog/5-learning-c-with-gdb">[C with GDB]</a>
 C: arrays and pointers;05-pointer_array_cont.pdf; [KR]5 [PH]2.9;
