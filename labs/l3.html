@@ -101,7 +101,7 @@ $ objdump -d ex1_sol.o
 
     <p>To run the test with the given <tt>ex1</tt> function, you need to link the test object file <tt>tester.o</tt> together with the given <tt>ex{1-5}-sol.o</tt> files.  We have made this step easy by including appropriate Makefile rules. When you type <tt>make</tt>, you will see that it generates two binary executables: <tt>tester</tt>, and <tt>tester-sol</tt>. The executable file <tt>tester</tt> links <tt>tester.o</tt> with object files <tt>ex{1-5}.o</tt> which are generated from <b>your</b> <tt>ex{1-5}.c</tt> files.  The executable file <tt>tester-sol</tt> links <tt>tester.o</tt> with the given object files <tt>ex{1-5}_sol.o</tt>. Thus, when you run <tt>./tester_sol</tt>, the tester invokes the given functions, and needless to say, all tests should pass. 
 
-<p>Run <tt>gdb tester_sol</tt>.  Stop the execution when the function <tt>ex1</tt> is invoked.  Dissemble the function. Execute the instructions one by one. Form some hypothesis on what the function signature is and what it does.  Verify your hypothesis during execution by examining register values and memory contents.  To learn more about gdb, see our gdb tutorial <a href="https://github.com/NYU-CSO/recitation/tree/master/r5">here</a>.
+<p>Run <tt>gdb tester_sol</tt>.  Stop the execution when the function <tt>ex1</tt> is invoked.  Dissemble the function. Execute the instructions one by one. Form some hypothesis on what the function signature is and what it does.  Verify your hypothesis during execution by examining register values and memory contents.  To learn more about gdb, see our gdb tutorial <a href="https://github.com/NYU-CSO/gdb-tutorial">here</a>.
 </ul>
 
 <p>
