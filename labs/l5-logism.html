@@ -48,25 +48,22 @@
 
 
 <h3>Setup</h3>
-<p>Clone the Lab 5 repository by clicking on the Github classroom invitation link</p>
+
+<p>Unlike the previous labs which are done on snappy1, you can do this lab on your local Mac or Windows laptop.
+Follow the following 3 setup steps to download the required files.
+
+<p>Step-1: Clone your Lab 5 repository by clicking on the Github classroom invitation link (found on campuswire).
+If your local laptop does not have git already installed, follow the instructions <a href="https://github.com/git-guides/install-git">here</a> to install git.
+</p>
+
+<p>Step-2: If your laptop does not have java already installed, you need to install Java runtime.  Follow the instructions <a href="https://www.java.com/en/download/">here</a>.
+
+<p>Step-3: Downtown the circuit simulator (Logisim Evolution) as a jar file from this github link: <a href="https://nyu-cso.github.io/labs/logisim-evolution-2.15.jar">https://nyu-cso.github.io/labs/logisim-evolution-2.15.jar"</a> Note that <i>you must use this .jar file that we've given you, and not any other version</i> 
 
 
-<p>All the work in this lab will be done from the program Logisim Evolution. Download this Logisim jar file into your lab5new 
-repository:
-<pre>
-$ cd lab5new-&lt;YourGithubUsername&gt;
-$ wget https://nyu-cso.github.io/labs/logisim-evolution-2.15.jar
-</pre>
+<p>Launch Logism Evolution.  On Windows, you can directly click the downloaded logisim-evolution-2.15.jar file. On Mac, open a terminal, navigate to the directory 
+containing the logisim-evolution-2.15.jar file, and type <kdb>$ java -jar logisim-evolution.jar</kdb>. You will see the Logisim's GUI interface popped up.
 
-Logisim is a Java program, so you'll need to download the Java runtime environment. Open a terminal in the lab virtual machine, 
-and type the following (When prompted for password, type in the login password for user "lab"):
-<pre>
-$ sudo apt-get install default-jre
-</pre>
-
-<p>Launch Logism by typing the following in your lab5new repo:
-<pre>$ java -jar logisim-evolution.jar</pre>
-Note that <i>you must use the .jar file we've given you, and not any other version</i> 
 
 <div class="bd-callout bd-callout-danger"><h5>Warning: Save often with Logism</h5>
   Logisim does not have autosave, i.e. it does not save your work as you go along. 
@@ -149,10 +146,11 @@ demonstrate their use.</p>
 </ol>
 
 <h4>Part 1 exercise:</h4>
-Now, you are ready to complete the exercises for part1.
-<ul>
-  <li> Open the given schematic file called part1.circ (File-&gt;Open..)</li>
-  <li> At the left of the screen, you'll see a set of existing subcircuits that have already been created for you.  Please 
+<p>Now, you are ready to complete the exercises for part1.
+
+<p>Open the given schematic file called part1.circ (File-&gt;Open..)
+  
+<p>At the left of the screen, you'll see a set of existing subcircuits that have already been created for you.  Please 
     complete these subcircuits <b>using only AND, OR, and NOT gates and not the built-in NAND, NOR, XOR, Decoder, Multiplexer circuits</b>. The subcircuits you are asked to implement are: 
     <ul>
       <li> NAND1: a NAND gate</li>
@@ -163,7 +161,13 @@ Now, you are ready to complete the exercises for part1.
       <li>Dec2to4: a 2-to-4 decoder </li>
       <li>Mux4to1: a 4-to-1 multiplexer. Hint: you may want to use the Dec2to4 subcuirt</li>
     </ul>
-    <li>In order to faciliate testing of your subcircuits, we have fixed the locations of your subcircuits' input and output pins, using the Logisim functionality Tunnel. When implementing NegSign and Dec2to4, you will also need to use Logisim functionality Splitter.  Read about <a href="#tunnel">Tunnel</a> and <a href="#splitter">Splitter</a> in the Logisim must-learn feature section.
+
+
+    <p>In order to faciliate testing of your subcircuits, we have fixed the locations of your subcircuits' input and output pins, using the Logisim functionality Tunnel (read more about <a href="#tunnel">here</a>).  Here's an example <b>incorrect</b> implementation of the NAND1 subcircuit.  All the gates and wires in your implementation should be below the line marked "Put all your circuits below this line", as show in this example.  On the top of this line, the input and output pins are connected to labelled <a href="#tunnel">tunnels</a>.  In your implementation underneath the line, you can access the inputs using the corresponding labelled tunnels and also feed your output to the corresponding labelled tunnel(s), as shown in this example.
+
+    <img src="example.jpg" width=150>
+
+<p>When implementing NegSign and Dec2to4, you will also need to use Logisim functionality Splitter.  Read about <a href="#tunnel">Tunnel</a> and <a href="#splitter">Splitter</a> in the Logisim must-learn feature section.
 </ul>
 
 <h4> Testing Part1</h4>
