@@ -52,8 +52,16 @@
 <p>Unlike the previous labs which are done on snappy1, you can do this lab on your local Mac or Windows laptop.
 Follow the following 3 setup steps to download the required files.
 
-<p>Step-1: Clone your Lab 5 repository by clicking on the Github classroom invitation link (found on campuswire).
-If your local laptop does not have git already installed, follow the instructions <a href="https://github.com/git-guides/install-git">here</a> to install git.
+<p>Step-1: Clone your Lab 5 repository 
+<ul>
+  <li>First, make your github repository by clicking the Github classroom invitation link (found on campuswire).
+  <li>Second, clone your github repository on your laptop
+      <pre>
+    $ git clone git@github.com:nyu-cso-fa21/lab4-&lt;YourGithubUsername&gt;.git  lab4
+    </pre>
+</ul>
+
+<p>If your local laptop does not have git already installed, follow the instructions <a href="https://github.com/git-guides/install-git">here</a> to install git.
 </p>
 
 <p>Step-2: If your laptop does not have java already installed, you need to install Java runtime.  Follow the instructions <a href="https://www.java.com/en/download/">here</a>.
@@ -172,7 +180,8 @@ demonstrate their use.</p>
 </ul>
 
 <h4> Testing Part1</h4>
-<p>Test your part1 circuits as follows (the output shows a run of successful test):
+<p>On Mac OS, test your part1 circuits by typing the following into a terminal, after navigating into your lab5 repository directory. 
+The following output shows a run of successful test:
 <pre>
 $./test.sh part1
 Copy part1.circ to tests/
@@ -184,6 +193,14 @@ Checking NegSign... OK
 Checking Dec2to4... OK
 Checking Mux4to1... OK
 </pre>
+
+<p>If you use a Windows laptop, you will have to run the test on snappy1.  To do so, follow the following 3 steps:
+<ul>
+  <li>First, on your windows laptop, push your local changes to github using <pre>git commit -am "..."; git push origin</pre>
+  <li>Second, on snappy1, clone your lab5 directory (if you have not done so). <pre>git clone git@github.com:nyu-cso-fa21/lab5-&lt;YourGithubUsername&gt;.git </pre>
+      Pull the changes into into this repository. <pre>git pull</pre>
+  <li>Third, on snappy1, navigate to the lab5 repository, and type <pre>./test.sh part1</pre>.  
+</ul>
 
 <h3>Part 2: FSMs to digital logic</h3>
 
