@@ -2,6 +2,15 @@
 import sys
 import datetime
 
+semester_start = datetime.date(2022,9,1) # enter first day of semester
+semester_end = datetime.date(2022,12,14)
+lec_day0 = 1 # enter lecture day of week
+lec_day1 = 3 # enter lecture day of week
+
+recitation_start = datetime.date(2022,9,12)
+recitation_end = datetime.date(2022,12,14)
+rec_day0 = 0 # enter recitation day of week
+
 def get_lectures(fname):
     fh = open(fname, 'r')
     lectures = []
@@ -25,12 +34,14 @@ def get_special_dates(fname):
     fh = open(fname, 'r')
     dates = []
     for line in fh:
+        if line.startswith('#'):
+            continue
         f = line.rstrip('\n').split(';')
         if len(f) != 3:
             print(line, " special dates should have exactly 3 fields (date, have-regular-class, info)")
             sys.exit(1)
         (month, day)= f[0].split('/')
-        l = {'month':month, 'day':day, 'regular':f[1], 'lec':"<font color=\"red\">"+f[2]+"</font>"}
+        l = {'month':month, 'day':day, 'classday':f[1], 'description':"<font color=\"red\">"+f[2]+"</font>"}
         dates.append(l)
     return dates
 
@@ -40,10 +51,22 @@ def is_special(special_dates, d):
             return sd
     return None
 
+def is_lecture_day(day):
+    if day == lec_day0 or day == lec_day1:
+        return True
+    return False
+
+def is_recitation_day(day):
+    if day == rec_day0:
+        return True
+    return False
+
 def get_lab_due_dates(fname):
     fh = open(fname, 'r')
     dates = []
     for line in fh:
+        if line.startswith('#'):
+            continue
         f = line.rstrip('\n').split(';')
         if len(f) != 2:
             print(line, " lab due dates should have exactly 2 fields (date, lab assignment)")
@@ -175,61 +198,47 @@ if __name__ == '__main__':
         recitationStr = ""
         lec = ""
         labinfo= ""
-        bonus=""
 
         specialLec = is_special(special_dates, d)
-        labDue = is_special(lab_due_dates, d)
-        labinfo = ""
-        if labDue is not None:
-            labinfo = labDue['lab']
-        
-        if specialLec is not None and specialLec['regular'] == "1":
+
+        #skip no class dates
+        if (specialLec != None and specialLec['classday'] == "-1") or (specialLec == None and (is_lecture_day(d.weekday() is False) and is_recitation_day(d.weekday()) is False)):
+            d = d + datetime.timedelta(1) # go to next day
+            if d.weekday() == 6: # terminate week container on Sunday
+                print("</div> <!--dark/light-->\n")
+            continue
+
+
+        print("<div class=\"row\">")
+        print("   <div class=\"col-sm-2\">%d/%d</div>" % (d.month, d.day))
+
+        if (specialLec is not None and is_lecture_day(specialLec['classday'])) or (specialLec is None and is_lecture_day(d.weekday())):
             l = lectures[which]
+            if specialLec is not None:
+                print("   <div class=\"col-sm-4\">%s " % (specialLec['description']+'<br>'+l['lec']))
+            else:
+                print("   <div class=\"col-sm-4\">%s " % (l['lec']))
+            print("  [<a href=\"notes/%s\">note</a>]</div>" % (l.get('note')))
+
+            print("   <div class=\"col-sm-4\">%s</div>" % (l.get('prepare')))
+            print("</div>\n")
+
             which = which+1
-            lec = specialLec['lec']+"<br>"+l['lec']
-            note = l['note']
-            prepare=l['prepare']
-        # classes are on Monday and Wed
-        elif d.weekday() == lec_day0 or d.weekday() == lec_day1:
-            if specialLec is None:
-                l = lectures[which]
-                which=which+1
-                lec = l['lec']
-                note = l['note']
-                prepare=l['prepare']
-                bonus=l['bonus']
-            else:
-                lec = specialLec['lec']
-        
-        if lec != "":
-            print("<div class=\"row\">")
-            print("   <div class=\"col-sm-2\">%d/%d</div>" % (d.month, d.day))
-            print("   <div class=\"col-sm-4\">%s " % (lec))
-            if note != "":
-                print("  [<a href=\"notes/%s\">note</a>]</div>" % (note))
-            else:
-                print("</div>\n")
-            print("   <div class=\"col-sm-4\">%s</div>" % (prepare))
-            print("   <div class=\"col-sm-2\">%s</div>"  % (labinfo))
-        #    print("   <div class=\"col-sm-2\">%s</div>"  % (bonus))
-            print("</div>\n")
+        elif (specialLec is not None and is_recitation_day(specialLec['classday'])) or (specialLec is None and is_recitation_day(d.weekday())):
+            print("  <div class=\"col-sm-4\"> ")
+            if specialLec is not None:
+                print("%s<br>" % (specialLec['description']))
+            print("<a href=\"rec-notes/r%02d.pdf\"><em>recitation%02d</em></a></div>" % (recitation, recitation)) 
+            print("  </div>\n")
+            print("   <div class=\"col-sm-4\"></div>") # empty prepare for recitation
+            recitation = recitation + 1
 
-        # Deal with recitations  on thu
-        if d.weekday() == rec_day0 and d >= recitation_start and d <= recitation_end:
-            print("<div class=\"row\">")
-            print("   <div class=\"col-sm-2\">%d/%d</div>" % (d.month, d.day))
-            if specialLec is None:
-                print("   <div class=\"col-sm-4\"><a href=\"rec-notes/r%02d.pdf\"><em>recitation%02d</em></a></div>" % (recitation, recitation))
-                print("   <div class=\"col-sm-4\"><em></em></div> ")
-                recitation = recitation + 1
-            else:
-                print("   <div class=\"col-sm-4\">%s</div> " % specialLec['lec'])
-                print("   <div class=\"col-sm-4\"></div> ")
-            print("   <div class=\"col-sm-2\">%s</div>"  % (labinfo))
-            print("</div>\n")
-        if d.weekday() == 6: # terminate week container on Sunday
-            print("</div> <!--dark/light-->\n")
-
+        labDue = is_special(lab_due_dates, d)
+        if labDue != None:
+            print("   <div class=\"col-sm-2\">%s</div>"  % (labDue.get('lab')))
+        else:
+            print("   <div class=\"col-sm-2\"></div>")
+            
         d = d + datetime.timedelta(1) # go to next day
 
     if which != len(lectures):
