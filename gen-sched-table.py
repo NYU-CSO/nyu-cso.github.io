@@ -227,7 +227,6 @@ if __name__ == '__main__':
             if specialLec is not None:
                 print("%s<br>" % (specialLec['description']), end="")
             print("<a href=\"rec-notes/r%02d.pdf\"><em>recitation%02d</em></a></div>" % (recitation, recitation), end="") 
-            print("  </div>")
             print("   <div class=\"col-sm-4\"></div>") # empty prepare for recitation
             recitation = recitation + 1
 
