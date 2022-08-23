@@ -1,3 +1,4 @@
-9/6;0; Labor day (no class)
-10/12;0; No class (classes follow Monday schedule)
-11/25;0;Thanksgiving
+9/5;0; Labor day (no class)
+10/10;0; Fall break (no class)
+10/11;1; Legislative Monday 
+11/24;0;Thanksgiving recess

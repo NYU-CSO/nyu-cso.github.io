@@ -64,7 +64,7 @@ def output_header():
 	<!-- Bootstrap CSS -->
 	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.3/css/bootstrap.min.css" integrity="sha384-Zug+QiDoJOrZ5t4lssLdxGhVrurbmBWopoEl+M6BdEfwnCJZtKxi1KgxUyJq13dy" crossorigin="anonymous">
 
-  <title>Computer Systems Organization (Fall 2021) </title>
+  <title>Computer Systems Organization (Fall 2022) </title>
 </head>
 
 <body>
@@ -91,7 +91,7 @@ def output_header():
         <h3 class="text-success">Computer Systems Organization</h3>
 		</div>
 		<div class="row">
-			CSCI-UA.0201(007), Fall 2021
+			CSCI-UA.0201(007), Fall 2022
 		</div>
 		</div>
 	</div>
@@ -142,13 +142,13 @@ if __name__ == '__main__':
     special_dates = get_special_dates(special_fname)
     lab_due_dates = get_lab_due_dates(lab_fname)
 
-    semester_start = datetime.date(2021,9,2) # enter first day of semester
-    semester_end = datetime.date(2021,12,14)
+    semester_start = datetime.date(2022,9,1) # enter first day of semester
+    semester_end = datetime.date(2022,12,14)
     lec_day0 = 1 # enter lecture day of week
     lec_day1 = 3 # enter lecture day of week
-    recitation_start = datetime.date(2021,9,3)
-    recitation_end = datetime.date(2021,12,14)
-    rec_day0 = 2 # enter recitation day of week
+    recitation_start = datetime.date(2022,9,12)
+    recitation_end = datetime.date(2022,12,14)
+    rec_day0 = 0 # enter recitation day of week
 
     line = """
 <div class=\"row\">
@@ -163,7 +163,6 @@ if __name__ == '__main__':
     flip = 1 # flip background color for alternating week
     d = semester_start
     while d <= semester_end:
-
         if d.weekday() == 0 or d == semester_start: # start of the week, print container
             if flip == 0:
                 print("<div class=\"container bg-light\">\n")
