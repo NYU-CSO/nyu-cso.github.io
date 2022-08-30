@@ -1,0 +1,166 @@
+<html>
+<head>
+	<meta charset="utf-8">
+  <link rel="shortcut icon" href="../favicon.ico" type="image/x-icon">
+	<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no, content=no-cache">
+
+	<!-- Bootstrap CSS -->
+	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.3/css/bootstrap.min.css" integrity="sha384-Zug+QiDoJOrZ5t4lssLdxGhVrurbmBWopoEl+M6BdEfwnCJZtKxi1KgxUyJq13dy" crossorigin="anonymous">
+	<link rel="stylesheet" href="../sty2.css">
+
+  <title>GDB Tutorial</title>
+</head>
+
+<body>
+<main role="main" class="container">
+      <header class="header clearfix">
+        <div class="row">...</div>
+    	<div class="row">
+		<div class="col-sm-3"><img src="../org.png" width=150></div>
+    <div class="col-sm-9"><h3>GDB Tutorial</h3></div>
+	</div>
+      </header>
+
+<div id="content">
+<hr>
+
+<p>The debugger for C/C++ is gdb, developed by GNU.  This is a simple tutorial to get your started on debugging using gdb. For more detailed instruction and advanced features, please refer to various online resources, such as <a href="http://www.dirac.org/linux/gdb/">this</a>, <a href="https://raw.githubusercontent.com/wiki/NETMF/llilum/gdbTutorial.pdf">this</a>, and <a href="https://darkdust.net/files/GDB%20Cheat%20Sheet.pdf">that</a>.
+
+<p>
+
+<h3>Getting started</h3>
+<p>We use the following example program <tt>foo.c</tt>:
+<pre>
+<code>
+1 #include &lt;stdio.h&gt;
+2 #include &lt;assert.h&gt;
+3
+4 int sum_even(int end)
+5 {
+6    int sum = 0;
+7    for (int i = 0; i != end; i+=2) {
+8      sum +=i;
+9    }
+10    return sum;
+11 }
+12
+13 int main()
+14 {
+15    int r1 = sum_even(10);
+16    int r2 = sum_even(11);
+17    assert(r1 == r2);
+18 }
+</code>
+</pre>
+
+In order to use gdb, we need to compile the source code using the <kbd>-g</kbd> flag so that appropriate debug information will be included in the generated binary files. 
+<pre>
+$ gcc -c -g foo.c //compile foo.c into foo.o, -g flag will include debug information in foo.o
+$ gcc -o foo foo.o //assemble foo.o into the binary executable foo.
+</pre>
+
+<h3>Locating a suspicious point of execution</h3>
+
+<p>
+You can run the compiled program by typing <kbd>./foo</kbd>. You'll notice that the foo program is buggy, and does not even terminate! To debug, type <kbd>gdb foo</kbd>.  Under the gdb prompt, type <kbd>r</kbd> (short for <kbd>run</kbd>) to run the program.  As expected, it does not terminate.  Type Control-C to interrupt the program execution and bring up the gdb prompt. You'll see the following:
+
+<pre>
+...
+For help, type "help".
+Type "apropos word" to search for commands related to "word"...
+Reading symbols from foo...
+(gdb) r
+Starting program: /home/jinyang/labs/foo
+^C
+Program received signal SIGINT, Interrupt.
+0x0000555555555171 in sum_even (end=11) at foo.c:7
+7	   for (int i = 0; i != end; i+=2) {
+(gdb)
+</pre>
+
+The above gdb message tells you that, when the program has been interrupted by your Ctrl-C signal, it is about to execute the line at <tt>foo.c:7</tt>. 
+
+<p>
+<b>Show the backtrace</b>. It is usually not sufficient to know which function (or program location) is causing trouble, because many different functions could invoke the same function.  For more information, we need to obtain the program's backtrace. A backtrace is a summary of how your program got where it is. It shows one line per frame (aka function invocation), for many frames, starting with the currently executing frame (frame zero), followed by its caller (frame one), and on up the stack. You can ask gdb to display backtrace by typing <kbd>bt</kbd> (short for backtrace).
+
+<pre>
+(gdb) bt
+#0  0x000055555555516e in sum_even (end=11) at foo.c:7
+#1  0x000055555555519e in main () at foo.c:16
+</pre>
+
+<p>The above backtrace information says that the program is stopped at function sum_even <tt>foo.c:7</tt>, which is being called by main() at <tt>foo.c:16</tt>.
+
+<h3>Displaying variable values</h3>
+<p>To debug further, I need to see the current values of various varibles. In our running example, when I see that my programing is being interrupted at foo.c:7, I am naturally wondering why the loop still has not terminated.  What is the value of <tt>end</tt>? It should be 11, since I know the caller of <tt>sum_even</tt> is line <tt>sum_even(11)</tt> at <tt>foo.c:16</tt>, based on my previous <tt>backtrace</tt> command. Nevertheless, it still good to check that I am not mistaken.  I can do this by typing <kbd>p end</kbd> (<tt>p</tt> is short for print).
+<pre>
+Program received signal SIGINT, Interrupt.
+0x0000555555555171 in sum_even (end=11) at foo.c:7
+7	   for (int i = 0; i != end; i+=2) {
+(gdb) p end
+$1 = 11
+</pre>
+
+Next, I want to know what is the current value of <tt>i</tt>? I do this by typing <kbd>p i</kbd>.
+<pre>
+(gdb) p i
+$2 = 1036418658
+</pre>
+
+<p>Wow, <tt>i</tt>'s value is much larger than I expected.  At this point in time, many of you would be able to identify the bug.  Suppose I am not as smart and am still quite puzzled. What more can I do? 
+
+
+<h3>Stopping at a specific point and continuing execution</h3>
+
+<p>Now I want to investigate why the loop got out of hand. I plan to explicitly examine each time the loop body is executed. I can do this by asking gdb to stop the program execution at line <tt>foo.c:8</tt>, where the loop body <tt>sum += i</tt> is executed.
+I can do this by typing <kbd>b foo.c:8</kbd> (<tt>b</tt> is short for break).  Then I re-start the program by typing <kbd>r</kbd>, see below.
+
+<pre>
+(gdb) b foo.c:8
+Breakpoint 1 at 0x115b: file foo.c, line 8.
+(gdb) r
+Starting program: /home/jinyang/classes/cso/nyu-cso.github.io/labs/foo
+
+Breakpoint 1, sum_even (end=10) at foo.c:8
+8	     sum +=i;
+</pre>
+
+<p>I can print the value of <tt>i</tt> (and <tt>sum</tt>) at this point.  I can see that <tt>i=0</tt>, suggesting that it's the first time the loop body is entered.
+
+<p>I want to let the program execute the next line. I can do so by typing <kbd>n</kbd> (<tt>n</tt> is short for next).
+
+<pre>
+(gdb) n
+(gdb) n
+7	   for (int i = 0; i != end; i+=2) {
+</pre>
+
+<p>To see the program execute line by line, I can keep typing <kbd>n</kbd>, or typing [Enter] which causes gdb to repeat the previous command.
+When such detailed following of the program's execution, I can surely identify my bug with some patience.
+
+<p>Note: gdb command <kbd>c</kbd> (<tt>c</tt> is short for continue) will continue executing the program until it hits the breakpoint again.
+
+<h3>Other useful gbb commands</h3>
+<p>We've seen how to use these most crucial gdb commands: 
+<pre>
+r (run)
+bt (backtrace)
+b (break) 
+p (print) 
+n (next) 
+c (continue).
+</pre>
+
+<p>The other useful gdb commands are: 
+<pre>
+l (list, print lines from the relevant source file)
+x (Examine memory: x/FMT ADDRESS) 
+s (step, Step program until it reaches a different source line, it's often used when you need to stop inside a callee)
+</pre>
+
+In general, you can type <kbd>help</kbd> to get the list of gdb commands. You can type <kbd>help x</kbd> to retrieve the information on command <kbd>x</kbd> or other commands.
+
+</body>
+
+<hr>
+</html>
