@@ -11,6 +11,13 @@ margin: 1em;
 padding: 1em;
 }
 
+pre code { 
+color:#733950;
+border:1px solid #eee;
+background-color:#E8E5E4;
+display: block;
+}
+
 img.btn {
     border: 5px solid #bdbbbb;
     background-color:#bdbbbb;

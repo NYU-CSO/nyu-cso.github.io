@@ -1,0 +1,509 @@
+<html>
+<head>
+	<meta charset="utf-8">
+  <link rel="shortcut icon" href="../favicon.ico" type="image/x-icon">
+	<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no, content=no-cache">
+
+	<!-- Bootstrap CSS -->
+	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.3/css/bootstrap.min.css" integrity="sha384-Zug+QiDoJOrZ5t4lssLdxGhVrurbmBWopoEl+M6BdEfwnCJZtKxi1KgxUyJq13dy" crossorigin="anonymous">
+	<link rel="stylesheet" href="../sty2.css">
+
+  <title>Computer Systems Organization (Fall 2019) </title>
+</head>
+
+<body>
+<br>
+    <main role="main" class="container">
+      <header class="header clearfix">
+        <nav>
+          <ul class="nav nav-pills float-left">
+            <li class="nav-item">
+              <a class="nav-link " href="../index.html">Home <span class="sr-only">(current)</span></a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="../schedule.html">Schedule</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link active" href=".">Lab</a>
+            </li>
+          </ul>
+        </nav>
+	<div class="row">
+		<div class="col-sm-3"><img src="../org.png" width=150></div>
+		<div class="col-sm-9">
+		<div class="row">
+        <h3 class="text-muted">Computer Systems Organization</h3>
+		</div>
+		<div class="row">
+			CSCI-UA.0201(007), Fall 2021
+		</div>
+		</div>
+	</div>
+      </header>
+
+<div id="content">
+<hr>
+
+<h2> Lab 6: Regfile and ALU</h2>
+
+<p>
+<div class="content">
+
+<p>
+The previous lab has helped you gain familiarity with Logisim. In this lab, you
+will be implementing the ALU and Regfile in Logisim.
+
+<h3>Setup</h3>
+<p>Clone the Lab 6 repository by clicking on the Github classroom invitation link</p>
+
+<p>Download the Logisim jar file into your lab6 repository:
+<pre>
+$ cd lab6-&lt;YourGithubUsername&gt;
+$ wget https://nyu-cso.github.io/labs/logisim-evolution.jar
+</pre>
+
+<div class="bd-callout bd-callout-danger"><h5>Warning: Save often with Logism</h5>
+  Logisim does not have autosave, i.e. it does not save your work as you go along. 
+  Save when you start, and save frequently as you work.</p>
+</div>
+
+<h2>Exercise 1: Arithmetic Logic Unit (ALU)</h2>
+
+  <p>Your first task is to create an ALU that supports all the operations needed by the instructions in our ISA (which is described in further detail in the next section). Please note that we treat overflow as RISC-V does with unsigned instructions, meaning that we ignore overflow.</p>
+
+
+    <p>We have provided a skeleton of an ALU for you in <tt>alu.circ</tt>. It has three inputs:</p>
+
+    <table class="table table-dark table-striped table-sm">
+      <thead>
+        <tr>
+          <th>Input Name</th>
+          <th>Bit Width</th>
+          <th>Description</th>
+        </tr>
+      </thead>
+        <tbody>
+            <tr>
+                <td>A</td>
+                <td>32</td>
+                <td>Data to use for Input A in the ALU operation.</td>
+            </tr>
+            <tr>
+                <td>B</td>
+                <td>32</td>
+                <td>Data to use for Input B in the ALU operation.</td>
+            </tr>
+            <tr>
+                <td>ALUSel</td>
+                <td>4</td>
+                <td>Selects what operation the ALU should perform <br>(see the list of operations with corresponding switch values below).</td>
+            </tr>
+        </tbody>
+    </table>
+
+    <p>... and one output:</p>
+
+    <table class="table table-dark table-striped table-sm">
+      <thead>
+        <tr>
+          <th>Output Name</th>
+          <th>Bit Width</th>
+          <th>Description</th>
+        </tr>
+      </thead>
+        <tbody>
+            <tr>
+                <td>Result</td>
+                <td>32</td>
+                <td>Result of the ALU Operation.</td>
+            </tr>
+        </tbody>
+    </table>
+
+    <p>Below is the list of ALU operations for you to implement, along with their associated ALUSel values. All of them are required with the exception of mulh, which is a bonus exercise. You are allowed and encouraged to use built-in Logisim blocks to implement the arithmetic operations.</p>
+
+    <table class="table table-dark table-striped thead-light table-sm">
+      <thead>
+          <tr>
+              <th>Switch Value</th>
+                <th>Instruction</th>
+              </tr>
+        </thead>
+        <tbody>
+          <tr>
+                <td class="center"> 0 </td>
+                <td> add: Result = A + B </td>
+          </tr>
+          <tr>
+                <td class="center"> 1 </td>
+                <td> and: Result = A &amp; B</td>
+          </tr>
+          <tr>
+                <td class="center"> 2 </td>
+                <td> or: Result = A | B</td>
+          </tr>
+          <tr>
+                <td class="center"> 3 </td>
+                <td> xor: Result = A^B </td>
+          </tr>
+          <tr>
+                <td class="center"> 4 </td>
+                <td> srl: Result = (unsigned) A &gt;&gt; B</td>
+            </tr>
+          <tr>
+                <td class="center"> 5 </td>
+                <td> sra: Result = (signed) A &gt;&gt; B</td>
+            </tr>
+          <tr>
+                <td class="center"> 6 </td>
+                <td> sll: Result = A &lt;&lt; B</td>
+          </tr>
+          <tr>
+                <td class="center"> 7 </td>
+                <td> slt: Result = (A &lt; B) ? 1 : 0 Signed</td>
+            </tr>
+          <tr>
+                <td class="center"> 8 </td>
+                <td> divu: Result = (unsigned) A / B </td>
+          </tr>
+          <tr>
+                <td class="center"> 9 </td>
+                <td> remu: Result = (unsigned) A % B </td>
+          </tr>
+          <tr>
+                <td class="center"> 10 </td>
+                <td> mult: Result = (signed) A*B[31:0]</td>
+          </tr>
+          <tr>
+                <td class="center"> 11 </td>
+                <td> mulhu: Result = A*B[63:32]</td>
+          </tr>
+	  <tr>
+                <td class="center"> 12 </td>
+                <td> sub : Result = A - B</td>
+          </tr>
+	  <tr>
+                <td class="center"> 13 </td>
+                <td> bsel: Result = B</td>
+          </tr>
+      <tr>
+      			<td class="center"> 14 </td>
+      			<td> mulh: Result = (signed) A*B[63:32]</td>
+      	  </tr>
+
+
+        </tbody>
+  </table>
+
+    <p> When implementing <tt>mul</tt> (or <tt>mulh</tt> for the bonus exercise), notice that the multiply block has a "Carry Out" output (the adder block also has this, but you will not need this) located here:</p> 
+    <img src="./carry.png" alt="Carry Out in Multiply Block" width="400" align="center">
+    <p> Experiment with it, and see what you get for both the result and carryout with negative and positive 2's complement numbers. You should realize why we made mulh extra credit.</p>
+
+    <p> <strong>NOTE:</strong> </p>
+    <ul>
+      <li>You should only modify <tt>alu.circ</tt>. Do not create any other *.circ file. You may (and are encouraged to) add new sub-circuits within the <tt>alu.circ</tt> file. 
+<li>The <tt>alu.circ</tt> that you submit <em>must</em> fit into the <tt>alu_harness.circ</tt> file we have provided for you. You should take care not to move inputs or outputs. To verify changes you have made didn't break anything, you can open <tt>alu_harness.circ</tt> and ensure there are no errors and that the circuit functions well. (The tests use a slightly modified copy of <tt>alu_harness.circ</tt>.) 
+         </ul>
+
+            <p><strong>Hints:</strong></p>
+    <ul>
+    	<li><tt>Add</tt> is already made for you, and feel free to use a similar structure when implementing your other blocks.</li>
+    	<li>You can hover your cursor over an output/input on a block to get more detailed information about that input/output.</li>
+    	<li>You might find bit splitters or extenders useful when implementing <tt>sra</tt> and <tt>srl</tt>.</li>
+    	<li>Use tunnels! They will make your wiring cleaner and easier to follow, and will reduce your chances of encountering unexpected errors.</li>
+    	<li>A multiplexer (MUX) might be useful when deciding which block output you want to ouput. In other words, consider simply processing the input in all blocks, and then outputing the one of your choice.</li>
+    </ul>
+
+    
+ <h3>Testing</h3>
+
+ <p>Test your ALU by typing the following (the output shows a successful test):
+
+ <pre>
+$ ./test.sh alu
+Copy alu.circ to tests/
+Testing files...
+	PASSED test: ALU add test
+	PASSED test: ALU div and rem test
+	PASSED test: ALU logic test
+	PASSED test: ALU shift test
+	PASSED test: ALU select, sub, BSel test
+	PASSED test: ALU comprehensive test
+	PASSED test: ALU mult/mulhu test
+	PASSED test: ALU mulh test (extra credit)
+Passed 8/8 tests
+ </pre>
+
+ <p>More often than not, when you type <tt>./test.sh alu</tt>, some test fails and you need to debug the failed test.
+The tester runs your ALU circuit and produces output in the <tt>tests/student_output</tt> directory, with different files 
+corresponding to the output of different ALU test cases.  We've provided a python script called <tt>binary_to_hex_alu.py</tt> 
+that can interpret this output in a readable format for you. 
+
+Suppose your ALU fails the ''ALU add test'', you can examine your ALU's output by typing the following:</p>
+
+<pre class="output">$ <span class="input">cd tests</span>
+$ <span class="input">python binary_to_hex_alu.py student_output/alu-add-student.out</span>
+</pre>
+
+<p>The correct ALU output can be seen by typing the following: </p>
+
+<pre>
+$ python binary_to_hex_alu.py reference_output/alu-add-ref.out
+</pre>
+
+<p>By comparing against the two outputs, you can understand why your ALU fails.  Sometimes, it is difficult to eyeball the difference.
+To make the difference more obvious, you can run the UNIX commandline tool <kbd>diff</kbd> commandline tool, e.g. by doing the following steps:
+</p>
+
+<pre>
+$ cd tests
+$ python binary_to_hex_alu.py reference_output/alu-add-ref.out &gt; alu-add-ref.out
+$ python binary_to_hex_alu.py student_output/alu-add-student.out &gt; alu-add-student.out
+$ diff alu-add-ref.out alu-add-student.out
+</pre>
+
+      <div class="section">
+        <h2>Exercise 2: Register File (RegFile)</h2>
+        <p>RISC-V architecture has 32 registers. However, in this lab, <b>You will only implement 9 of them (specified below)</b> to save you some repetitive work. This means your rs1, rs2, and rd signals will still be 5-bit, but we will only test you on the specified registers. </p>
+
+    <p>Your RegFile should be able to write to or read from these registers specified in a given RISC-V instruction without affecting any other registers. There is one notable exception: your RegFile should NOT write to x0, even if an instruction try. Remember that the zero register should ALWAYS have the value 0x0. You should always connect the clock signal directly to the clock input of the registers without passing through ANY combinational logic.</p>
+
+    <p> The registers and their corresponding numbers are listed below. </p>
+  <table class="table table-dark table-striped thead-light table-sm">
+      <thead>
+        <tr>
+          <th>Register #</th>
+          <th>Register Name</th>
+        </tr>
+      </thead>
+        <tbody>
+            <tr>
+                <td>x0</td>
+                <td>zero</td>
+            </tr>
+            <tr>
+                <td>x1</td>
+                <td>ra</td>
+            </tr>
+            <tr>
+                <td>x2</td>
+                <td>sp</td>
+            </tr>
+            <tr>
+                <td>x5</td>
+                <td>t0</td>
+            </tr>
+            <tr>
+                <td>x6</td>
+                <td>t1</td>
+            </tr>
+            <tr>
+                <td>x7</td>
+                <td>t2</td>
+            </tr>
+            <tr>
+                <td>x8</td>
+                <td>s0</td>
+            </tr>
+            <tr>
+                <td>x9</td>
+                <td>s1</td>
+            </tr>
+            <tr>
+                <td>x10</td>
+                <td>a0</td>
+            </tr>
+        </tbody>
+    </table>
+
+
+    <p> You are provided with the skeleton of a register file in <tt>regfile.circ</tt>. The register file circuit has six inputs:</p>
+  <table class="table table-dark table-striped thead-light table-sm">
+
+      <thead>
+        <tr>
+          <th>Input Name</th>
+          <th>Bit Width</th>
+          <th>Description</th>
+        </tr>
+      </thead>
+        <tbody>
+            <tr>
+                <td>Clock</td>
+                <td>1</td>
+                <td>Input providing the clock. This signal can be sent into subcircuits or attached directly to the clock inputs of memory units in Logisim, but should not otherwise be gated (i.e., do not invert it, do not "and" it with anything, etc.).</td>
+            </tr>
+            <tr>
+                <td>RegWEn</td>
+                <td>1</td>
+                <td>Determines whether data is written to the register file on the next rising edge of the clock.</td>
+            </tr>
+            <tr>
+                <td>Read Register 1 (rs1)</td>
+                <td>5</td>
+                <td>Determines which register's value is sent to the Read Data 1 output, see below.</td>
+            </tr>
+            <tr>
+                <td>Read Register 2 (rs2)</td>
+                <td>5</td>
+                <td>Determines which register's value is sent to the Read Data 2 output, see below.</td>
+            </tr>
+            <tr>
+                <td>Write Register (rd)</td>
+                <td>5</td>
+                <td>Determines which register to set to the value of Write Data on the next rising edge of the clock, assuming that RegWEn is a 1.</td>
+            </tr>
+            <tr>
+                <td>Write Data</td>
+                <td>32</td>
+                <td>Determines what data to write to the register identified by the Write Register input on the next rising edge of the clock, assuming that RegWEn is 1.</td>
+            </tr>
+        </tbody>
+    </table>
+
+    <p> The register file also has the following outputs:</p>
+
+
+<table class="table table-dark table-striped thead-light table-sm">
+
+      <thead>
+          <tr>
+            <th>Output Name</th>
+                <th>Bit Width</th>
+                <th>Description</th>
+            </tr>
+    </thead>
+        <tbody>
+            <tr>
+              <td>Read Data 1</td>
+            <td>32</td>
+                <td>Driven with the value of the register identified by the Read Register 1 input.</td>
+            </tr>
+            <tr>
+              <td>Read Data 2</td>
+            <td>32</td>
+                <td>Driven with the value of the register identified by the Read Register 2 input.</td>
+            </tr>
+            <tr>
+              <td><tt>ra</tt> Value</td>
+            <td>32</td>
+                <td>Always driven with the value of <tt>ra</tt> (This is a DEBUG/TEST output.)</td>
+            </tr>
+            <tr>
+              <td><tt>sp</tt> Value</td>
+            <td>32</td>
+                <td>Always driven with the value of <tt>sp</tt> (This is a DEBUG/TEST output.)</td>
+            </tr>
+            <tr>
+              <td><tt>t0</tt> Value</td>
+            <td>32</td>
+                <td>Always driven with the value of <tt>t0</tt> (This is a DEBUG/TEST output.)</td>
+            </tr>
+            <tr>
+              <td><tt>t1</tt> Value</td>
+            <td>32</td>
+                <td>Always driven with the value of <tt>t1</tt> (This is a DEBUG/TEST output.)</td>
+            </tr>
+            <tr>
+              <td><tt>t2</tt> Value</td>
+            <td>32</td>
+                <td>Always driven with the value of <tt>t2</tt> (This is a DEBUG/TEST output.)</td>
+            </tr>
+            <tr>
+              <td><tt>s0</tt> Value</td>
+            <td>32</td>
+                <td>Always driven with the value of <tt>s0</tt> (This is a DEBUG/TEST output.)</td>
+            </tr>
+            <tr>
+              <td><tt>s1</tt> Value</td>
+            <td>32</td>
+                <td>Always driven with the value of <tt>s1</tt> (This is a DEBUG/TEST output.)</td>
+            </tr>
+
+            <tr>
+              <td><tt>a0</tt> Value</td>
+            <td>32</td>
+                <td>Always driven with the value of <tt>a0</tt> (This is a DEBUG/TEST output.)</td>
+            </tr>
+        </tbody>
+    </table>
+
+    <p>The DEBUG/TEST outputs are present for testing and debugging purposes. If you were implementing a real register file, you would omit those outputs. In our case, be sure they are included correctly--if they are not, you will not pass the tests.</p>
+
+    <p><strong>Note:</strong></p>
+    <ul><li>You should only modify <tt>regfile.circ</tt>. Do not create any new *.circ files. 
+      <li>The <tt>regfile.circ</tt> that you submit <em>must</em> fit into the <tt>regfile_harness.circ</tt> file we have provided for you. You should take care not to move inputs or outputs. To verify changes you have made didn't break anything, you can open <tt>regfile_harness.circ</tt> and ensure there are no errors and that the circuit functions well. (The tests use a slightly modified copy of <tt>regfile_harness.circ</tt>.) 
+    </ul>
+
+    </p><p><strong>Hints:</strong></p>
+    <ul>
+	<li>Take advantage of copy-paste! It might be a good idea to make one register completely and use it as a template for the others to avoid repetitive work.</li>
+	<li>Because of the naming conventions that Logisim Evolution requires, because the outputs are named ra, sp, etc., you will not be able to name your registers ra, sp, etc. We suggest that you instead name them with numerical name of the register, e.g. x1, x2.</li>
+    	<li>You should not use the ``enable input'' on your MUXes. In fact, you can turn that feature off. You are advised to also turn ``three-state'' to off. Take a look at all the inputs to a Logisim register and see what they all do. </li>
+    	<li>Again, MUXes are your friend, but also DeMUXes. </li>
+    	<li>Think about what happens in the register file after a single instruction is executed. Which values change? Which values stay the same? Registers are clock-triggered--what does that mean? </li>
+    	<li>Keep in mind registers have an "enable" input available, as well as a clock input.</li>
+    	<li>What is the value of <tt>x0</tt>?</li>
+    </ul>
+
+  <h3>Testing</h3>
+
+<p>Test your Regfile by typing the following (the output shows a successful test):
+
+ <pre>
+$ ./test.sh regfile 
+Copy regfile.circ to tests/
+Testing files...
+	PASSED test: RegFile insert test
+	PASSED test: RegFile zero test
+	PASSED test: RegFile x0 test
+	PASSED test: RegFile all registers test
+Passed 4/4 tests
+ </pre>
+
+
+  <p>Like with ALU tests, when you run <tt>./test.sh regfile</tt>, the tester will produce output in the <tt>tests/student_output</tt> directory. We've provided a python script called <tt>binary_to_hex_regfile.py</tt> that can interpret this output in a readable format for you. For example, suppose your Regfile fails the ``RegFile x0 test''. To examine the output of your Regfile on this test, do the following:</p>
+
+<pre>
+cd tests
+python binary_to_hex_regfile.py student_output/regfile-x0-student.out
+</pre>
+
+<p>To see what the expected output of a correct test, do this:</p>
+
+<pre>
+$ cd tests
+$ python binary_to_hex_regfile.py reference_output/regfile-x0-ref.out
+</pre>
+
+<p>To use the UNIX tool <kbd>diff</kbd> to discover the difference between your output and the reference solution, take the following steps: 
+
+</p><pre class="output">$ <span class="input">cd tests</span>
+$ <span class="input">python binary_to_hex_regfile.py reference_output/regfile-x0-ref.out &gt; regfile-x0-ref.out</span>
+$ <span class="input">python binary_to_hex_regfile.py student_output/regfile-x0-student.out &gt; regfile-x0-student.out</span>
+$ <span class="input">diff regfile-x0-ref.out regfile-x0-student.out</span>
+</pre>
+
+ <h3>Handin Procedure</h3>
+
+To run both ALU and Regfile tests together, type:
+<pre>
+$ ./test.sh 
+</pre>
+
+To handin your files, simply commit and push them to github.com 
+<pre>
+$ git commit -am "Finish lab6"
+$ git push origin master
+</pre>
+
+<p>We will fetching your lab files from Github.com at the specified deadline and grade them.
+
+ 
+ <h4>Acknowledgements</h4>
+This lab is borrowed and adapted from Berkeley's CS61c class.
+ 
+ <meta http-equiv="PRAGMA" content="NO-CACHE">
+  
+
+</div></div></body></html>

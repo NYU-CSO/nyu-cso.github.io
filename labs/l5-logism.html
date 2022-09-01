@@ -8,7 +8,7 @@
 	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.3/css/bootstrap.min.css" integrity="sha384-Zug+QiDoJOrZ5t4lssLdxGhVrurbmBWopoEl+M6BdEfwnCJZtKxi1KgxUyJq13dy" crossorigin="anonymous">
 	<link rel="stylesheet" href="../sty2.css">
 
-  <title>Computer Systems Organization (Fall 2019) </title>
+  <title>Computer Systems Organization (Fall 2022) </title>
 </head>
 
 <body>
@@ -35,7 +35,7 @@
         <h3 class="text-muted">Computer Systems Organization</h3>
 		</div>
 		<div class="row">
-			CSCI-UA.0201(007), Fall 2021
+			CSCI-UA.0201(003), Fall 2022
 		</div>
 		</div>
 	</div>
@@ -57,7 +57,7 @@ Follow the following 3 setup steps to download the required files.
   <li>First, make your github repository by clicking the Github classroom invitation link (found on campuswire).
   <li>Second, clone your github repository on your laptop
       <pre>
-    $ git clone git@github.com:nyu-cso-fa21/lab5-&lt;YourGithubUsername&gt;.git  lab4
+    $ git clone git@github.com:nyu-cso-fa21/lab5-&lt;YourGithubUsername&gt;.git  lab5
     </pre>
 </ul>
 
@@ -67,7 +67,13 @@ Follow the following 3 setup steps to download the required files.
 <p>Step-2: If your laptop does not have java already installed, you need to install Java runtime.  Follow the instructions <a href="https://www.java.com/en/download/">here</a>.
 
 <p>Step-3: Launch Logism Evolution.  On Windows, you can directly click the <tt>logisim-evolution-2.15.jar</tt> file in your local lab5 repository. 
-On Mac, open a terminal, navigate to your lab5 repository directory which contains the <tt>logisim-evolution-2.15.jar</tt> file, and type the command <tt>java -jar logisim-evolution.jar</tt>. You will see the Logisim's GUI interface pop up.
+On Mac, open a terminal, navigate to your lab5 repository directory which contains the <tt>logisim-evolution-2.15.jar</tt> file, and type the command:
+
+<pre>
+java -jar logisim-evolution-2.15.jar
+</pre>.
+
+<p>You will see the Logisim's GUI interface pop up.
 
 
 <div class="bd-callout bd-callout-danger"><h5>Warning: Save often with Logism</h5>
@@ -80,7 +86,7 @@ On Mac, open a terminal, navigate to your lab5 repository directory which contai
 <p>We begin by creating a very simple circuit just to get the feel for placing
 gates and wires. Before you start, take note of a useful feature: the zoom function! It's in the bottom left corner, and will make your life with Logisim much easier. </p>
 
-<p align=center><img src="zoom.png" width=470></p>
+<p align=center><img src="zoom.png" width=700></p>
 
 <ul>
   <li><img class="btn" src="and.gif"> Start by clicking
@@ -180,6 +186,9 @@ demonstrate their use.</p>
 <h4> Testing Part1</h4>
 <p>On Mac OS, test your part1 circuits by typing the following into a terminal, after navigating into your lab5 repository directory. 
 The following output shows a run of successful test:
+
+<p align=center><img src="part1_tests.png" width=700></p>
+<!---
 <pre>
 $./test.sh part1
 Copy part1.circ to tests/
@@ -191,6 +200,7 @@ Checking NegSign... OK
 Checking Dec2to4... OK
 Checking Mux4to1... OK
 </pre>
+-->
 
 <p>If you use a Windows laptop, you will have to run the test on snappy1.  To do so, follow the following 3 steps:
 <ul>
