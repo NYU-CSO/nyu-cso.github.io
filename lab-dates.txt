@@ -1,4 +1,4 @@
-9/23;<a href="labs/clab-part1.html">Lab 1</a> due 9/30
+9/22;<a href="labs/clab-part1.html">Lab 1</a> due 9/24
 10/14;<a href="labs/clab-part2.html">Lab 2</a> due 10/16
 10/28;<a href="labs/l3.html">Lab 3</a> due 10/30
 11/25;<a href="labs/malloclab.html">Lab 4</a> due 11/28
