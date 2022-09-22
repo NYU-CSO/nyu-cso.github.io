@@ -3,8 +3,7 @@ Bits,Bytes,Ints;02-bits_bytes_int.pdf;[PH]2.4 or [BO]2.1-2.3;
 Floats;03-floats.pdf;[PH]3.5 or [BO]2.4;
 Floats continued;03-floats.pdf; [KR]1-4;
 C: overview, bitwise;04-C_Basics.pdf;[KR]5;<a href="https://www.recurse.com/blog/5-learning-c-with-gdb">[C with GDB]</a>
-C: Scope rules, pointers;04-C_Basics.pdf;[KR]5;<a href="https://www.recurse.com/blog/5-learning-c-with-gdb">[C with GDB]</a>
-C: arrays and pointers;05-pointer_array.pdf; [KR]5 [PH]2.9;
+C: pointers and arrays;05-pointer_array.pdf;[KR]5;<a href="https://www.recurse.com/blog/5-learning-c-with-gdb">[C with GDB]</a>
 C: characters and strings;06-string-struct-malloc.pdf; [KR]5,7 [PH]2.9;
 C: structs, malloc;06-struct-malloc.pdf; [KR]5,7 [PH]2.9;
 C: Program organization, I/O ;07-largec-io.pdf;;
@@ -26,3 +25,4 @@ Architecture: Sequential impl;arch-simple2-pipeline.pdf; [PH]4.1-4.4;
 Architecture: Pipelined impl;arch-cpu-pipeline.pdf; [PH]4.5-4.7;
 Architecture: Pipelined impl cont;arch-cpu-pipeline2.pdf;[PH] 5.1-5.4;
 Memory, Cache;arch-mem.pdf;[PH] 5.1-5.4;
+Memory, Cache continued;arch-mem.pdf;[PH] 5.1-5.4;
