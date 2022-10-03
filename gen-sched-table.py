@@ -40,7 +40,7 @@ def get_special_dates(fname):
             print(line, " special dates should have exactly 3 fields (date, have-regular-class, info)")
             sys.exit(1)
         (month, day)= f[0].split('/')
-        l = {'month':month, 'day':day, 'classday':f[1], 'description':"<font color=\"red\">"+f[2]+"</font>"}
+        l = {'month':month, 'day':day, 'classday':int(f[1]), 'description':"<font color=\"red\">"+f[2]+"</font>"}
         dates.append(l)
     return dates
 
@@ -202,7 +202,7 @@ if __name__ == '__main__':
         specialLec = is_special(special_dates, d)
 
         #skip no class dates
-        if (specialLec != None and specialLec['classday'] == "-1") or (specialLec is None and is_lecture_day(d.weekday()) is False and is_recitation_day(d.weekday()) is False):
+        if (specialLec != None and specialLec['classday'] < 0) or (specialLec is None and is_lecture_day(d.weekday()) is False and is_recitation_day(d.weekday()) is False):
             d = d + datetime.timedelta(1) # go to next day
             if d.weekday() == 6: # terminate week container on Sunday
                 print("</div> <!--dark/light-->\n")
@@ -229,6 +229,8 @@ if __name__ == '__main__':
             print("<a href=\"rec-notes/r%02d.pdf\"><em>recitation%02d</em></a></div>" % (recitation, recitation), end="") 
             print("   <div class=\"col-sm-4\"></div>") # empty prepare for recitation
             recitation = recitation + 1
+        elif specialLec is not None and specialLec['classday'] >=0:
+            assert False
 
         labDue = is_special(lab_due_dates, d)
         if labDue != None:
