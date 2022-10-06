@@ -78,7 +78,11 @@ Program received signal SIGINT, Interrupt.
 (gdb)
 </pre>
 
+<p>
 The above gdb message tells you that, when the program has been interrupted by your Ctrl-C signal, it is about to execute the line at <tt>foo.c:7</tt>. 
+
+<p>
+You can type the command <kdb>l foo.c:7</kdb> at the gdb prompt to print out the relevant lines of the C code (aka several lines starting from line 7 in foo.c). <kdb>l</kdb> is short for <kdb>list</kdb>.
 
 <p>
 <b>Show the backtrace</b>. It is usually not sufficient to know which function (or program location) is causing trouble, because many different functions could invoke the same function.  For more information, we need to obtain the program's backtrace. A backtrace is a summary of how your program got where it is. It shows one line per frame (aka function invocation), for many frames, starting with the currently executing frame (frame zero), followed by its caller (frame one), and on up the stack. You can ask gdb to display backtrace by typing <kbd>bt</kbd> (short for backtrace).
@@ -131,7 +135,6 @@ Breakpoint 1, sum_even (end=10) at foo.c:8
 
 <pre>
 (gdb) n
-(gdb) n
 7	   for (int i = 0; i != end; i+=2) {
 </pre>
 
@@ -140,22 +143,27 @@ When such detailed following of the program's execution, I can surely identify m
 
 <p>Note: gdb command <kbd>c</kbd> (<tt>c</tt> is short for continue) will continue executing the program until it hits the breakpoint again.
 
-<h3>Other useful gbb commands</h3>
+<p>Another useful gdb command is <kdb>s</kdb> (<tt>s</tt> is short for step, aka step program until it reaches a different source line).  This command is useful when, during line-by-line execution using <kdb>n</kdb>, you encounter a procedure invocation.  If you are to use <kdb>n</kdb>, the entire procedure will be executed without interruption. If you want to step inside that procedure to continue line-by-line execution, you use <kdb>s</kdb> to do so.
+
+<h3 id="binary">gdb commands useful for investigating binaries</h3>
+In Lab3 and certain other scenarios, you only have access to the binary executable and not its related source files. For this purpose, the gdb command <kdb>disass</kdb>, <kdb>nexti</kdb>, <kdb>info registers</kdb>, <kdb>x</kdb> commands are really useful. 
+You can learn more about these commands <a href="https://github.com/NYU-CSO/gdb-tutorial">here</a>.
+
+<h3>Summary: useful gdb commands to remember</h3>
 <p>We've seen how to use these most crucial gdb commands: 
 <pre>
 r (run)
 bt (backtrace)
+l (list, print lines from the relevant source file)
 b (break) 
 p (print) 
 n (next) 
-c (continue).
-</pre>
-
-<p>The other useful gdb commands are: 
-<pre>
-l (list, print lines from the relevant source file)
-x (Examine memory: x/FMT ADDRESS) 
-s (step, Step program until it reaches a different source line, it's often used when you need to stop inside a callee)
+c (continue)
+s (step: step program until it reaches a different source line)
+x (examine memory: x/FMT address)
+ni (next instruction)
+disass (disassemble a procedure)
+info registers (print out register values)
 </pre>
 
 In general, you can type <kbd>help</kbd> to get the list of gdb commands. You can type <kbd>help x</kbd> to retrieve the information on command <kbd>x</kbd> or other commands.
