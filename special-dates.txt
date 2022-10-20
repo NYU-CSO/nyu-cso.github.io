@@ -2,4 +2,5 @@
 9/5;-1; Labor day (no class)
 10/10;-1; Fall break (no class)
 10/11;0; Legislative Monday 
+10/27;-1; midterm (online)
 11/24;-1;Thanksgiving recess
