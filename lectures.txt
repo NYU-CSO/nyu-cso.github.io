@@ -16,8 +16,8 @@ Machine Prog: SegFault and Buffer Overflow;11-machine-layout-overflow.pdf; [BO]3
 midterm;;;
 Linking;13-optimization-linking.pdf;[BO]5.1-5.6;
 Dynamic Memory Allocation;14-Dynamic_Allocator.pdf;[BO] 9.9;
-Dynamic Memory Allocation Cont;;[BO] 9.9;
-Dynamic Memory Allocation Cont;;[BO] 9.9;
+Dynamic Memory Allocation Cont;14-Dynamic_Allocator.pdf;[BO] 9.9;
+Dynamic Memory Allocation Cont;14-Dynamic_Allocator.pdf;[BO] 9.9;
 Architecture: Overview;arch-overview.pdf; [PH]1.4-1.6, A.1-A.3;
 Architecture: ALU;arch-alu.pdf; [PH]1.4-1.6, A.1-A.3;
 Architecture: Sequential Logic;arch-seq.pdf; [PH]A.7-A.8, A.10;
