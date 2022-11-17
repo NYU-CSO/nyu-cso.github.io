@@ -132,7 +132,7 @@ subcircuits. In this part of the lab, we will create several subcircuits to
 demonstrate their use.</p>
 
 <div class="bd-callout bd-callout-info"><h5>Subcircuit naming:</h5>
-  Logisim Evolution won't let you name a subcircuit after a keyword (e.g. "NAND", "NOR"). 
+  Logisim Evolution won't let you name a subcircuit after an existing keyword (e.g. "NAND", "NOR"). 
   Additionally, circuit names must start with "A-Za-z", so no starting with numbers.
 </div>
 
@@ -141,7 +141,7 @@ demonstrate their use.</p>
         <li>Create a new schematic (File-&gt;New) for your work.</li>
         <li>Create a new subcircuit (Project-&gt;Add Circuit ). You will be prompted for
           a name for the subcircuit; call it AND1 (note the 1 at the end. As there is already a component called AND, you <i>cannot</i> call it AND).</li>
-        <li>In the new schematic window that you see create a simple AND circuit with 4
+        <li>In the new schematic window, create a simple AND circuit with 4
           input pins on the left side and an output pin on the right side. Do this by using only 
           the built-in AND gate with 2 inputs only. You can change the labels for the inputs and output by selecting the input/output using the select tool and changing the property &quot;Label&quot; in the bottom left of the window.</li>
         <li>Go back to your &quot;main&quot; schematic by double-clicking &quot;main&quot;
@@ -170,7 +170,7 @@ demonstrate their use.</p>
       <li>NegSign: Negate the most significant bit (sign bit) of an 8-bit number. You can think of the 8-bit number as representing a signed integer in the "sign and magnitude" format (instead of 2's complement), thus this circuit negates the number.
       <li>Mux2to1: a 2-to-1 multiplexer</li>
       <li>Dec2to4: a 2-to-4 decoder </li>
-      <li>Mux4to1: a 4-to-1 multiplexer. Hint: you may want to use the Dec2to4 subcuirt</li>
+      <li>Mux4to1: a 4-to-1 multiplexer. Hint: you may want to use the Dec2to4 subcircuit that you've implemented earlier</li>
     </ul>
 
 
@@ -375,7 +375,7 @@ As a bonus, you are to implement a non-trivial combinational logic block: <code>
       </p>
 
       <p>
-      <b>Hint:</b> Just because we gave you an RTL representation doesn't mean it's the best way to look at this problem. Think about the input bits of <strong>B</strong> and think about how to effectively use splitters! Can you do something with the binary form? Remember why binary is good for use in computers: a 1 is easy to represent as an "ON" signal, and a 0 is easy to represent as an "OFF" signal. Let's say we want to rotate 6 times. 6 is 110 in binary, or 1*0x4 + 1*0x2 + 0*0x1. Can you use this to make a cleaner circuit?</p>
+      <b>Hint:</b> You will not be able to use the brute-force truth-table enumeration method for this problem, since there are too many input bits. Instead, split the individual bits of <strong>B</strong> using <a href="#splitter">splitters</a>! Can you do something with the bits? Let's say we want to right shift by 6. Since 6 is 110 in binary (aka B=(110)<sub>2</sub>), it is equivalent to 1*0x4+1*0x2+0*0x1. Therefore, one way to think about the solution is to right shift by 4 (or not) first, followed by right shift by 2 (or not), followed by right shift by 1 (or not), and whether or not we shift by 2<sup>i</sup> is determined by the corresponding bit value of B at i. Can you use this insight to make a cleaner circuit?</p>
       <p>
 
 <h4> Testing shr</h4>
