@@ -262,17 +262,43 @@ $ ./implicit-mdriver -V
 
 <p>The <tt>-V</tt> turns on verbose printing in the tester. 
 
-<p>To run the tester on one specific tracefile instead of all of the default tracefiles, type:
+It's unlikely that you'll pass all the tracefiles even though you've already passed the unit tests.
+To debug, first identify which tracefile caused the error based on the output of `./implicit-mdriver -V`.
+Then, run the tester on that specific tracefile instead of all of the required tracefiles. For example,
+suppose you've identified that tracefile named <tt>amptjp-bal.rep</tt> has caused error. Then, type the following
+to run the test based on amptjp-bal.rep tracefile alone:
+
 <pre>
-$./implicit-mdriver -V -f tracefile
+$./implicit-mdriver -V -f traces/amptjp-bal.rep
 </pre>
 
-<p>All the tracefiles can be found in the <tt>traces/</tt> subdirectory.
-
-<p>You can type <tt>$./implicit-mdriver -h</tt> to 
+<p>Note that all the tracefiles reside in the <tt>traces/</tt> subdirectory. You can also type <tt>$./implicit-mdriver -h</tt> to 
 see a full list of command line options. 
 
-Here's the example output if the tester runs successfully.
+<p>The next step in debugging is to understand why this tracefile has triggered error in your code.  In order to do this, you 
+must understand the sequence of malloc/free/realloc requests that your code has been invoked with according to the tracefile.  Open the tracefile, which is a simple ASCII
+file, using any editor of your choice.  For example, below is the content of the 
+first 10 lines of <tt>realloc-bal.rep</tt>. The comments following <tt>//</tt>
+annotate what each line means:
+
+<pre>
+a 0 512 //(m)alloc request 0 demands 512 bytes
+a 1 128 //(m)alloc request 1 demands 128 bytes
+r 0 640 //realloc demands request 0 be enlarged to 640 bytes
+a 2 128 //(m)alloc request 2 demands 128 bytes
+f 1     //free request 1
+r 0 768 //realloc demands request 0 be enlarged to 768 (note this is the 2nd time request 0 has been realloc-ed)
+a 3 128 //(m)alloc request 3 demaands 128 bytes
+f 2     //free request 2
+r 0 896 //realloc demands request 0 be further enlarged to 896 bytes (3rd time request 0 has been realloc-ed)
+a 4 128 //(m)alloc request 4 demands 128 bytes
+...
+</pre>
+
+<p>Once you know the sequence of malloc/free/realloc requests of a tracefile, then you know what the expected behavior of your heap should be. And you can run 
+your code in <tt>gdb</tt> to see if the code's actual behavior matches its expected behavior.  
+
+<p>Once you got every tracefile to pass correctly, you can test all tracefiles again to make sure everything goes well. Here's the example output if the tester runs successfully.
 <pre>
 $ ./implicit-mdriver
 Using default tracefiles in ./traces/
@@ -355,6 +381,7 @@ implementation.  For starters, build <tt>mm_realloc</tt> on top of your
 existing <tt>mm_malloc</tt> and <tt>mm_free</tt> implementations. But to get
 really good performance, you will need to build a stand-alone <tt>
 mm_realloc</tt>.
+
 
 	<li>Use gdb. It
 will help you isolate and identify out of bounds memory references.
