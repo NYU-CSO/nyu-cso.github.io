@@ -2,12 +2,12 @@ import sys
 import datetime
 
 semester_start = datetime.date(2022,9,1) # enter first day of semester
-semester_end = datetime.date(2022,12,14)
+semester_end = datetime.date(2022,12,16)
 lec_day0 = 1 # enter lecture day of week
 lec_day1 = 3 # enter lecture day of week
 
 recitation_start = datetime.date(2022,9,12)
-recitation_end = datetime.date(2022,12,14)
+recitation_end = datetime.date(2022,12,16)
 rec_day0 = 0 # enter recitation day of week
 
 def get_lectures(fname):
@@ -138,6 +138,7 @@ def output_header():
 def output_footer():
     line = """
     </main>
+    <hr>
 <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
 <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.3/js/bootstrap.min.js" integrity="sha384-a5N7Y/aK3qNeh15eJKGWxsqtnX/wWdSZSKp+81YjTmS15nvnvxKHuzaWwXHDli+4" crossorigin="anonymous"></script>
@@ -164,12 +165,8 @@ if __name__ == '__main__':
     special_dates = get_special_dates(special_fname)
     lab_due_dates = get_lab_due_dates(lab_fname)
 
-    semester_start = datetime.date(2022,9,1) # enter first day of semester
-    semester_end = datetime.date(2022,12,14)
     lec_day0 = 1 # enter lecture day of week
     lec_day1 = 3 # enter lecture day of week
-    recitation_start = datetime.date(2022,9,12)
-    recitation_end = datetime.date(2022,12,14)
     rec_day0 = 0 # enter recitation day of week
 
     line = """
@@ -202,7 +199,8 @@ if __name__ == '__main__':
         specialLec = is_special(special_dates, d)
 
         #skip no class dates
-        if (specialLec != None and specialLec['classday'] < 0) or (specialLec is None and is_lecture_day(d.weekday()) is False and is_recitation_day(d.weekday()) is False):
+        #if (specialLec != None and specialLec['classday'] < 0) or (specialLec is None and is_lecture_day(d.weekday()) is False and is_recitation_day(d.weekday()) is False):
+        if specialLec is None and is_lecture_day(d.weekday()) is False and is_recitation_day(d.weekday()) is False:
             d = d + datetime.timedelta(1) # go to next day
             if d.weekday() == 6: # terminate week container on Sunday
                 print("</div> <!--dark/light-->\n")
@@ -217,7 +215,11 @@ if __name__ == '__main__':
             if specialLec is not None:
                 print(f'{specialLec["description"]}<br>', end=" ") 
             print(l['lec'], end=" ")
-            print("  [<a href=\"notes/%s\">note</a>]</div>" % (l.get('note')))
+            if l.get('note') is '':
+                print("  </div>")
+            else:
+                print("  [<a href=\"notes/%s\">note</a>]</div>" % (l.get('note')))
+
 
             print("   <div class=\"col-sm-4\">%s</div>" % (l.get('prepare')))
 
@@ -229,6 +231,9 @@ if __name__ == '__main__':
             print("<a href=\"rec-notes/r%02d.pdf\"><em>recitation%02d</em></a></div>" % (recitation, recitation), end="") 
             print("   <div class=\"col-sm-4\"></div>") # empty prepare for recitation
             recitation = recitation + 1
+        elif specialLec is not None and specialLec['classday'] < 0:
+            print(f'   <div class=\"col-sm-4\">{specialLec["description"]}</div>', end=" ")
+            print("   <div class=\"col-sm-4\"></div>")
         elif specialLec is not None and specialLec['classday'] >=0:
             assert False
 
