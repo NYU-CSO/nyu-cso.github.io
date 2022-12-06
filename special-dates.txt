@@ -3,3 +3,5 @@
 10/10;-1; Fall break (no class)
 10/11;0; Legislative Monday 
 11/24;-1;Thanksgiving recess
+12/15;-1; Reading day (no class)
+12/16;-1; Final Exam (10am-11:50)
