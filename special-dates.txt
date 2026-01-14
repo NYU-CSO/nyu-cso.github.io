@@ -1,7 +1,8 @@
 #date; classday (0 for Mon, 1 for Tue etc, -1 for no class); description 
-9/5;-1; Labor day (no class)
-10/10;-1; Fall break (no class)
-10/11;0; Legislative Monday 
-11/24;-1;Thanksgiving recess
-12/15;-1; Reading day (no class)
-12/16;-1; Final Exam (10am-11:50)
+2/16;-1; Presidents' day (no class)
+2/17;0; Legislative Monday 
+3/16;-1; Spring Break
+3/18;-1; Spring Break
+5/6;-1; Reading day (no class)
+5/7;-1; 
+5/8;-1; Final Exam 

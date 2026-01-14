@@ -1,14 +1,14 @@
 import sys
 import datetime
 
-semester_start = datetime.date(2022,9,1) # enter first day of semester
-semester_end = datetime.date(2022,12,16)
-lec_day0 = 1 # enter lecture day of week
-lec_day1 = 3 # enter lecture day of week
+semester_start = datetime.date(2026,1,20) # enter first day of semester
+semester_end = datetime.date(2026,5,8)
+lec_day0 = 0 # enter lecture day of week (Mon)
+lec_day1 = 2 # enter lecture day of week (Wed)
 
-recitation_start = datetime.date(2022,9,12)
-recitation_end = datetime.date(2022,12,16)
-rec_day0 = 0 # enter recitation day of week
+recitation_start = datetime.date(2026,1,23)
+recitation_end = datetime.date(2026,5,5)
+rec_day0 = 4 # enter recitation day of week
 
 def get_lectures(fname):
     fh = open(fname, 'r')
@@ -86,7 +86,7 @@ def output_header():
 	<!-- Bootstrap CSS -->
 	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.3/css/bootstrap.min.css" integrity="sha384-Zug+QiDoJOrZ5t4lssLdxGhVrurbmBWopoEl+M6BdEfwnCJZtKxi1KgxUyJq13dy" crossorigin="anonymous">
 
-  <title>Computer Systems Organization (Fall 2022) </title>
+  <title>Computer Systems Organization (Spring 2026) </title>
 </head>
 
 <body>
@@ -110,10 +110,10 @@ def output_header():
 		<div class="col-sm-3"><img src="org2.png" width=150></div>
 		<div class="col-sm-9">
 		<div class="row">
-        <h3 class="text-success">Computer Systems Organization</h3>
+        <h3>Computer Systems Organization</h3>
 		</div>
 		<div class="row">
-			CSCI-UA.0201(007), Fall 2022
+			CSCI-UA.0201(007), Fall 2026
 		</div>
 		</div>
 	</div>
@@ -165,16 +165,11 @@ if __name__ == '__main__':
     special_dates = get_special_dates(special_fname)
     lab_due_dates = get_lab_due_dates(lab_fname)
 
-    lec_day0 = 1 # enter lecture day of week
-    lec_day1 = 3 # enter lecture day of week
-    rec_day0 = 0 # enter recitation day of week
-
     line = """
 <div class=\"row\">
    <div class=\"col-sm-2\"><b>Date</b></div> 
    <div class=\"col-sm-4\"><b>Lecture</b></div> 
    <div class=\"col-sm-4\"><b>Reading</b></div> 
-   <div class=\"col-sm-2\"><b>Lab Due</b></div>
 </div>
 """
     print(line)
@@ -207,21 +202,23 @@ if __name__ == '__main__':
             continue
 
         print("<div class=\"row\">")
-        print("   <div class=\"col-sm-2\">%d/%d</div>" % (d.month, d.day))
+        weekday_str = d.strftime("%a")
+        print(f'   <div class=\"col-sm-2\">{d.month}/{d.day} <span style="color:#888; font-size:0.85em;">{weekday_str}</span></div>')
 
         if (specialLec is not None and is_lecture_day(specialLec['classday'])) or (specialLec is None and is_lecture_day(d.weekday())):
-            l = lectures[which]
-            print("   <div class=\"col-sm-4\">", end=" ")
-            if specialLec is not None:
-                print(f'{specialLec["description"]}<br>', end=" ") 
-            print(l['lec'], end=" ")
-            if l.get('note') is '':
-                print("  </div>")
-            else:
-                print("  [<a href=\"notes/%s\">note</a>]</div>" % (l.get('note')))
-
-
-            print("   <div class=\"col-sm-4\">%s</div>" % (l.get('prepare')))
+            try:
+                l = lectures[which]
+                print("   <div class=\"col-sm-4\">", end=" ")
+                if specialLec is not None:
+                    print(f'{specialLec["description"]}<br>', end=" ") 
+                print(l['lec'], end=" ")
+                if l.get('note') == '':
+                    print("  </div>")
+                else:
+                    print("  [<a href=\"notes/%s\">note</a>]</div>" % (l.get('note')))
+                print("   <div class=\"col-sm-4\">%s</div>" % (l.get('prepare')))
+            except IndexError as e:
+                print(f"IndexError: {e}")
 
             which = which+1
         elif (specialLec is not None and is_recitation_day(specialLec['classday'])) or (specialLec is None and is_recitation_day(d.weekday())):
@@ -236,18 +233,19 @@ if __name__ == '__main__':
             print("   <div class=\"col-sm-4\"></div>")
         elif specialLec is not None and specialLec['classday'] >=0:
             assert False
-
-        labDue = is_special(lab_due_dates, d)
-        if labDue != None:
-            print("   <div class=\"col-sm-2\">%s</div>"  % (labDue.get('lab')))
-        else:
-            print("   <div class=\"col-sm-2\"></div>")
-            
+ 
+#        labDue = is_special(lab_due_dates, d)
+#        if labDue != None:
+#            print("   <div class=\"col-sm-2\">%s</div>"  % (labDue.get('lab')))
+#        else:
+#            print("   <div class=\"col-sm-2\"></div>")
+#            
         print("</div>\n")
-        d = d + datetime.timedelta(1) # go to next day
+
+        d = d + datetime.timedelta(1) 
 
     if which != len(lectures):
-            print("%d weeks total not equal to %d lectures planned" % (which, len(lectures)))
+            print("%d lectures total not equal to %d lectures planned" % (which, len(lectures)))
             sys.exit(1)
 
 
