@@ -177,6 +177,8 @@ if __name__ == '__main__':
     recitation = 1
     flip = 1 # flip background color for alternating week
     d = semester_start
+
+
     while d <= semester_end:
         if d.weekday() == 0 or d == semester_start: # start of the week, print container
             if flip == 0:
@@ -212,7 +214,7 @@ if __name__ == '__main__':
                 if specialLec is not None:
                     print(f'{specialLec["description"]}<br>', end=" ") 
                 print(l['lec'], end=" ")
-                if l.get('note') == '':
+                if l.get('note') == '' or d > datetime.date.today():
                     print("  </div>")
                 else:
                     print("  [<a href=\"notes/%s\">note</a>]</div>" % (l.get('note')))
