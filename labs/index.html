@@ -47,10 +47,10 @@
 <h4>Lab assignments</h4>
 
 <div class="row">
-	<div class="col-sm-6"><a href="clab-part1.html">Lab 1 </a>C programming (part-1)</div>
+	<div class="col-sm-6"><a href="clab-part1.html">Lab 1 (Part 1) </a>C programming</div>
 </div>
 <div class="row">
-	<div class="col-sm-6"><a href="clab-part2.html">Lab 2</a> C programming (part-2)</div>
+	<div class="col-sm-6"><a href="clab-part2.html">Lab 1 (Part 2)</a> C programming (continued)</div>
 </div>
 
 <div class="row">
@@ -70,83 +70,61 @@
 <p>
 
 <p>
-All labs' git classroom invitation links can be found on <a href="https://campuswire.com/c/G8CA18B38/feed/7">Campuswire</a>
+All labs' git classroom invitation links can be found on <a href="https://campuswire.com/">Campuswire</a>
 
 <p>
-<h4>Collaboration and Integrity Policy</h4>
-Please read <a href="../policy.html">this</a> carefully. We will run plagiarism detection software on all submitted code.
+<h4>AI and Integrity Policy</h4>
+Please read <a href="../policy.html">this</a>. 
 
 <p>
-<h4>Acknowledgements:</h4>
-Lab 5 is due to Berkeley's CS61c.
+<h4>Background: Working with UNIX for program development</h4>
+This course assumes familiarity of the UNIX environment as course pre-requisite. If you are new to UNIX, you should take some time to read on your own to master the required knowledge.
+
+<div class="bd-callout bd-callout-info">
+<h5>Good sources to help you learn UNIX:</h5>
+<ul>
+<li>A short course from MIT called <a href="https://missing.csail.mit.edu/2026/">``The missing semester of your CS education''</a>.  Note that this course has a lecture on Agent coding.  However, you should not use agent coding to do the labs for this course. Learn it for your other non-course-related projects.</li>
+<li>A useful guide: <a href="https://github.com/jlevy/the-art-of-command-line">The art of commandline</a>. 
+<li>A very short UNIX command <a href="linux_cheat_sheet.pdf">cheat sheet</a>. </li>
+<li>Ask AI. It is a good use of AI to help you get familiar with UNIX programming environment.</li>
+</ul>
+</div>
 
 <p>
-<h4>Lab Setup Instructions</h4>
+<h4>Lab Setup Preliminary</h4>
 
-<div class="bd-callout bd-callout-warning">
-	<h5>You will be doing labs on the Courant's compute servers</h5>
-	<p>You should have received an email from CIMS Systems Support w.r.t. your account. 
-	<p>You may visit <a href="https://cims.nyu.edu/webapps/password/reset">this link</a> 
-		to view the status of your account and to rest your password 
-		if needed.</p>
-	<p>
+<ul>
+<li><b>If you use a Windows laptop,</b> do the following 4 steps:
+<ol>
+<li>Install <a href="https://learn.microsoft.com/en-us/windows/wsl/install">the Windows Subsystem for Linux (WSL)</a>. Make sure you install/upgrade WSL2 before proceeding.
+<li>Install <a href="https://docs.docker.com/desktop/setup/install/windows-install/">Docker Desktop for Windows</a>.
+<li>Install Linux with WSL by following these <a href="https://learn.microsoft.com/en-us/linux/install#install-linux-with-windows-subsystem-for-linux">instructions</a>.  
+Choose <b>Ubuntu</b> as your Linux distribution. 
+<li>Restart your machine.
+</ol>
+
+<p><b>Important: </b> All commands you follow for the labs should be done within WSL (aka by first typing <kbd>wsl</kbd> in PowerShell).
+</li>
+<li><b>If you use a Mac laptop...</b>:
+<ol>
+<li>Install <a href="https://docs.docker.com/desktop/setup/install/mac-install/">Docker</a>.</li>
+</ol>
+</li>
+
+</ul>
+
+<h4 id="repo">Setting up Git Repository</h4>
+
+<div class="bd-callout bd-callout-info">
+	<h5>Learn to use <tt>git</tt></h5>
+	<p>Git is a version control system. It allows you to save versions of your work over time. It's like a time machine plus a teamwork system for your program files, where you track changes and safely experiment and collaborate without chaos. 
+	<p>Eddie Kohler has an excellent <a href="https://cs61.seas.harvard.edu/site/2025/git/">guide</a> on Git. You should read it.
+    <p>This course uses <a href="https://github.com">Github</a> to distribute and collect labs. Github is a cloud storage plus other useful project management tools for code using git.
 	</ul>
 </div>
 
-<a href="#login">Log into Courant's servers from your laptop<br> 
-<!--
-  <span class="glyphicon glyphicon-star"></span><a href="#vm-faq">FAQs on setting up VirtualBox</a><br>
-  -->
-<a href="#repo">Set up Git repository</a><br>
-<span class="glyphicon glyphicon-star"></span><a href="#git-faq">FAQs on gits</a><br>
-
-
-<p>
-<h4 id="login">Log into CIMS servers from your laptop</h4>
-
-<h5>Windows laptop:</h5>
-
-<p>You should use the Chrome secure shell extension to log into Courant servers.</p>
-
-<p>Make sure you have <a href="https://google.com/chrome">Google Chrome browser</a> installed.</p>
-
-<p>Download and install <a href="https://chrome.google.com/webstore/detail/secure-shell/iodihamcpbpeioajjeobimgagajmlibd?hl=en">Chrome secure shell extension</a> </p>
-
-<p>Launch Chrome, then open the extension by clicking the extension icon, 
-	followed by clicking "Connection Dialog". </p>
-<p><img src="chrome_ext.png" width=500></img></p>
-<p><img src="chrome_ext_ssh.png" width=500></img></p>
-
-<p></p>
-
-<p>You should do the labs on Courant's Compute Server called 
-	<tt>snappy1.cims.nyu.edu</tt>. 
-	To log in snappy1, you must go through a gateway host called 
-	<tt>access.cims.nyu.edu</tt> first by 
-	filling in the following information after opening the secure shell extension. 
-	Note: Substitute <tt>your-cims-username</tt> with your Courant computer account username.</p>
-	
-<p><img src="ssh_access_cims.png" width=500></img></p>
-
-<p>After you have logged into <tt>access.cims.nyu.edu</tt>. Type in the following command to log into snappy1.cims.nyu.edu</p>
-<pre>access$ ssh snappy1</pre></p>
-
-<h5>Mac Laptop:</h5>
-
-<p>You can use the native Mac terminal to log into Courant servers.</p>
-
-<p>Launch a Mac terminal</p>
-
-<p>Log into the Courant gateway host by typing the command <tt>$ ssh access.cims.nyu.edu</tt></p>
-
-<p>Continue on logging into snappy1 by typing <pre>access$ ssh snappy1</pre></p>
-
-<h5>Using commandline</h5>
-Once you've logged into snappy1, you'll need to use UNIX commands to navigate the file systems, launch programs, editors and so forth. Getting familiar with the UNIX commandline is an indispencible skill for any CS student. You can learn more about command line <a href="https://github.com/jlevy/the-art-of-command-line">here</a>.  You may also find this one-page <a href="linux_cheat_sheet.pdf">cheatcheet</a> handy.
-
 <p>
 
-<h4 id="repo">Setting up Git Repository</h4>
 <p>For each student in the class, we have created for him/her a corresponding private
 lab repository on Github.com. You will submit labs by pushing to your private
 repo on github.com (as many times as you want) and then submitting them via Gradescope.
