@@ -113,7 +113,7 @@ def output_header():
         <h3>Computer Systems Organization</h3>
 		</div>
 		<div class="row">
-			CSCI-UA.0201(007), Fall 2026
+			CSCI-UA.0201(007), Spring 2026
 		</div>
 		</div>
 	</div>

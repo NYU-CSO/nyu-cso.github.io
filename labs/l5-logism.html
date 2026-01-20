@@ -47,36 +47,29 @@
 <h2> Lab-5: Introduction to Logism</h2>
 
 
-<h4>Acknowledgement</h4>
-This lab is based on Berkeley's CS61c.
-
 <h3>Setup</h3>
 
-<p><font color="red">Unlike the previous labs which are done on snappy1, you can do this lab on your local Mac or Windows laptop.</font>
+<p>
 Follow the following 3 setup steps to download the required files.
 
-<p>Step-1: Clone your Lab 5 repository 
-<ul>
-  <li>First, make your github repository by clicking the Github classroom invitation link (found on campuswire).
-  <li>Second, clone your github repository on your laptop
-      <pre>
-    $ git clone git@github.com:nyu-cso-fa22/lab5-&lt;YourGithubUsername&gt;.git  lab5
-    </pre>
-</ul>
+<ol>
+<li>Clone your Lab 5 repository as before. Click Github classroom assignment invitation link (found on Campuswire) and then type:
+<pre>
+$ git clone git@github.com:nyu-cso-sp26/lab5-&lt;YourGithubUsername&gt;.git lab5
+</pre>
+</li>
 
-<p>If your local laptop does not have git already installed, follow the instructions <a href="https://github.com/git-guides/install-git">here</a> to install git.
-</p>
+<li>If your laptop does not have java already installed, you need to install Java runtime.  Follow the instructions <a href="https://www.java.com/en/download/">here</a>.
 
-<p>Step-2: If your laptop does not have java already installed, you need to install Java runtime.  Follow the instructions <a href="https://www.java.com/en/download/">here</a>.
-
-<p>Step-3: Launch Logism Evolution.  On Windows, you can directly click the <tt>logisim-evolution-2.15.jar</tt> file in your local lab5 repository. 
-On Mac, open a terminal, navigate to your lab5 repository directory which contains the <tt>logisim-evolution-2.15.jar</tt> file, and type the command:
-
+<li>Launch Logisim Evolution.  On Windows, you can directly click the <tt>logisim-evolution-2.15.jar</tt> file in your local lab5 repository. 
+On Mac, open a terminal, navigate to your lab5 repository directory which contains the <tt>logisim-evolution-2.15.jar</tt> file, and type the command.
+Afterwards, you will see the Logisim's GUI interface pop up.
 <pre>
 java -jar logisim-evolution-2.15.jar
 </pre>.
 
-<p>You will see the Logisim's GUI interface pop up.
+</li>
+</ol>
 
 
 <div class="bd-callout bd-callout-danger"><h5>Warning: Save often with Logism</h5>
@@ -208,7 +201,7 @@ Checking Mux4to1... OK
 <p>If you use a Windows laptop, you will have to run the test on snappy1.  To do so, follow the following 3 steps:
 <ul>
   <li>First, on your windows laptop, push your local changes to github using <pre>git commit -am "..."; git push origin</pre>
-  <li>Second, on snappy1, clone your lab5 directory (if you have not done so). <pre>git clone git@github.com:nyu-cso-fa22/lab5-&lt;YourGithubUsername&gt;.git </pre>
+  <li>Second, on snappy1, clone your lab5 directory (if you have not done so). <pre>git clone git@github.com:nyu-cso-sp26/lab5-&lt;YourGithubUsername&gt;.git </pre>
       Pull the changes into into this repository. <pre>git pull</pre>
   <li>Third, on snappy1, navigate to the lab5 repository, and type <pre>./test.sh part1</pre>.  
 </ul>
