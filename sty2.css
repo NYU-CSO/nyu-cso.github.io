@@ -9,6 +9,14 @@ font: monospace;
 font-size: 85%;
 margin: 1em;
 padding: 1em;
+background-color: #f2f2f2; 
+}
+
+cmd {
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono",
+                   "Courier New", monospace;
+      color: #17a2b8;      
+      font-size: 0.9em; 
 }
 
 pre code { 

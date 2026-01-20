@@ -93,6 +93,16 @@ This course assumes familiarity of the UNIX environment as course pre-requisite.
 <p>
 <h4>Lab Setup Preliminary</h4>
 
+We use Docker for doing labs so everyone has the same Linux (Unix) enviroment, whether you are on a Mac, Windows or other kind of laptops. 
+
+<p>Docker gives you a pre-built lab environment that includes:
+<ul>
+<li>the required Unix tools</li>
+<li>the right C compiler and debugger</li>
+<li>x86_64 architecture environment (what this class is targeting)</li>
+</ul>
+
+<h5>Install Docker Desktop</h5>
 <ul>
 <li><b>If you use a Windows laptop,</b> do the following 4 steps:
 <ol>
@@ -103,7 +113,7 @@ Choose <b>Ubuntu</b> as your Linux distribution.
 <li>Restart your machine.
 </ol>
 
-<p><b>Important: </b> All commands you follow for the labs should be done within WSL (aka by first typing <kbd>wsl</kbd> in PowerShell).
+<p><b>Important: </b> All commands you follow for the labs should be done within WSL (aka by first typing <cmd>wsl</cmd> in PowerShell).
 </li>
 <li><b>If you use a Mac laptop...</b>:
 <ol>
@@ -113,71 +123,117 @@ Choose <b>Ubuntu</b> as your Linux distribution.
 
 </ul>
 
-<h4 id="repo">Setting up Git Repository</h4>
+<h5>Creating and Running CSO Docker image</h5>
+
+<p><b>Reminder:</b> if your laptop is Windows, type all the commands within WSL.
+
+<p>Do the following:
+<ul>
+<li>Open a terminal and create <tt>cso-labs</tt> directory to hold all your lab related files.
+<pre>
+$ mkdir cso-labs
+$ cd cso-labs
+</pre>
+
+<li>Download the configuration file for creating the required Docker image.
+<pre>
+$ git clone https://github.com/NYU-CSO/cso-docker.git
+</pre>
+
+<li>Create the Docker image. The following command will take a while (several minutes).
+<pre>
+$ docker build --platform=linux/amd64 -f cso-docker/Dockerfile -t cso_x86:latest .
+</pre>
+
+<li>Create and start a new container from the image.
+<pre>
+$ docker run  --platform=linux/amd64 -it --rm -v "$HOME/cso-labs":/cso-labs -w /cso-labs cso_x86:latest
+</pre>
+The above <cmd>docker run</cmd> command uses several commandline options:
+<ul> 
+<li><cmd>--platform=linux/amd64</cmd> forces the container to run an x86_64 (aka amd64) Linux. On a Windows laptop with Intel or AMD CPU, it runs normally. On a Mac laptop with Apple-silicon (M-series CPUs), Docker will run the container using x86_64 emulation, so programs inside the container behave like they are running on a x86_64 CPU.
+<li><cmd>-it</cmd> combines two flags: <cmd>-i</cmd> (short for iterative) keeps STDIN open so you can keep typing commands and <cmd>-t</cmd> allocates a terminal so it feels like a normal shell.
+<li><cmd>--rm</cmd> automatically deletes the container when you exit, avoiding the clutter of lots of stopped and disused container.
+<li><cmd>-v "$HOME/cso-labs":/cso-labs</cmd> mounts a host folder (<tt>$HOME/cso-labs</tt>) into a folder in the container (as <tt>cso-labs/</tt>).
+<li><cmd>-w /cso-labs</cmd> sets the working directory inside the container so when the container starts you begin in <tt>cso-labs</tt> instead of the root directory <tt>/</tt>
+</ul>
+
+
+<li>Test some commands on your newly running container by typing
+<pre>
+$ uname -a
+</pre>
+
+<li>To stop the running (iterative) container, you type <cmd>exit</cmd> or press Ctrl-D.
+
+<li>
+<b>(Optional)</b>. Lastly, you could add an alias to the long docker run command to avoid having to remember and type the many command options. To do so:
+<ul>
+<li>(With Docker container stopped) Find out which shell you are running by typing:
+<pre>
+$ echo $SHELL
+</pre>
+
+<li>If your shell is zsh, edit <tt>~/.zshrc</tt>. If it's bash, edit <tt>~/.bash_profile</tt>. Add an alias to the right file (the following assumes your shell is zsh) and reload:
+<pre>
+$ echo 'alias x86lab="docker run  --platform=linux/amd64 -it --rm -v \"$HOME/cso-labs\":/cso-labs -w /cso-labs cso_x86:latest"' >> ~/.zshrc
+$ source ~/.zshrc
+</pre>
+
+<li>Now you can type <cmd>x86lab</cmd> as a shorthand for the long docker run command.
+
+</ul>
+
+</ul>
+
+<h4 id="repo">Setting up Git and Github</h4>
 
 <div class="bd-callout bd-callout-info">
 	<h5>Learn to use <tt>git</tt></h5>
 	<p>Git is a version control system. It allows you to save versions of your work over time. It's like a time machine plus a teamwork system for your program files, where you track changes and safely experiment and collaborate without chaos. 
 	<p>Eddie Kohler has an excellent <a href="https://cs61.seas.harvard.edu/site/2025/git/">guide</a> on Git. You should read it.
+	<p>You can find other comprehensive sources to study <a href="https://docs.github.com/en/get-started/start-your-journey/git-and-github-learning-resources">here</a>.
     <p>This course uses <a href="https://github.com">Github</a> to distribute and collect labs. Github is a cloud storage plus other useful project management tools for code using git.
 	</ul>
 </div>
 
-<p>
+<p><b>Create a Github account</b> if you do not already have one.  The Free plan is perfectly fine.
 
-<p>For each student in the class, we have created for him/her a corresponding private
-lab repository on Github.com. You will submit labs by pushing to your private
-repo on github.com (as many times as you want) and then submitting them via Gradescope.
-
-<p>
-Below are the steps
-for setting up your the lab environment on <tt>snappy1</tt>.  If you are not
-familiar with the <tt>git</tt> version control system,  follow the resources <a
-href="https://help.github.com/articles/good-resources-for-learning-git-and-github/">here</a>
-to get started.
-
-<p><b>Preparation: set up ssh-based logins to github</b>.  This is needed as github no longer accepts password-based commandlines.
+<p><b>Set up ssh-based logins to Github</b>.  
 <ul>
-  <li>On snappy1, generate a pair of ssh keys by typing:
+  <li>In your Mac terminal or Windows WSL, generate a pair of ssh keys by typing:
     <pre>
-    snappy1$ ssh-keygen
+    $ ssh-keygen -t rsa -b 2048
     </pre>
     <p>Hit [Enter] a couple of times until you see that the keys have been saved in the files, like the example below</p>
       <p><img src="ssh-keygen.png" width=600></img></p>
   </li>
   <li>Display the contents of the public key portion of the key pair by typing the following. You'll need to copy-n-paste this content to github website</p>
       <pre>
-      snappy1$ cat ~/.ssh/id_rsa.pub
+      $ cat ~/.ssh/id_rsa.pub
       </pre>
     <img src="ssh-pub.png" width=800></img></p>
 
   </li>
-  <li>Enter public key information in github.  To do so, use the browser on your laptop to log into <a href="https://github.com">github website</a>.  Click the icon on the top right corner to pull down a menu, then click "Settings".  On the settings page, click "SSH and GPG keys" on the left-side menu, then click the green button named "New SSH key".  Type <tt>snappy1</tt> in the textbox named "Title".  Copy-n-paste the content of your previously generated public key to the textbox named "Key". Then, click "Add SSH key".
+  <li>Enter public key information in github.  To do so, use the browser on your laptop to log into <a href="https://github.com">github website</a>.  Click the icon on the top right corner to pull down a menu, then click "Settings".  On the settings page, click "SSH and GPG keys" on the left-side menu, then click the green button named "New SSH key".  Type any name (e.g. your laptop's name) in the textbox named "Title".  Copy-n-paste the content of your previously generated public key to the textbox named "Key". Then, click "Add SSH key".
 
       <p><img src="github-ssh.png" width=900></img></p>
   </li>
 </ul>
 
-<p> <b>Cloning your lab repo on snappy1</b>
+<p> <b>Cloning your lab repo locally</b>
 <p>
 	<li> Create a github private repository by clicking on each lab's invitation link (posted in Campuswire).  Select your NYU NetID to link your github account and create your lab repository on Github.
   </li>
 
-  <p>
-  <li>On snappy1, we recommend you create a directory to hold all your cloned lab repositories. 
-  <pre>
-  snappy1$ mkdir cso-labs
-  </pre>
-  </li>
-
-  <li> On snapy1, clone your repo by typing the following (the following example is for the first lab).
-    <pre >
-snappy1$ cd cso-labs
-snappy1$ git clone git@github.com:nyu-cso-fa22/clab-part1-&lt;YourGithubUsername&gt;.git clab-part1
-    </pre>
+  <li> On your laptop, clone your repo by typing the following (the following example is for clab part1).
+<pre>
+$ cd cso-labs
+$ git clone git@github.com:nyu-cso-sp26/clab-part1-&lt;YourGithubUsername&gt;.git clab-part1
+</pre>
     <p>
-    You will see that a directory named <tt>lab1</tt> has been created under the <tt>cso-labs</tt> directory.
-    This is the git repo for your lab assignment 1. Other labs can be created similarly by cloning respective repositories.
+    You will see that a directory named <tt>clab-part1</tt> has been created under the <tt>cso-labs</tt> directory.
+    This is the git repo for your clab assignment (part 1). Other labs can be created similarly by cloning respective repositories.
   </li>
 
 </ul>
@@ -191,7 +247,7 @@ set up your own lab repo to track the changes made in the <tt>cso-labs</tt> repo
 In the git world, <tt>cso-labs</tt> would be your "upstream" repo from which changes 
 should ``flow'' into your own lab repo.
 
-<p>Type <kbd>git remote add</kbd> to add the upstream repo, and <kbd>git remote -v</kbd> to check that <tt>cso-labs</tt> is indeed an upstream for your own lab repo.
+<p>Type <cmd>git remote add</cmd> to add the upstream repo, and <cmd>git remote -v</cmd> to check that <tt>cso-labs</tt> is indeed an upstream for your own lab repo.
 <pre >
 $ git remote add upstream https://github.com/nyu-cso-fa19/cso-labs.git
 $ git remote -v
@@ -214,8 +270,8 @@ We will also remind you to fetch upstream on Piazza if we make changes/bug-fixes
 
 <p>We recommend using <tt>nano</tt></b>. For example, if you want to change file <tt>array.c</tt>, type the following:
 <pre>
-	snappy1$ cd cso-labs/clab-part1
-	snappy1$ nano array.c
+$ cd cso-labs/clab-part1
+$ nano array.c
 </pre>
 
 <p><b>Saving changes to Github while you are working on Labs</b>
@@ -235,20 +291,20 @@ Otherwise, the file will not be committed by git commit. Make git track a new fi
 $ git add &lt;my-new-file&gt;
 </pre>
 
-<p>After you've pushed your changes by typing <kbd>git push origin master</kbd>, they are safely stored on github.com.
+<p>After you've pushed your changes by typing <cmd>git push origin master</cmd>, they are safely stored on github.com.
 Even if your laptop catches on fire in the future, those pushed changes can still be retrieved.
-However, you must remember that doing <kbd>git commit</kbd> by itself does not save your changes on github.com 
-(it only saves your changes locally).  So, don't forget to type <kbd>git push origin master</kbd>.
+However, you must remember that doing <cmd>git commit</cmd> by itself does not save your changes on github.com 
+(it only saves your changes locally).  So, don't forget to type <cmd>git push origin master</cmd>.
 
 <p>
 To see if your local repo is up-to-date with your origin repo on github.com and vice versa, type
-<kbd>git status</kbd>
+<cmd>git status</cmd>
 
 <p>
 <div class="bd-callout bd-callout-info">
 <h5 id="git-faq">FAQs on Git repository</h5>
 <ul>
-	<li><b>What message should I fill in for <kbd>git commit -am "message"</kbd></b>
+	<li><b>What message should I fill in for <cmd>git commit -am "message"</cmd></b>
 		<p>The <tt>"message"</tt> can be any string. But we ask you to leave something descriptive as message. In the future, when you check your git logs, this message helps you recall what you did for this commit. We (CSO staff) will never read your commit message. It's not going to affect grading.
 	</li>
  
@@ -257,8 +313,8 @@ To see if your local repo is up-to-date with your origin repo on github.com and 
 	</li>
  
 	<li>I got an error message <tt>Fatal: Not a git repository</tt> (or any of the parent directories).</b>
-	<p> This means you are typing git commands outside the directory containing your git repository. You need to type <kbd>cd recitations-XXX</kbd>, where XXX is your GitHub username.
-	Remember to always type most git commands inside git repository. Commands like <kbd>git clone</kbd>, <kbd>git config --global</kbd> can be issued anywhere.
+	<p> This means you are typing git commands outside the directory containing your git repository. You need to type <cmd>cd recitations-XXX</cmd>, where XXX is your GitHub username.
+	Remember to always type most git commands inside git repository. Commands like <cmd>git clone</cmd>, <cmd>git config --global</cmd> can be issued anywhere.
 	</li>
  
 	<li><b>Can I edit files through GitHub.com?</b>
@@ -269,9 +325,9 @@ Please only use GitHub.com for read-only access, i.e. checking if all your chang
 	<li><b>When I do <tt>git pull</tt>, I got an error <tt>Repository not found</tt>.</b>
 Check the repository address, there should be no quotes (") or angle brackets (&lt; &gt;). The lab instructions use quotes or angle brackets to mark a placeholder for your GitHub username.
 If <tt>git pull upstream master</tt> fails, then check upstream address by typing
-<kbd>git remote -v</kbd>
+<cmd>git remote -v</cmd>
     To edit your upstream address, remove it first by typing
-    <kbd>git remote remove upstream</kbd>, and then add it back with <kbd>git remote add</kbd>
+    <cmd>git remote remove upstream</cmd>, and then add it back with <cmd>git remote add</cmd>
 </div>
 
 <h4 id="handin">Handin Procedure</h4>
@@ -295,6 +351,8 @@ And upload the file <tt>submitfiles.zip</tt> to Gradescope assignment's submissi
 The above command produces <tt>submitfiles.zip</tt> which you can upload for Gradescope assignment submission.
 </ul>
 
+<h4>Acknowledgements</h4>
+Some part of this material is based on the lab setup instructions in Prof. Michael Walfish's CS202.
 
 <hr>
 </div>
