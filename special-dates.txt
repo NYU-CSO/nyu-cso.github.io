@@ -1,8 +1,11 @@
-#date; classday (0 for Mon, 1 for Tue etc, -1 for no class); description 
-2/16;-1; Presidents' day (no class)
-2/17;0; Legislative Monday 
-3/16;-1; Spring Break
-3/18;-1; Spring Break
-5/6;-1; Reading day (no class)
+#date; Append the next lecture (lecture is on)
+2/16;-1; <font color="red">Presidents' day (no class)</font>
+2/17;0; <font color="green">Legislative Monday </font>
+2/20;-1; Recitation: <font color="green"><b>Test-1 (C Programming)</b></font>
+3/16;-1; <font color="red">Spring Break</font>
+3/18;-1; <font color="red">Spring Break</font>
+4/10;-1; Recitation:<font color="green"><b>Test-3 (Dynamic Mem Alloc)</b></font>
+4/24;-1; Recitation:<font color="green"><b>Test-4 (Basic Logic Design and Architecture)</b></font>
+5/6;-1; <font color="red">Reading day (no class)</font>
 5/7;-1; 
-5/8;-1; Final Exam 
+5/8;-1; <font color="green"><b>Final Exam </b></font>

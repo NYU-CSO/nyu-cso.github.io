@@ -39,14 +39,14 @@ def get_special_dates(fname):
         if len(f) != 3:
             print(line, " special dates should have exactly 3 fields (date, have-regular-class, info)")
             sys.exit(1)
-        (month, day)= f[0].split('/')
-        l = {'month':month, 'day':day, 'classday':int(f[1]), 'description':"<font color=\"red\">"+f[2]+"</font>"}
+        dt = datetime.datetime.strptime(f[0], "%m/%d").replace(year=datetime.datetime.now().year)
+        l = {'dt':dt, 'lec_day': int(f[1]), 'description':f[2]}
         dates.append(l)
     return dates
 
 def is_special(special_dates, d):
     for sd in special_dates:
-        if d.month == int(sd['month']) and d.day == int(sd['day']):
+        if sd['dt'].date() == d:
             return sd
     return None
 
@@ -193,11 +193,11 @@ if __name__ == '__main__':
         lec = ""
         labinfo= ""
 
-        specialLec = is_special(special_dates, d)
+        special = is_special(special_dates, d)
 
         #skip no class dates
-        #if (specialLec != None and specialLec['classday'] < 0) or (specialLec is None and is_lecture_day(d.weekday()) is False and is_recitation_day(d.weekday()) is False):
-        if specialLec is None and is_lecture_day(d.weekday()) is False and is_recitation_day(d.weekday()) is False:
+        #if (special != None and special['lec_day'] < 0) or (special is None and is_lecture_day(d.weekday()) is False and is_recitation_day(d.weekday()) is False):
+        if special is None and is_lecture_day(d.weekday()) is False and is_recitation_day(d.weekday()) is False:
             d = d + datetime.timedelta(1) # go to next day
             if d.weekday() == 6: # terminate week container on Sunday
                 print("</div> <!--dark/light-->\n")
@@ -207,12 +207,12 @@ if __name__ == '__main__':
         weekday_str = d.strftime("%a")
         print(f'   <div class=\"col-sm-2\">{d.month}/{d.day} <span style="color:#888; font-size:0.85em;">{weekday_str}</span></div>')
 
-        if (specialLec is not None and is_lecture_day(specialLec['classday'])) or (specialLec is None and is_lecture_day(d.weekday())):
+        if (special is not None and special['lec_day'] >= 0) or (special is None and is_lecture_day(d.weekday())):
             try:
                 l = lectures[which]
                 print("   <div class=\"col-sm-4\">", end=" ")
-                if specialLec is not None:
-                    print(f'{specialLec["description"]}<br>', end=" ") 
+                if special is not None:
+                    print(f'{special["description"]}<br>', end=" ") 
                 print(l['lec'], end=" ")
                 if l.get('note') == '' or d > datetime.date.today():
                     print("  </div>")
@@ -223,17 +223,17 @@ if __name__ == '__main__':
                 print(f"IndexError: {e}")
 
             which = which+1
-        elif (specialLec is not None and is_recitation_day(specialLec['classday'])) or (specialLec is None and is_recitation_day(d.weekday())):
+        elif (special is not None and is_recitation_day(special['lec_day'])) or (special is None and is_recitation_day(d.weekday())):
             print("   <div class=\"col-sm-4\"> ", end="")
-            if specialLec is not None:
-                print("%s<br>" % (specialLec['description']), end="")
+            if special is not None:
+                print("%s<br>" % (special['description']), end="")
             print("<a href=\"rec-notes/r%02d.pdf\"><em>recitation%02d</em></a></div>" % (recitation, recitation), end="") 
             print("   <div class=\"col-sm-4\"></div>") # empty prepare for recitation
             recitation = recitation + 1
-        elif specialLec is not None and specialLec['classday'] < 0:
-            print(f'   <div class=\"col-sm-4\">{specialLec["description"]}</div>', end=" ")
+        elif special is not None and special['lec_day'] < 0:
+            print(f'   <div class=\"col-sm-4\">{special["description"]}</div>', end=" ")
             print("   <div class=\"col-sm-4\"></div>")
-        elif specialLec is not None and specialLec['classday'] >=0:
+        elif special is not None and special['lec_day'] >=0:
             assert False
  
 #        labDue = is_special(lab_due_dates, d)

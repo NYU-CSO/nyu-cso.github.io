@@ -1,7 +1,6 @@
 Overview;01-overview.pdf;[PH] 1;
 Bits,Bytes,Ints;02-bits_bytes_int.pdf;[PH]2.4 or [BO]2.1-2.3;
 Floats;03-floats.pdf;[PH]3.5 or [BO]2.4;
-Floats continued;03-floats.pdf; [KR]1-4;
 C: overview, bitwise;04-C_Basics.pdf;[KR]5;<a href="https://www.recurse.com/blog/5-learning-c-with-gdb">[C with GDB]</a>
 C: pointers and arrays;05-pointer_array.pdf;[KR]5;<a href="https://www.recurse.com/blog/5-learning-c-with-gdb">[C with GDB]</a>
 C: characters and strings;06-string-struct-malloc.pdf; [KR]5,7 [PH]2.9;
@@ -13,8 +12,8 @@ Machine Prog: Control;08-Machine_Control.pdf; [BO] 3.6;
 Machine Prog: Procedures;10-Machine_Procedure.pdf; [BO] 3.7;
 Machine Prog: Data;09-Machine_Data.pdf; [BO] 3.8-3.9;
 Machine Prog: SegFault and Buffer Overflow;11-machine-layout-overflow.pdf; [BO]3.10;
-midterm;;;
-Linking;13-optimization-linking.pdf;[BO]5.1-5.6;
+Code Optimization and Linking;13-optimization-linking.pdf;[BO]5.1-5.6;
+<font color="green"><b>Test-2 (Binary lab and machine programming)</b></font>;;;
 Dynamic Memory Allocation;14-Dynamic_Allocator.pdf;[BO] 9.9;
 Dynamic Memory Allocation Cont;14-Dynamic_Allocator.pdf;[BO] 9.9;
 Dynamic Memory Allocation Cont;14-Dynamic_Allocator.pdf;[BO] 9.9;
@@ -26,3 +25,4 @@ Architecture: Seq cont, Pipelining;arch-simple2-pipeline.pdf; [PH]4.1-4.4;
 Architecture: Pipelined impl;arch-cpu-pipeline.pdf; [PH]4.5-4.7;
 Cache;arch-mem.pdf;[PH] 5.1-5.4;
 Virtual Memory;arch-mem2.pdf;[PH] 5.1-5.4;
+Virtual Memory II;arch-mem2.pdf;[PH] 5.1-5.4;
