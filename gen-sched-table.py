@@ -214,7 +214,8 @@ if __name__ == '__main__':
                 if special is not None:
                     print(f'{special["description"]}<br>', end=" ") 
                 print(l['lec'], end=" ")
-                if l.get('note') == '' or d > datetime.date.today():
+                if l.get('note') == '': 
+                    #or d > datetime.date.today():
                     print("  </div>")
                 else:
                     print("  [<a href=\"notes/%s\">note</a>]</div>" % (l.get('note')))
