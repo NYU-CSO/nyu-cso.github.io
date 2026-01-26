@@ -145,7 +145,7 @@ $ git clone https://github.com/NYU-CSO/cso-docker.git
 $ docker build --platform=linux/amd64 -f cso-docker/Dockerfile -t cso_x86:latest .
 </pre>
 
-<li>Create and start a new container from the image.
+<li id="start">Create and start a new container from the image.
 <pre>
 $ docker run  --platform=linux/amd64 -it --rm -v "$HOME/cso-labs":/cso-labs -w /cso-labs cso_x86:latest
 </pre>
