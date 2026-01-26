@@ -74,8 +74,9 @@ You may read other files but you must not change them.</tt></span>.
 <p>
 Complete the exercises in files <tt>bitfloat.c</tt>, <tt>ptr.c</tt>, <tt>array.c</tt>, in order. It is recommended that you complete and test the exercises in each file individually before moving on to the next. For example, suppose you have completed the exercise in <tt>bitfloat.c</tt>.  You can test by first launching the lab's docker container (see instructions <a href="https://nyu-cso.github.io/labs/index.html#start">here</a>).  Once you a prompt like <gbd>student@3694b47269f3:/cso-labs$</a>, you know you are inside the running container.  Test by typing the following:
 <pre >
-student@3694b47269f3:/cso-labs$ make
-student@3694b47269f3:/cso-labs$ ./clab_test
+student@3694b47269f3:/cso-labs$ cd lab1
+student@3694b47269f3:/cso-labs/lab1$ make
+student@3694b47269f3:/cso-labs/lab1$ ./clab_test
 Bit at pos 0 of int 1 should be 1 (returned 23)
 ---Start testing bitfloat.c
       get_bit_at_pos...
@@ -87,7 +88,7 @@ Complete and test each part individually before moving on to the next one.
 
 <p>Once you've passed all the tests, you should see this (note that <tt>get_precision</tt> is a bonus problem):
 <pre >
-student@3694b47269f3:/cso-labs$ ./clab_test
+student@3694b47269f3:/cso-labs/lab1$ ./clab_test
 ---Start testing bitfloat.c
       get_bit_at_pos...passed
       flip_bit_at_pos...passed
