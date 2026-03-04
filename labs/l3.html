@@ -46,77 +46,56 @@
 
 <h2> Lab-3: Binary Mystery</h2>
 
-<p>
-<p>
-In this lab, we give you 5 object files, <tt>ex1_sol.o, ex2_sol.o, ...,
-ex5-sol.o</tt>, and withhold their corresponding C
-sources. 
+For this lab, you need to use a native x86 Linux machine instead of inside a docker container.
+<a href="l3.html#login">First</a>, you follow instructions below to log into such a Linux server maintained by CIMS.
+<a href="l3.html#clone">Next</a>, you clone the lab's repository on this CIMS Linux server.
+<a href="l3.html"#dolab">Finally</a>, you can follow the instructions to do the lab on the CIMS Linux server.
 
-Each object file implements a particular mystery function (e.g. <tt>ex1_sol.o</tt> 
-implements the function <tt>ex1</tt>).  We ask you to deduce what these mystery functions do based on their x86-64 assembly code and write the corresponding C function that accomplishes the same
-thing for each of the five functions.
+<p>
+<h4 id="login">Log into a CIMS Linux server from your laptop</h4>
 
-<h3>Obtaining the lab</h3>
+<p>You will do the lab on a CIMS server called <tt>snappy2.cims.nyu.edu</tt>, which you access via a gateway host called 
+<tt>access.cims.nyu.edu</tt>.  To do so, open a terminal on your laptop (if you use Windows, type <tt>wsl</tt> in PowerShell).
+
+<pre>$ ssh <NetID>@access.cims.nyu.edu
+[Enter your password. Then select 1 or 2 for further authentication]
+</pre>
+
+<p>Continue to log into <tt>snappy1</tt> by typing <pre>[netid@access2 ~]$ ssh snappy2</pre></p>
+
+<h3 id="clone">Cloing the lab repository</h3>
 <p>
 
 <p> First, click on Lab3's github classroom invitation link (posted on Campuswire) and select your NYU netid.  Next, clone your repo by typing the following
 <pre >
-$ cd cso-labs
-$ git clone git@github.com:nyu-cso-sp26/lab3-&lt;YourGithubUsername&gt;.git  lab3
+snappy2$ mkdir -p cso-labs
+snappy2$ cd cso-labs
+snappy2$ git clone git@github.com:nyu-cso-sp26/lab3-&lt;YourGithubUsername&gt;.git  lab3
 </pre>
 
-<p>
-This lab's files are 
-located in the <tt>lab3/</tt> subdirectory.  You will write code for files <tt>ex{1-5}.c</tt>.
+<h3 id="dolab">Do lab3 by uncovering the mystery of x86 assembly</h3>
 
-<h3>Uncover the mystery of assembly</h3>
-<p>
-The object files whose assembly code you seek to understand are <tt>ex1_sol.o</tt>, <tt>ex2_sol.o</tt> and so on, located under <tt>objs/</tt> sub-directory.  
-File <tt>ex1_sol.o</tt> implements mystery function <tt>ex1</tt>; file <tt>ex2_sol.o</tt> implements function <tt>ex2</tt> and so on.
-Your goal in this lab is to figre out what mystery function <tt>ex1</tt> does, and write its corresponding C code 
-in file <tt>ex1.c</tt>; figure out what mystery function <tt>ex2</tt> does, and write its corresponding C code in file <tt>ex2.c</tt>, and so on.
+The lab contains two parts. In <a href="l3.html#p1">part-1</a>, you reconstruct semantically equivalent C functions based on their assembly and execution. In <a href="l3.html#p2">part-2</a>, you perform a control flow hijacking attack by exploiting a buffer overflow vulnerability in the given program.
+
+<h4 id="p1">Part-1: Reconstruct equivalent C code from assembly </h4>
+
+<p> In this part, you are to reconstruct five C functions by examining their corresponding machine code and running the executable in <tt>gdb</tt>.
+
+<p>The five C functions you are to reconstruct are named <tt>ex[1-5](...)</tt>. We have compiled their C implementation into object files <tt>ex[1-5]_sol.o</tt> and withheld the source code.
+We have also implemented a tester that tests these five functions using various inputs. The tester's binary <tt>tester_sol</tt> is also given to you. If you make and run <tt>tester_sol</tt>, you should 
+see that it passes all tests, as expected.  
+
+<p>Figure out what each function <tt>ex[1-5></tt> does according to <a href="l3.html#p1_hints">hints</a>, and write the corresponding C code in <tt>ex[1-5].c</tt>.
 
 <div class="bd-callout bd-callout-danger"><h5>No goto's</h5> For this lab,
   the only files that you should modify are <tt>ex[1-5].c</tt>. Furthermore, your implementation should not contain any <tt>goto</tt> statements.
 </span>.
 </div>
 
+<h5>Test your solution</h5>
 
-<p>
-Suppose you set out to figure out what function <tt>ex1</tt> (implemented in <tt>ex1_sol.o</tt>) does.  There are two approaches to do this. You should use them <b>both</b> to help uncover the mystery. 
-
-<ul>
-	<li><b>Approach 1:</b> 
-		<p>Disassemble the object files. Read the assembly to get some initial understanding of what the function tries to achieve. To disassemble <tt>ex1_sol.o</tt>, type:
-<pre>
-$ objdump -d ex1_sol.o
-</pre>
-	</li>
-
-
-	<li><b>Approach 2</b>
-		<p>Run the function <tt>ex1</tt> in gdb.  
-
-		<p>You might wonder how to run <tt>ex1</tt> in gdb, since not knowing the function signature of <tt>ex1</tt> makes it hard to write your own C code to correctly invoke <tt>ex1</tt>.  How to run <tt>ex1</tt> then?  It turns out that you can utilize the tester that we have given you to run <tt>ex1</tt> and observe how it executes.  
-
-    <p>To run the test with the given <tt>ex1</tt> function, you need to link the test object file <tt>tester.o</tt> together with the given <tt>ex{1-5}-sol.o</tt> files.  We have made this step easy by including appropriate Makefile rules. When you type <tt>make</tt>, you will see that it generates two binary executables: <tt>tester</tt>, and <tt>tester-sol</tt>. The executable file <tt>tester</tt> links <tt>tester.o</tt> with object files <tt>ex{1-5}.o</tt> which are generated from <b>your</b> <tt>ex{1-5}.c</tt> files.  The executable file <tt>tester-sol</tt> links <tt>tester.o</tt> with the given object files <tt>ex{1-5}_sol.o</tt>. Thus, when you run <tt>./tester_sol</tt>, the tester invokes the given functions, and needless to say, all tests should pass. 
-
-<p>Run <tt>gdb tester_sol</tt>.  Stop the execution when the function <tt>ex1</tt> is invoked.  Dissemble the function. Execute the instructions one by one. Form some hypothesis on what the function signature is and what it does.  Verify your hypothesis during execution by examining register values and memory contents.  To learn more about gdb, see our gdb tutorial <a href="gdb.html#binary">here</a>.
-</ul>
-
-<p>
-<div class="bd-callout bd-callout-danger">
-	<h5>Do not try to match assembly</h5>
-  <p>It is not the right approach to try to match the object code of your C function line-by-line to those contained in <tt>ex{1-5}-sol.o</tt>.
-Doing so is painful and not necessary.  Differences in the compiler versions, compilation flags, and small differences in C code will 
-all result in different object code, although they do not affect the code's semantics.
-Therefore, trying to find a C function that generates the <i>same</i>
-object code is likely futile.
-</i>
-</div>
-
-<h3>Test your solution</h3>
-After you've finished each function (remember to remove the <tt>assert(0)</tt> statement), you can test its correctness as follows:
+<p>After you've finished each function (remember to remove the <tt>assert(0)</tt> statement), you compile and create a new tester that links to your 
+implementation <tt>ex[1-5].o</tt> instead of <tt>ex[1-5]_sol.o</tt>. You can check whether your reconstructed functions are correct or not by running this new tester:
 <pre>
 $ make
 $ ./tester
@@ -146,6 +125,53 @@ type <tt>./tester -t 2</tt>.  Ditto with other functions.
 <i>Note: Passing the test does not guarantee that your implementation is not necessarily correct.
 During grading, we may manually examine your source code to determine its correctness.</i>
 </p>
+
+
+<h5>Part-1 Hints</h5>
+<p>
+Suppose you set out to figure out what function <tt>ex1</tt> (implemented in <tt>ex1_sol.o</tt>) does.  There are two approaches to do this. You should use them <b>both</b> to help uncover the mystery. 
+
+<ul>
+	<li><b>Approach 1:</b> 
+		<p>Disassemble the object files. Read the assembly to get some initial understanding of what the function tries to achieve. To disassemble <tt>ex1_sol.o</tt>, type:
+<pre>
+$ objdump -d ex1_sol.o
+</pre>
+	</li>
+
+
+	<li><b>Approach 2: (You must master this to do well in test-2) </b>
+		<p>Run the function <tt>ex1</tt> in gdb.  
+
+		<p>You might wonder how to run <tt>ex1</tt> in gdb, since not knowing the function signature of <tt>ex1</tt> makes it hard to write your own C code to correctly invoke <tt>ex1</tt>.  How to run <tt>ex1</tt> then?  It turns out that you can utilize the tester that we have given you to run <tt>ex1</tt> and observe how it executes.  
+
+    <p>To run the test with the given <tt>ex1</tt> function, you need to link the test object file <tt>tester.o</tt> together with the given <tt>ex{1-5}-sol.o</tt> files.  We have made this step easy by including appropriate Makefile rules. When you type <tt>make</tt>, you will see that it generates two binary executables: <tt>tester</tt>, and <tt>tester-sol</tt>. The executable file <tt>tester</tt> links <tt>tester.o</tt> with object files <tt>ex{1-5}.o</tt> which are generated from <b>your</b> <tt>ex{1-5}.c</tt> files.  The executable file <tt>tester-sol</tt> links <tt>tester.o</tt> with the given object files <tt>ex{1-5}_sol.o</tt>. Thus, when you run <tt>./tester_sol</tt>, the tester invokes the given functions, and needless to say, all tests should pass. 
+
+<p>Run by typing <kbd>gdb -x ./.gdbinit tester_sol</kbd>.  The commandline option <tt>-x ./.gdbinit</tt> makes <tt>gdb</tt> load configurations from file <tt>./gdbinit</tt> which we have given to you in the lab's repository. In general, your workflow in <tt>gdb</tt> will usually proceed like the following:
+<ul>
+<li>Set a breakpoint to step the execution whenever the function <tt>ex1</tt> is invoked.  <kbd>(gdb) b ex1</kbd> 
+<li>Run the program until the breakpoint is triggered. <kbd>(gdb) r</kbd>
+<li>Dissemble the function under investigation. <kbd>(gdb) disass ex1</kbd>
+<li>Execute the instructions one by one. <kbd>(gdb) nexti</kbd> 
+<li>Form a hypothesis on what the function signature is. 
+<p> Does the function take any arguments? If so, how many?  Suppose you want to know if <tt>ex1</tt> has at least one argument.  We know a function's first argument is stored in register <tt>%rdi</tt> if there is a first argument.  You can examine the function body of <tt>ex1</tt> to see if it uses register <tt>%rdi</tt> without writing to it first. If so, <tt>ex1</tt> must have a first argument. You can also examine the instructions leading to call of <tt>ex1</tt>. Did the caller write to <tt>%rdi</tt> before the <tt>call</tt> instruction to set up the argument?  If so, that's also indication <tt>ex1</tt> has a first argument.  
+<p>What is the type of each function argument? Is it an integer or a pointer (aka memory address)?  Suppose you want to deduce the type of <tt>ex1</tt>'s first argument. You can examine the content of register <tt>%rdi</tt> while the execution is inside <tt>ex1</tt>. Type <kbd>(gdb)info registers</kbd> which gives you the content of all registers. You can also print the content of a specific register <kbd>(gdb) p /x $rdi</kbd> (Note that registers start with "$" in gdb instead of '%'. And the <tt>/x</tt> option prints out the hex value).  If you hypothesize the argument is a memory address, you can examine the memory contents staring from that specific address with <kbd>(gdb)x/20xb $rdi</kbd> (this prints out 20 bytes in hex starting from the memory address contained in %rdi).
+<li>Execute the function body instruction by instruction and figure out what it does. Verify your hypothesis during execution by examining register values and memory contents.  
+</ul>
+To learn more about gdb, see our gdb tutorial <a href="gdb.html#binary">here</a>.
+</ul>
+
+
+<p>
+<div class="bd-callout bd-callout-danger">
+	<h5>Do not try to match assembly</h5>
+  <p>It is not the right approach to try to match the object code of your C function line-by-line to those contained in <tt>ex{1-5}-sol.o</tt>.
+Doing so is painful and not necessary.  Differences in the compiler versions, compilation flags, and small differences in C code will 
+all result in different object code, although they do not affect the code's semantics.
+Therefore, trying to find a C function that generates the <i>same</i>
+object code is likely futile.
+</i>
+</div>
 
 <h3>Explanations on some unfamiliar assembly and others</h3>
 
@@ -196,7 +222,27 @@ The GNU software (gcc, gdb etc) and lecture notes use AT&amp;T syntax which
 puts the destination operand last and Intel manual (of course) uses Intel syntax which puts
 the destination operand first.
 
-<h4>Handin Procedure</h4>
+<h4 id="p2">Part-2: Buffer Overflow Hack</h4>
+
+You are given a program <tt>overflow</tt> whose source code has been withheld.  This program takes a single command line input and prints some output. 
+Your job is to craft a malicious input such that the program will end up invoking a function called <tt>success</tt> that it is never supposed to invoke under its normal control flow.
+<pre>
+void success()
+{
+  printf("you successfully hijacked overflow's control flow\n");
+  exit(0);
+}
+</pre>
+
+Put your malicious argument in a file called <tt>bad_arg</tt> and run program <tt>overflow</tt>. If you are successful, you should see the following:
+<pre>
+snappy2$ cat bad_arg |xargs ./overflow
+you successfully hijacked overflow's control flow
+</pre>
+
+<p>In the above command, <kbd>cat bad_arg</kbd> prints the content of file <tt>bad_arg</tt> to stdout which is connected via a pipe <kbd>|</kbd> to the stdin of command <kbd>xargs ./overflow</kbd>.  <tt>xargs</tt> reads stuff from stdin and uses them as arguments for command <tt>overflow</tt>.
+
+<h3>Handin Procedure</h3>
 
 Follow these <a href="index.html#handin">instructions</a>.
 
