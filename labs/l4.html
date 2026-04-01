@@ -70,13 +70,13 @@ This lab's files are
 located in the <tt>lab4/</tt> subdirectory.  <div class="bd-callout bd-callout-warning">
 	<h5>Files you can modify</h5>
 	<p>The only files you should modify for this lab are <tt>mm-implicit.c</tt>. If you are 
-  doing the bonus part of this lab, you'll also modify <tt>mm.c</tt>, <tt>mm.h</tt>, <tt>mm-unittest.c</tt>. 
+  doing the bonus part of this lab, you'll also modify <tt>mm-buddy.c</tt>.
 <ul>
 </div>
 
 <h3>Malloc API</h3>
 
-The API of your malloc library consists of the following 5 functions (declared in <tt>mm-common.h</tt>:
+The API of your malloc library consists of the following 5 functions (declared in <tt>mm-common.h</tt>):
 <pre>
 int    mm_init(void);
 void*  mm_malloc(size_t size);
@@ -85,8 +85,8 @@ void*  mm_realloc(void *ptr, size_t size);
 heap_info_t mm_checkheap(bool verbose);
 </pre>
 
-Your malloc implementation must complete the above 5 functions.  Note that we
-use the prefix <tt>mm_*</tt> in the above APIs to distinguish your
+Note that we
+use the prefix <tt>mm_*</tt> in the above APIs to distinguish our custom malloc
 implementation from those come with the standard C library.  The API semantics
 are as follows:
 
@@ -171,11 +171,6 @@ Returns a generic pointer to the first byte in the heap.
 <li><p><tt> void *mem_heap_hi(void)</tt>:
 Returns a generic pointer to the last byte in the heap.
 
-<li><p><tt> size_t mem_heapsize(void)</tt>:
-Returns the current size of the heap in bytes.
-
-<li><p><tt> size_t mem_pagesize(void)</tt>:
-Returns the system's page size in bytes 
 </ul>
 
 <p> Your implementation must observe the following rules:
@@ -202,45 +197,51 @@ tester will enforce this requirement for you.
 
 <h3 id="implicitlist">Implement implicit list malloc</h3>
 You are asked to implement an existing simple design, i.e. the
-implicit list based malloc (without footer).
+implicit list based malloc (with both header and footer).
 
 <p>To implement implicit-list, you shall work from the skeleton 
 code given to you in <tt>mm-implicit.{c,h}</tt>. You should only
 modify <tt>mm-implicit.c</tt> while leaving <tt>mm-implicit.h</tt> unchanged.
 
-<p>In <tt>mm-implicit.h</tt>, we give you the definition of chunk header in 
-the implicit list design.  For simplicity, we make the header (16-byte)
-aligned.  Unlike the header discussed in the lecture, we will simplify it 
-further and use an 8-byte integer (<tt>size_t</tt>) to store the chunk
-size (including chunk header) and another 8-byte integer to store the status on
-whether the chunk is allocated or free. Since our implementation frequently
+<p>In <tt>mm-implicit.h</tt>, we give you the definition of chunk header (or footer) in 
+the implicit list design.  Since the header is 8-byte in size, we'll pad the 
+start of the heap by 8 bytes so that the payloads start at 16-byte aligned boundaries.
+Since our implementation frequently
 refers to the size of the header, we set global variable <tt>hdr_size =
 sizeof(header_t)</tt>, and use <tt>hdr_size</tt> later in the code.
-We don't have a footer in the chunk, so coalescing is only done with the next
-but not the previous free chunk.
 
-<p>You shall complete the implicit list implementation in the following 3 steps:
+<p>You shall complete the implicit list implementation in the following 3 stages:
 <ol>
-	<li> Complete helper function <tt>next_chunk</tt> and use it to complete the heap checker function <tt>mm_heapcheck</tt>. You can test these two functions by compiling <kbd>make</kbd> and running the unit test <kbd>./implicit-unittest</kbd>. The unit test should finish its first 2 tests, <tt>test_next_chunk</tt> and <tt>test_mm_checkheap</tt> and fails at the 3rd test (since you've not implemented the rest yet). Please read the unit test file <tt>mm-implicit-unittest.c</tt> to understand what the unit test is doing.
-	<li>Complete helper functions <tt>ask_os_for_chunk</tt>, <tt>split</tt>, <tt>first_fit</tt> and use them to implement <tt>mm_malloc</tt>.  Perform unit test on your implementation.
-	<li>Complete helper functions <tt>payload2header</tt>, <tt>coalesce</tt> and use them to implement <tt>mm_free</tt>.
+    <li>Complete various helper functions that manipulate the header, including <tt>set_size_status, get_size, get_status, set_status, header2footer, payload2header</tt>.   
+	<li>Complete helper function <tt>next_chunk_header</tt> and <tt>prev_chunk_header</tt>
+    <li>Implement <tt>mm_heapcheck</tt>. 
+	<li>Complete helper functions <tt>split</tt>, <tt>first_fit</tt> and use them to implement <tt>mm_malloc</tt>.  
+	<li>Complete helper functions <tt>coalesce</tt> and use them to implement <tt>mm_free</tt>.
+	<li>Complete <tt>mm_realloc</tt>.
 </ol>
 
-<p>After you've completed your implemementation, make sure that all unit tests pass.
+<p>After completing each stage of the implementation, make sure that the unit tests corresponding to those functions that you've implemented pass:
 <pre>
 $ make
 $ ./implicit-unittest
-start test_next_chunk
-start test_mm_checkheap
-start test_ask_os_for_chunk
-start test_split
-start test_first_fit
-start test_mm_malloc
-start test_payload2header
-start test_coalesce
-start test_mm_free
-start test_mm_realloc
-all unit tests passed...
+start test_set_size_status...passed
+start test_get_size...passed
+start test_get_status...passed
+start test_set_status...passed
+start test_header2footer...passed
+start test_payload2header...passed
+start test_next_chunk_header...passed
+start test_prev_chunk_header...passed
+start test_first_chunk_header...passed
+start test_ask_os_for_chunk...passed
+start test_mm_checkheap...passed
+start test_split...passed
+start test_first_fit...passed
+start test_mm_malloc...passed
+start test_coalesce_next...passed
+start test_coalesce_prev...passed
+start test_mm_free...passed
+start test_mm_realloc...passed
 </pre>
 
 <p>Now you are ready to run our trace-based tester.
@@ -310,44 +311,26 @@ You can refer to <a href="l4.html#eval">here</a> to understand how the performan
 index is calculated.  As we expect, the implicit list design works but does not
 achieve great performance.
 
-<h3> Bonus part: Implement your own malloc</h3>
+<h3> Bonus part (15% extra): Implement a buddy system based malloc</h3>
 
 <p> For extra challenge after finishing implicit-list malloc, you can implement
-your own malloc design, or do a variation of one of the designs taught in the lecture. 
-For example, you can implement explicit-list, segregated
-explict-list, buddy system, or invent your own! 
+a buddy system based malloc.
 
-<p>You are supposed to modify only these files: <tt>mm.c</tt> <tt>mm.h</tt>
-<tt>mm-unittest.c</tt>. This time, we no longer provide the unit test
-implementation nor any skeleton code. You should write your own unit test  (<tt>mm-unittest.c</tt>)
+<p>You are supposed to modify only these files: <tt>mm-buddy.c</tt> 
+<tt>mm-buddy-unittest.c</tt>. This time, we no longer provide the unit test
+implementation nor any skeleton code. You should write your own unit test  (<tt>mm-buddy-unittest.c</tt>)
 in the style of <tt>mm-implicit-unittest.c</tt> to test the correctness of 
-your implementation in <tt>mm.c</tt>. The given makefile compiles your unit test <tt>mm-unittest.c</tt> into binary executable <tt>unittest</tt> which you can invoke.
+your implementation in <tt>mm-buddy.c</tt>. The given makefile compiles your unit test <tt>mm-buddy-unittest.c</tt> into binary executable <tt>buddy-unittest</tt> which you can invoke.
 
 <p>Once you finish the implementation, invoke the trace-based tester as follows:
 <pre>
-$ ./mdriver -V
+$ ./buddy-mdriver -V
 </pre>
 
 <h3>Programming Advice</h3>
 
 <ul>
-
-	<li>Your code should have a header comment that describes the
-overall design of your malloc implementation: e.g. the organization of the
-free list.  Each function should also have a header comment that describes what
-the function does.
-
-	<li> Define your chunk header as structs and modularize your implementation 
-using helper functions. The skeleton code of <tt>mm-implicit.c</tt>
-gives you an example of modular implementation. Follow it.
-While Bryant/O'Hallaron's textbook is useful for reviewing the malloc design, <b>I do not
-recommend follow the textbook programming style</b> of doing pointer
-arithmetic everywhere and using C macros instead of regular functions.  It
-makes the code harder to read and debug. Define structs to represent chunk
-meta-data and use regular helper functions, as demonstrated in
-<tt>mm-implicit.c</tt>
-
-<div class="bd-callout bd-callout-warning">
+	<div class="bd-callout bd-callout-warning">
 	<h5 id="heapconsistency">Heap consistency checker:</h5>
 <p> Your heap consistency checker <tt>mm_checkheap</tt> should be
 thorough. Some examples of what a heap checker might check are:
@@ -362,7 +345,7 @@ addresses?
 </ul>
 </div>
 
-	<li>Write unit tests (in <tt>mm-unittest.c</tt>) in the style of
+	<li>If you decide to do the bonus part, write unit tests (in <tt>mm-buddy-unittest.c</tt>) in the style of
 <tt>mm-implicit-unittest.c</tt>. They might seem tedious, but they are crucial 
 for debugging. 
 
@@ -393,23 +376,16 @@ such as <tt>gprof</tt>, to understand and optimize the performance of your progr
 
 <h3 id="eval">Evaluation</h3>
 
-<div class="bd-callout bd-callout-warning">
-	<h5>Programming style:</h5>
-    <p>As is the case with previous labs, we reserve the right to critique your coding style and we
-    will deduct up to 20% of total lab points for bad style based on our
-    subjective evaluation.
-</div>
-
 <p>You will receive <b>zero points</b> if you break any of the rules or
 your code is buggy and crashes the tester.  Otherwise, your grade will
 be calculated as follows:
 
 <ul>
-	<li><p><b>Correctness of implicit-list (40 points)</b>.
+	<li><p><b>Correctness of implicit-list (80 points)</b>.
 To achieve full score, your implicit list implementation must pass both the 
 unit test <tt>implicit-unittest</tt> and trace-based test <tt>implicit-mdriver</tt>.
 
-<li><p><b>Performance of your malloc (40 points)</b>.  
+<li><p><b>Performance of your implicit-list (20 points)</b>.  
 Two performance metrics will be used to evaluate your solution:
 
 <ul>
@@ -424,6 +400,7 @@ optimal.
 <li><p>Throughput: The average number of operations completed per second.
 
 </ul>
+
 <p>The tester program summarizes the performance of your
 allocator by computing a <i>performance index</i>, which is a
 weighted sum of the space utilization (U) and throughput (T)
@@ -437,16 +414,8 @@ system on the default traces. Throughput is calculated as the number of
 requests in a given trace divided by how long it takes 
 a malloc library to process all those requests.
 
-<li><p>Style (20 points)</p>. We will look at your code to determine if you wrote 
-  them in a clear and readable fashion.
+If your performance index is close enough to our reference implementation, then you get full performance credit.
 </ul>
-
-<p>Observing that both memory and CPU cycles are expensive system
-resources, we adopt this formula to encourage balanced optimization of
-both memory utilization and throughput.  To receive a good score,
-you must achieve a balance between utilization and throughput.
-Ideally, the performance
-index could reach 100%, but that is very difficult. 
 
 <h4>Handin Procedure</h4>
 
