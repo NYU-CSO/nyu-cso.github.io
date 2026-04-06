@@ -6,8 +6,8 @@
 3/18;-1; <font color="red">Spring Break</font>
 3/20;-1; <font color="red">Spring Break</font>
 3/23;-1; Recitation</font>
-4/10;-1; <font color="green"><b>Test-3 (Dynamic Mem Alloc)</b></font>
-4/24;-1; <font color="green"><b>Test-4 (Basic Logic Design and Architecture)</b></font>
+4/17;-1; <font color="green"><b>Test-3 (Dynamic Mem Alloc)</b></font>
+5/1;-1; <font color="green"><b>Test-4 (Basic Logic Design and Architecture)</b></font>
 5/6;-1; <font color="red">Reading day (no class)</font>
 5/7;-1; 
 5/8;-1; <font color="green"><b>Final Exam </b></font>
