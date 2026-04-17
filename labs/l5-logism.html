@@ -49,6 +49,12 @@
 
 <h3>Setup</h3>
 
+<div class="bd-callout bd-callout-warning">
+	<h5>Do this lab without Docker</h5>
+	<p>This lab does not require execution inside a docker container. 
+<ul>
+</div>
+
 <p>
 Follow the following 3 setup steps to download the required files.
 
@@ -198,13 +204,7 @@ Checking Mux4to1... OK
 </pre>
 -->
 
-<p>If you use a Windows laptop, you will have to run the test on snappy1.  To do so, follow the following 3 steps:
-<ul>
-  <li>First, on your windows laptop, push your local changes to github using <pre>git commit -am "..."; git push origin</pre>
-  <li>Second, on snappy1, clone your lab5 directory (if you have not done so). <pre>git clone git@github.com:nyu-cso-sp26/lab5-&lt;YourGithubUsername&gt;.git </pre>
-      Pull the changes into into this repository. <pre>git pull</pre>
-  <li>Third, on snappy1, navigate to the lab5 repository, and type <pre>./test.sh part1</pre>.  
-</ul>
+<p>If you use a Windows laptop, you will have to run the test in WSL (Windows Subsystem for Linux), aka by first typing wsl in PowerShell. 
 
 <h3>Part 2: FSMs to digital logic</h3>
 
