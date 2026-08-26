@@ -1,13 +1,13 @@
 import sys
 import datetime
 
-semester_start = datetime.date(2026,1,20) # enter first day of semester
-semester_end = datetime.date(2026,5,8)
+semester_start = datetime.date(2026,9,2) # enter first day of semester
+semester_end = datetime.date(2026,12,16)
 lec_day0 = 0 # enter lecture day of week (Mon)
 lec_day1 = 2 # enter lecture day of week (Wed)
 
-recitation_start = datetime.date(2026,1,23)
-recitation_end = datetime.date(2026,5,5)
+recitation_start = datetime.date(2026,9,4)
+recitation_end = datetime.date(2026,12,11)
 rec_day0 = 4 # enter recitation day of week
 
 def get_lectures(fname):
@@ -86,7 +86,7 @@ def output_header():
 	<!-- Bootstrap CSS -->
 	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.3/css/bootstrap.min.css" integrity="sha384-Zug+QiDoJOrZ5t4lssLdxGhVrurbmBWopoEl+M6BdEfwnCJZtKxi1KgxUyJq13dy" crossorigin="anonymous">
 
-  <title>Computer Systems Organization (Spring 2026) </title>
+  <title>Computer Systems Organization (Fall 2026) </title>
 </head>
 
 <body>
@@ -113,7 +113,7 @@ def output_header():
         <h3>Computer Systems Organization</h3>
 		</div>
 		<div class="row">
-			CSCI-UA.0201(007), Spring 2026
+			CSCI-UA.0201-030, Fall 2026
 		</div>
 		</div>
 	</div>
