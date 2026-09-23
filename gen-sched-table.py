@@ -14,6 +14,8 @@ def get_lectures(fname):
     fh = open(fname, 'r')
     lectures = []
     for line in fh:
+        if line.startswith('%') or line.strip() == '':
+            continue  # commented out or blank
         f = line.rstrip('\n').split(';')
         if len(f) < 3:
             print(line, " does not have exactly 4 fields")
