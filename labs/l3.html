@@ -66,7 +66,7 @@ Once you have a terminal on either machine, follow the <a href="l3.html#dolab">i
 <li>A VS Code window opens in your browser with your repository already cloned and opened. Open a terminal from the menu <b>Terminal &rarr; New Terminal</b> (or press <kbd>Ctrl+`</kbd>).  The terminal prompt looks like <tt>@&lt;github-username&gt; &rarr; /workspaces/lab3-&lt;netid&gt; (master) $</tt>.  You can confirm you are on an x86_64 machine by typing <kbd>uname -m</kbd>, which should print <tt>x86_64</tt>.
 </ol>
 
-<p>You now do the lab in this terminal following the instructions <a href="l3.html#dolab">below</a>.  Type <kbd>make</kbd>, <kbd>./tester</kbd>, <kbd>gdb -x ./.gdbinit tester_sol</kbd> etc. exactly as written; just ignore the <tt>snappy2$</tt> prompt shown in the examples, which is the prompt you would see with Option B. You can edit <tt>ex[1-5].c</tt> and <tt>bad_arg</tt> either in the VS Code editor or with <tt>vim</tt>/<tt>nano</tt> in the terminal. There is no need to <tt>git clone</tt> anything: the codespace was created from your repository.
+<p>You now do the lab in this terminal following the instructions <a href="l3.html#dolab">below</a>.  Type <kbd>make</kbd>, <kbd>./tester</kbd>, <kbd>gdb -x ./.gdbinit tester_sol</kbd> etc. exactly as written; the shell prompt shown in those examples will differ from the one in your codespace terminal, which does not matter. You can edit <tt>ex[1-5].c</tt> and <tt>bad_arg</tt> either in the VS Code editor or with <tt>vim</tt>/<tt>nano</tt> in the terminal. There is no need to <tt>git clone</tt> anything: the codespace was created from your repository.
 
 <h5>Saving your work and coming back later</h5>
 <ul>
@@ -89,7 +89,7 @@ Once you have a terminal on either machine, follow the <a href="l3.html#dolab">i
 [Enter your password. Then select 1 or 2 for further authentication]
 </pre>
 
-<p>Continue to log into <tt>snappy1</tt> by typing <pre>[netid@access2 ~]$ ssh snappy2</pre></p>
+<p>Continue to log into <tt>snappy2</tt> by typing <pre>[netid@access2 ~]$ ssh snappy2</pre></p>
 
 <h5 id="clone">Cloning the lab repository</h5>
 <p>
@@ -115,7 +115,7 @@ The lab contains two parts. In <a href="l3.html#p1">part-1</a>, you reconstruct 
 We have also implemented a tester that tests these five functions using various inputs. The tester's binary <tt>tester_sol</tt> is also given to you. If you make and run <tt>tester_sol</tt>, you should 
 see that it passes all tests, as expected.  
 
-<p>Figure out what each function <tt>ex[1-5></tt> does according to <a href="l3.html#p1_hints">hints</a>, and write the corresponding C code in <tt>ex[1-5].c</tt>.
+<p>Figure out what each function <tt>ex[1-5]</tt> does according to <a href="l3.html#p1_hints">hints</a>, and write the corresponding C code in <tt>ex[1-5].c</tt>.
 
 <div class="bd-callout bd-callout-danger"><h5>No goto's</h5> For this lab,
   the only files that you should modify are <tt>ex[1-5].c</tt>. Furthermore, your implementation should not contain any <tt>goto</tt> statements.
@@ -152,7 +152,7 @@ This is a good strategy if you are stuck on some function.  To test just <tt>ex2
 type <tt>./tester -t 2</tt>.  Ditto with other functions.
 
 <p>
-<i>Note: Passing the test does not guarantee that your implementation is not necessarily correct.
+<i>Note: Passing the test does not guarantee that your implementation is correct.
 During grading, we may manually examine your source code to determine its correctness.</i>
 </p>
 
@@ -175,9 +175,9 @@ $ objdump -d ex1_sol.o
 
 		<p>You might wonder how to run <tt>ex1</tt> in gdb, since not knowing the function signature of <tt>ex1</tt> makes it hard to write your own C code to correctly invoke <tt>ex1</tt>.  How to run <tt>ex1</tt> then?  It turns out that you can utilize the tester that we have given you to run <tt>ex1</tt> and observe how it executes.  
 
-    <p>To run the test with the given <tt>ex1</tt> function, you need to link the test object file <tt>tester.o</tt> together with the given <tt>ex{1-5}-sol.o</tt> files.  We have made this step easy by including appropriate Makefile rules. When you type <tt>make</tt>, you will see that it generates two binary executables: <tt>tester</tt>, and <tt>tester-sol</tt>. The executable file <tt>tester</tt> links <tt>tester.o</tt> with object files <tt>ex{1-5}.o</tt> which are generated from <b>your</b> <tt>ex{1-5}.c</tt> files.  The executable file <tt>tester-sol</tt> links <tt>tester.o</tt> with the given object files <tt>ex{1-5}_sol.o</tt>. Thus, when you run <tt>./tester_sol</tt>, the tester invokes the given functions, and needless to say, all tests should pass. 
+    <p>To run the test with the given <tt>ex1</tt> function, you need to link the test object file <tt>tester.o</tt> together with the given <tt>ex{1-5}-sol.o</tt> files.  We have made this step easy by including appropriate Makefile rules. When you type <tt>make</tt>, you will see that it generates two binary executables: <tt>tester</tt>, and <tt>tester_sol</tt>. The executable file <tt>tester</tt> links <tt>tester.o</tt> with object files <tt>ex{1-5}.o</tt> which are generated from <b>your</b> <tt>ex{1-5}.c</tt> files.  The executable file <tt>tester_sol</tt> links <tt>tester.o</tt> with the given object files <tt>ex{1-5}_sol.o</tt>. Thus, when you run <tt>./tester_sol</tt>, the tester invokes the given functions, and needless to say, all tests should pass. 
 
-<p>Run by typing <kbd>gdb -x ./.gdbinit tester_sol</kbd>.  The commandline option <tt>-x ./.gdbinit</tt> makes <tt>gdb</tt> load configurations from file <tt>./gdbinit</tt> which we have given to you in the lab's repository. In general, your workflow in <tt>gdb</tt> will usually proceed like the following:
+<p>Run by typing <kbd>gdb -x ./.gdbinit tester_sol</kbd>.  The commandline option <tt>-x ./.gdbinit</tt> makes <tt>gdb</tt> load configurations from file <tt>./.gdbinit</tt> which we have given to you in the lab's repository. In general, your workflow in <tt>gdb</tt> will usually proceed like the following:
 <ul>
 <li>Set a breakpoint to step the execution whenever the function <tt>ex1</tt> is invoked.  <kbd>(gdb) b ex1</kbd> 
 <li>Run the program until the breakpoint is triggered. <kbd>(gdb) r</kbd>
@@ -238,7 +238,7 @@ Instruction <tt>movslq</tt> moves the 4-byte source operand to the 8-byte destin
 The two byte instruction "<tt>repz retq</tt>" behaves identically as the one byte instruction <tt>retq</tt>.
 
 <p>
-<li>If you disassemble an object file, (e.g. "objdump -d ex1_sol.o"), you should <b>not</b> expect valid address for functions, because <a href="http://stackoverflow.com/questions/6264249/how-does-the-compilation-linking-process-work">linking</a> has not yet happened. If you want to see valid function addresses (i.e. those that appear as the operand for the <tt>call</tt> instruction), disassemble the binary executable (<tt>tester</tt> or <tt>tester-sol</tt>) or disassemble in gdb.
+<li>If you disassemble an object file, (e.g. "objdump -d ex1_sol.o"), you should <b>not</b> expect valid address for functions, because <a href="http://stackoverflow.com/questions/6264249/how-does-the-compilation-linking-process-work">linking</a> has not yet happened. If you want to see valid function addresses (i.e. those that appear as the operand for the <tt>call</tt> instruction), disassemble the binary executable (<tt>tester</tt> or <tt>tester_sol</tt>) or disassemble in gdb.
 </ul>
 
 <p>For those of you who want to go out in the world to explore other object files,
@@ -266,7 +266,7 @@ void success()
 
 Put your malicious argument in a file called <tt>bad_arg</tt> and run program <tt>overflow</tt>. If you are successful, you should see the following:
 <pre>
-snappy2$ cat bad_arg |xargs ./overflow
+$ cat bad_arg |xargs ./overflow
 you successfully hijacked overflow's control flow
 </pre>
 
