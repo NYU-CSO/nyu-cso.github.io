@@ -47,12 +47,40 @@
 <h2> Lab-3: Binary Mystery</h2>
 
 For this lab, you need to use a native x86 Linux machine instead of inside a docker container.
-<a href="l3.html#login">First</a>, you follow instructions below to log into such a Linux server maintained by CIMS.
-<a href="l3.html#clone">Next</a>, you clone the lab's repository on this CIMS Linux server.
-<a href="l3.html"#dolab">Finally</a>, you can follow the instructions to do the lab on the CIMS Linux server.
+There are two ways to get one; pick <b>one</b> of them:
+<ul>
+<li><a href="l3.html#codespaces">Option A (recommended)</a>: do the lab in a GitHub Codespace, a Linux machine that GitHub runs in the cloud for you, accessed from your browser.
+<li><a href="l3.html#login">Option B</a>: log into a Linux server maintained by CIMS and <a href="l3.html#clone">clone</a> the lab's repository there.
+</ul>
+Once you have a terminal on either machine, follow the <a href="l3.html#dolab">instructions</a> to do the lab.
 
 <p>
-<h4 id="login">Log into a CIMS Linux server from your laptop</h4>
+<h4 id="codespaces">Option A: Do the lab in GitHub Codespaces</h4>
+
+<p>A <a href="https://docs.github.com/en/codespaces/overview">GitHub Codespace</a> is a Linux virtual machine that GitHub creates and runs in the cloud for you. You use it through VS Code running in your browser, which includes a terminal. Codespaces run on x86_64 CPUs, so the binaries given in this lab (<tt>tester_sol</tt>, <tt>overflow</tt> and the <tt>objs/*.o</tt> files) run natively rather than under emulation, and the default codespace image already has <tt>gcc</tt>, <tt>make</tt>, <tt>gdb</tt> and <tt>objdump</tt> installed. Nothing needs to be installed on your laptop, and you do not need to set up an SSH key, because the codespace is already logged into GitHub as you.
+
+<h5>Create a codespace for your lab repository</h5>
+<ol>
+<li>In your browser, log into github.com and open your lab repository at <tt>https://github.com/nyu-cso-fa26/lab3-&lt;netid&gt;</tt>. If you get a "404" page, you have not yet accepted the invitation to the repository: check the email address your GitHub account is registered under, find the email inviting you to <tt>nyu-cso-fa26/lab3-&lt;netid&gt;</tt>, and accept it.
+<li>Click the green <b>Code</b> button, select the <b>Codespaces</b> tab, and click <b>Create codespace on master</b>. The first time, it takes a minute or two for the machine to be created.
+<li>A VS Code window opens in your browser with your repository already cloned and opened. Open a terminal from the menu <b>Terminal &rarr; New Terminal</b> (or press <kbd>Ctrl+`</kbd>).  The terminal prompt looks like <tt>@&lt;github-username&gt; &rarr; /workspaces/lab3-&lt;netid&gt; (master) $</tt>.  You can confirm you are on an x86_64 machine by typing <kbd>uname -m</kbd>, which should print <tt>x86_64</tt>.
+</ol>
+
+<p>You now do the lab in this terminal following the instructions <a href="l3.html#dolab">below</a>.  Type <kbd>make</kbd>, <kbd>./tester</kbd>, <kbd>gdb -x ./.gdbinit tester_sol</kbd> etc. exactly as written; just ignore the <tt>snappy2$</tt> prompt shown in the examples, which is the prompt you would see with Option B. You can edit <tt>ex[1-5].c</tt> and <tt>bad_arg</tt> either in the VS Code editor or with <tt>vim</tt>/<tt>nano</tt> in the terminal. There is no need to <tt>git clone</tt> anything: the codespace was created from your repository.
+
+<h5>Saving your work and coming back later</h5>
+<ul>
+<li>Your files live in the codespace, not on your laptop. Commit and push often by typing <kbd>git commit -am "..."</kbd> and <kbd>git push origin master</kbd> in the terminal. Pushing works without any setup since the codespace is authenticated as you. Pushing is also how you <a href="l3.html#handin">hand in</a> the lab.
+<li>To return to your work, open your repository's <b>Code &rarr; Codespaces</b> tab (or go to <a href="https://github.com/codespaces">github.com/codespaces</a>) and click on your existing codespace.  Do <b>not</b> create a new codespace each time; any changes you have not pushed stay in the old one.
+<li>A codespace stops automatically after it has been idle for 30 minutes, and resumes where you left off when you open it again. GitHub deletes a codespace that has not been used for 30 days, so always push your work before stepping away for long.
+<li>Codespace usage is metered: a free GitHub account gets 120 core-hours per month, which is 60 hours on the default 2-core machine, and the <a href="https://education.github.com/pack">GitHub Student Developer Pack</a> gives you more. This is plenty for the lab, but to conserve your quota, stop the codespace when you are done for the day: press <kbd>F1</kbd> in VS Code and choose <b>Codespaces: Stop Current Codespace</b>, or stop it from <a href="https://github.com/codespaces">github.com/codespaces</a>.
+</ul>
+
+<p>
+<h4>Option B: Do the lab on a CIMS Linux server</h4>
+
+<p>
+<h5 id="login">Log into a CIMS Linux server from your laptop</h5>
 
 <p>You will do the lab on a CIMS server called <tt>snappy2.cims.nyu.edu</tt>, which you access via a gateway host called 
 <tt>access.cims.nyu.edu</tt>.  To do so, open a terminal on your laptop (if you use Windows, type <tt>wsl</tt> in PowerShell).
@@ -63,7 +91,7 @@ For this lab, you need to use a native x86 Linux machine instead of inside a doc
 
 <p>Continue to log into <tt>snappy1</tt> by typing <pre>[netid@access2 ~]$ ssh snappy2</pre></p>
 
-<h3 id="clone">Cloing the lab repository</h3>
+<h5 id="clone">Cloning the lab repository</h5>
 <p>
 
 <p> First, clone your lab repo by typing the following
@@ -244,7 +272,7 @@ you successfully hijacked overflow's control flow
 
 <p>In the above command, <kbd>cat bad_arg</kbd> prints the content of file <tt>bad_arg</tt> to stdout which is connected via a pipe <kbd>|</kbd> to the stdin of command <kbd>xargs ./overflow</kbd>.  <tt>xargs</tt> reads stuff from stdin and uses them as arguments for command <tt>overflow</tt>.
 
-<h3>Handin Procedure</h3>
+<h3 id="handin">Handin Procedure</h3>
 
 Follow these <a href="l0.html#handin">instructions</a>. Submission to Gradescope is via GitHub only: push your work to your lab repository on github.com and submit that repository on Gradescope. Zip file uploads are not accepted.
 
