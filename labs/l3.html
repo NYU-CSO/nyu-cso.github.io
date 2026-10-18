@@ -68,6 +68,10 @@ Once you have a terminal on either machine, follow the <a href="l3.html#dolab">i
 
 <p>You now do the lab in this terminal following the instructions <a href="l3.html#dolab">below</a>.  Type <kbd>make</kbd>, <kbd>./tester</kbd>, <kbd>gdb -x ./.gdbinit tester_sol</kbd> etc. exactly as written; the shell prompt shown in those examples will differ from the one in your codespace terminal, which does not matter. You can edit <tt>ex[1-5].c</tt> and <tt>bad_arg</tt> either in the VS Code editor or with <tt>vim</tt>/<tt>nano</tt> in the terminal. There is no need to <tt>git clone</tt> anything: the codespace was created from your repository.
 
+<div class="bd-callout bd-callout-danger">
+<p style="color:#d00000; font-weight:bold; font-size:1.3em; margin:0;">&#9888; VS Code does NOT auto-save your files! Press <kbd>Ctrl/Cmd+S</kbd> to save every edited file (or turn on <b>File &rarr; Auto Save</b>) before you run <tt>make</tt> or <tt>git commit</tt> &mdash; otherwise they use the old, unsaved version of your code.</p>
+</div>
+
 <h5>Saving your work and coming back later</h5>
 <ul>
 <li>Your files live in the codespace, not on your laptop. Commit and push often by typing <kbd>git commit -am "..."</kbd> and <kbd>git push origin master</kbd> in the terminal. Pushing works without any setup since the codespace is authenticated as you. Pushing is also how you <a href="l3.html#handin">hand in</a> the lab.
