@@ -47,15 +47,11 @@
 <h2> Lab-3: Binary Mystery</h2>
 
 For this lab, you need to use a native x86 Linux machine instead of inside a docker container.
-There are two ways to get one; pick <b>one</b> of them:
-<ul>
-<li><a href="l3.html#codespaces">Option A (recommended)</a>: do the lab in a GitHub Codespace, a Linux machine that GitHub runs in the cloud for you, accessed from your browser.
-<li><a href="l3.html#login">Option B</a>: log into a Linux server maintained by CIMS and <a href="l3.html#clone">clone</a> the lab's repository there.
-</ul>
-Once you have a terminal on either machine, follow the <a href="l3.html#dolab">instructions</a> to do the lab.
+You will do the lab in a <a href="l3.html#codespaces">GitHub Codespace</a>, a Linux machine that GitHub runs in the cloud for you, accessed from your browser.
+Once you have a terminal in your codespace, follow the <a href="l3.html#dolab">instructions</a> to do the lab.
 
 <p>
-<h4 id="codespaces">Option A: Do the lab in GitHub Codespaces</h4>
+<h4 id="codespaces">Do the lab in GitHub Codespaces</h4>
 
 <p>A <a href="https://docs.github.com/en/codespaces/overview">GitHub Codespace</a> is a Linux virtual machine that GitHub creates and runs in the cloud for you. You use it through VS Code running in your browser, which includes a terminal. Codespaces run on x86_64 CPUs, so the binaries given in this lab (<tt>tester_sol</tt>, <tt>overflow</tt> and the <tt>objs/*.o</tt> files) run natively rather than under emulation, and the default codespace image already has <tt>gcc</tt>, <tt>make</tt>, <tt>gdb</tt> and <tt>objdump</tt> installed. Nothing needs to be installed on your laptop, and you do not need to set up an SSH key, because the codespace is already logged into GitHub as you.
 
@@ -79,33 +75,6 @@ Once you have a terminal on either machine, follow the <a href="l3.html#dolab">i
 <li>A codespace stops automatically after it has been idle for 30 minutes, and resumes where you left off when you open it again. <b>Closing the browser tab does not stop the codespace</b> &mdash; it keeps running, and using your allowance, until that idle timeout, so stop it explicitly (see the next point) when you are done. GitHub deletes a codespace that has not been used for 30 days, so always push your work before stepping away for long.
 <li>Codespace usage counts against your <b>personal</b> GitHub Codespaces free allowance (the course organization lets each user own the codespaces they create). A free GitHub account includes 120 core-hours and 15 GB of storage per month, which is about 60 hours on the default 2-core machine, plenty for this lab. You will <b>not</b> be charged money: if you use up the free allowance, GitHub simply stops letting you create or resume codespaces unless you have separately set up your own paid billing. To conserve the allowance, stop your codespace when you are done for the day rather than leaving it idle: open the VS Code Command Palette (press <kbd>F1</kbd>, or <kbd>Ctrl/Cmd+Shift+P</kbd>), type <tt>stop current codespace</tt>, and select <b>Codespaces: Stop Current Codespace</b>. Alternatively, go to <a href="https://github.com/codespaces">github.com/codespaces</a>, open the <b>...</b> menu next to your codespace, and choose <b>Stop codespace</b>. (A codespace also stops on its own after 30 minutes idle, as noted above.)
 </ul>
-
-<p>
-<h4>Option B: Do the lab on a CIMS Linux server</h4>
-
-<p>
-<h5 id="login">Log into a CIMS Linux server from your laptop</h5>
-
-<p>You will do the lab on a CIMS server called <tt>snappy2.cims.nyu.edu</tt>, which you access via a gateway host called 
-<tt>access.cims.nyu.edu</tt>.  To do so, open a terminal on your laptop (if you use Windows, type <tt>wsl</tt> in PowerShell).
-
-<pre>$ ssh <NetID>@access.cims.nyu.edu
-[Enter your password. Then select 1 or 2 for further authentication]
-</pre>
-
-<p>Continue to log into <tt>snappy2</tt> by typing <pre>[netid@access2 ~]$ ssh snappy2</pre></p>
-
-<h5 id="clone">Cloning the lab repository</h5>
-<p>
-
-<p> First, clone your lab repo by typing the following
-<pre >
-snappy2$ mkdir -p cso-labs
-snappy2$ cd cso-labs
-snappy2$ git clone git@github.com:nyu-cso-fa26/lab3-&lt;netid&gt;.git  lab3
-</pre>
-
-<p>If you encounter a warning/error saying "Repository Access Issues", you should check your email (the email your github account is registered under), find an email from Github classroom inviting you to join the nyu-cso-fa26/lab3-XXX repository and accept the invite.
 
 <h3 id="dolab">Do lab3 by uncovering the mystery of x86 assembly</h3>
 
