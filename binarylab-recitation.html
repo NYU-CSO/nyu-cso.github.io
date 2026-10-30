@@ -54,7 +54,6 @@
 <li><a href="#mystery">3. The mystery functions (Q1&ndash;Q7)</a></li>
 <li><a href="#overflow">4. The buffer overflow (Q8&ndash;Q10)</a></li>
 <li><a href="#binfile">5. Writing and reading binary files</a></li>
-<li><a href="#handin">6. Submit on Gradescope</a></li>
 </ul>
 
 <hr>
@@ -72,10 +71,6 @@
 <li>A VS Code window opens in your browser with a terminal at the bottom (open one with <b>Terminal &rarr; New Terminal</b> if needed). Confirm you are on an x86-64 machine with <kbd>uname -m</kbd>, which should print <tt>x86_64</tt>.</li>
 </ol>
 <p>The default codespace image already has <tt>gcc</tt>, <tt>make</tt>, <tt>gdb</tt> and <tt>objdump</tt> installed &mdash; nothing to install.</p>
-
-<div class="bd-callout bd-callout-info">
-<p style="margin:0;"><b>Why fork instead of opening the repo directly?</b> A Codespace created on your personal fork is owned by <em>you</em> and billed to your own free monthly Codespaces allowance, and it does not depend on any organization setting. This is the most reliable way to make sure Codespaces works for everyone.</p>
-</div>
 
 <h5>One-time gdb setup</h5>
 <p>The repository ships a <tt>.gdbinit</tt> file (it turns on a nicer disassembly display and silences the <tt>debuginfod</tt> prompt). By default <tt>gdb</tt> refuses to load a <tt>.gdbinit</tt> from a project directory for security. Allow it by running this <b>once</b> in the terminal:</p>
@@ -116,7 +111,7 @@ quit      (or q)        leave gdb
 <h4 id="mystery">3. The mystery functions (Q1&ndash;Q7)</h4>
 
 <p>Run <kbd>gdb ./mystery-sol</kbd>. Using the commands above, set a breakpoint at <tt>mystery1</tt>, <tt>mystery2</tt>, and <tt>mystery3</tt>, run the program, and inspect the arguments (in the registers), the memory they point to, and the return values. From that, work out what each function computes.</p>
-<p>Answer <b>Q1&ndash;Q7</b> on the Gradescope online assignment as you go.</p>
+<p>Answer <b>Q1&ndash;Q7</b> as you go.</p>
 
 <hr>
 <h4 id="overflow">4. The buffer overflow (Q8&ndash;Q10)</h4>
@@ -178,13 +173,7 @@ printf 'AAAAAAAAAAAAAAAA\x82\x11\x40\x00\x00\x00\x00\x00' &gt; bad_input
 </pre>
 
 <h5>Reading (inspecting) a binary file</h5>
-<p>You cannot usefully <tt>cat</tt> a binary file &mdash; the unprintable bytes turn into garbage. Use a hex viewer instead:</p>
-<pre>
-xxd bad_input           # hex on the left, ASCII on the right, 16 bytes/line
-od -An -tx1 bad_input   # just the bytes, in hex
-wc -c bad_input         # byte count (should be 24 here)
-</pre>
-<p>For example, <kbd>xxd bad_input</kbd> prints:</p>
+<p>You cannot usefully <tt>cat</tt> a binary file &mdash; the unprintable bytes turn into garbage. Use <tt>xxd</tt>, which shows the bytes in hex on the left and as ASCII on the right. <kbd>xxd bad_input</kbd> prints:</p>
 <pre>
 00000000: 4141 4141 4141 4141 4141 4141 4141 4141  AAAAAAAAAAAAAAAA
 00000010: 8211 4000 0000 0000                      ..@.....
@@ -208,11 +197,6 @@ Congratulations! You have earned lots of $$$
 <div class="bd-callout bd-callout-info">
 <p style="margin:0;"><b>A note on <tt>gets()</tt> and newlines.</b> <tt>gets()</tt> reads until it sees a newline (<tt>0x0a</tt>) or the end of the input, and it is happy to read <tt>0x00</tt> bytes along the way. The files written above contain no newline, so every byte is read. Just don't put a stray newline <em>in the middle</em> of your payload, or <tt>gets()</tt> will stop early.</p>
 </div>
-
-<hr>
-<h4 id="handin">6. Submit on Gradescope</h4>
-
-<p>Answer all 10 questions on the <b>Binary Mystery &amp; Overflow</b> online assignment on Gradescope. Each answer is something you read off <tt>gdb</tt> while the program is running, so have your Codespace terminal open as you go.</p>
 
 </div>
 </body>
