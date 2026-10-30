@@ -153,40 +153,30 @@ int main()
 <hr>
 <h4 id="binfile">5. Writing and reading binary files</h4>
 
-<p>Answering Q8&ndash;Q10 only requires reading the program with gdb. But to actually <em>carry out</em> the attack &mdash; make the program print the congratulations message with no password &mdash; you must feed it the raw bytes of <tt>give_out_lots_of_money</tt>'s address. For example <tt>0x401182</tt> is really the eight bytes</p>
-<pre>82 11 40 00 00 00 00 00</pre>
-<p>(x86-64 is <b>little-endian</b>, so the low byte comes first, and the high bytes are <tt>00</tt>). Several of those bytes are not characters you can type, so you build them in a file and feed the file to the program.</p>
+<p>Answering Q8&ndash;Q10 only requires reading the program with gdb. But to actually <em>carry out</em> the attack &mdash; make the program print the congratulations message with no password &mdash; you must feed it the raw bytes of a memory address. Most address bytes are not characters you can type (and some are <tt>0x00</tt>), so you build the bytes in a file and feed the file to the program. On x86-64 an address is stored <b>little-endian</b> (low byte first): for example the placeholder address <tt>0xdeadbeef</tt> is the eight bytes <tt>ef be ad de 00 00 00 00</tt>.</p>
 
 <div class="bd-callout bd-callout-warning">
 <p style="margin:0;"><b>Why a file, and not a command-line argument?</b> A command-line argument is a NUL-terminated string, so it can <em>never</em> contain a <tt>0x00</tt> byte &mdash; the argument would be cut off there. The shell's <tt>$(&hellip;)</tt> substitution also silently drops NUL bytes and trailing newlines. Since addresses contain <tt>0x00</tt> bytes, overflow payloads are fed through <b>standard input</b> (from a file), not as arguments.</p>
 </div>
 
 <h5>Writing a binary file</h5>
-<p>The easiest way to produce exact bytes is with Python. This writes 16 padding bytes (enough to fill <tt>buf</tt> and the saved <tt>%rbx</tt>, so the next 8 bytes land on the saved return address) followed by the 8-byte address of <tt>give_out_lots_of_money</tt>:</p>
+<p>Use <tt>printf</tt>: each ordinary character stands for itself, and each raw byte is written as <tt>\xHH</tt> (two hex digits). For example, to write four <tt>'A'</tt> bytes followed by the placeholder address <tt>0xdeadbeef</tt> as an 8-byte little-endian value:</p>
 <pre>
-python3 -c "open('bad_input','wb').write(b'A'*16 + (0x401182).to_bytes(8,'little'))"
+printf 'AAAA\xef\xbe\xad\xde\x00\x00\x00\x00' &gt; myfile
 </pre>
-<p>Here <tt>b'A'*16</tt> is sixteen <tt>0x41</tt> bytes, and <tt>(0x401182).to_bytes(8,'little')</tt> produces the eight address bytes <tt>82 11 40 00 00 00 00 00</tt>. (Use the address <em>you</em> found in Q8.)</p>
-<p>You can also do it with <tt>printf</tt>, writing each byte as <tt>\xHH</tt>:</p>
-<pre>
-printf 'AAAAAAAAAAAAAAAA\x82\x11\x40\x00\x00\x00\x00\x00' &gt; bad_input
-</pre>
+<p>Here <tt>AAAA</tt> are four <tt>0x41</tt> bytes and <tt>\xef\xbe\xad\xde\x00\x00\x00\x00</tt> is the address written one byte at a time, low byte first. <tt>printf</tt> adds no trailing newline, so the file holds exactly these bytes. (This is only an illustration &mdash; for the attack you supply your own padding length and the address you found in Q8.)</p>
 
 <h5>Reading (inspecting) a binary file</h5>
-<p>You cannot usefully <tt>cat</tt> a binary file &mdash; the unprintable bytes turn into garbage. Use <tt>xxd</tt>, which shows the bytes in hex on the left and as ASCII on the right. <kbd>xxd bad_input</kbd> prints:</p>
+<p>You cannot usefully <tt>cat</tt> a binary file &mdash; the unprintable bytes turn into garbage. Use <tt>xxd</tt>, which shows the bytes in hex on the left and as ASCII on the right. <kbd>xxd myfile</kbd> prints:</p>
 <pre>
-00000000: 4141 4141 4141 4141 4141 4141 4141 4141  AAAAAAAAAAAAAAAA
-00000010: 8211 4000 0000 0000                      ..@.....
+00000000: 4141 4141 efbe adde 0000 0000            AAAA........
 </pre>
-<p>The 16 <tt>0x41</tt> (<tt>'A'</tt>) padding bytes, then the little-endian address, are exactly what you wrote.</p>
+<p>The four <tt>0x41</tt> (<tt>'A'</tt>) bytes, then the little-endian address, are exactly what you wrote. (Non-printable bytes show as <tt>.</tt> on the right.)</p>
 
 <h5>Feeding the file to the program</h5>
-<p>Redirect the file into the program's standard input with <tt>&lt;</tt> (or pipe it in). Either of these runs the attack:</p>
+<p>Put your crafted bytes in a file (say <tt>bad_input</tt>), then redirect it into the program's standard input with <tt>&lt;</tt>:</p>
 <pre>
 ./exampleoverflow &lt; bad_input
-
-# or without making a file at all:
-python3 -c "import sys; sys.stdout.buffer.write(b'A'*16 + (0x401182).to_bytes(8,'little'))" | ./exampleoverflow
 </pre>
 <p>If your bytes are right, the program prints</p>
 <pre>
@@ -195,7 +185,7 @@ Congratulations! You have earned lots of $$$
 <p>even though you never typed the password &mdash; you hijacked its control flow.</p>
 
 <div class="bd-callout bd-callout-info">
-<p style="margin:0;"><b>A note on <tt>gets()</tt> and newlines.</b> <tt>gets()</tt> reads until it sees a newline (<tt>0x0a</tt>) or the end of the input, and it is happy to read <tt>0x00</tt> bytes along the way. The files written above contain no newline, so every byte is read. Just don't put a stray newline <em>in the middle</em> of your payload, or <tt>gets()</tt> will stop early.</p>
+<p style="margin:0;"><b>A note on <tt>gets()</tt> and newlines.</b> <tt>gets()</tt> reads until it sees a newline (<tt>0x0a</tt>) or the end of the input, and it is happy to read <tt>0x00</tt> bytes along the way. A file written by <tt>printf</tt> as above contains no newline, so every byte is read. Just don't put a stray newline <em>in the middle</em> of your payload, or <tt>gets()</tt> will stop early.</p>
 </div>
 
 </div>
