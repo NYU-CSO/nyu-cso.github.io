@@ -7,4 +7,4 @@
 11/27;-1; <font color="red">Thanksgiving Recess (no class)</font>
 12/11;-1; Recitation: <font color="green"><b>Test-4 (Basic Logic Design and Architecture)</b></font>
 12/15;-1; <font color="red">Reading day (no class)</font>
-12/16;-1; <font color="green"><b>Final Exam</b></font> (date/time TBD, exam period Dec 16-22)
+12/16;-1; <font color="green"><b>Final Exam</b></font> 4:00-5:50pm, 60 5th Ave Room 150
