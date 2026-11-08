@@ -58,6 +58,13 @@ fast.
 
 <p> This is an individual lab. </p>
 
+<h3>Lab environment</h3>
+<p>As in the earlier labs, you may do this lab in either of two environments; both provide the <tt>gcc</tt>, <tt>make</tt> and <tt>gdb</tt> that this lab needs:
+<ul>
+<li><b>Docker</b> on your own laptop, using the <tt>cso_x86</tt> container you set up in <a href="l0.html">Lab 0</a>. You clone your repo (see below) into your <tt>cso-labs</tt> directory, which is mounted into the container.
+<li><b>GitHub Codespaces</b>, a Linux machine in your browser, as described in <a href="l3.html#codespaces">Lab 3</a>. A codespace is created from your repo and is already cloned for you, so you can skip the clone step below.
+</ul>
+
 <h3>Obtaining the lab</h3>
 <p> First, clone your lab repo by typing the following
 <pre >
@@ -95,7 +102,7 @@ are as follows:
 <ul>
 	<li><p><tt>mm_init</tt>: This function is called to initialize your malloc library prior to any 
   any <tt>mm_malloc</tt> and <tt>mm_free</tt> calls. 
-  In this lab, the given tester programs (<tt>mm_unittest.c</tt>, <tt>mdriver.c</tt>) 
+  In this lab, the given tester programs (<tt>mm-implicit-unittest.c</tt>, <tt>mm-buddy-unittest.c</tt>, <tt>mdriver.c</tt>)
   invoke <tt>mm_init</tt>.  The return value is -1 if there was a problem in
 performing the initialization, 0 otherwise.
   
@@ -143,7 +150,7 @@ constraints.
 	identical to the first 4 bytes of the old block.  
 </ul> 
 
-<li><p>Lastly, <tt>mm_checkheap</tt>: The <tt>mm_cheapheap</tt> routine is an 
+<li><p>Lastly, <tt>mm_checkheap</tt>: The <tt>mm_checkheap</tt> routine is an
 auxilary routine that checks <a href="#heapconsistency">the consistency of 
 	your heap</a>. The function argument <tt>verbose</tt> can be used to 
 turn on/off verbose debug printing.
@@ -155,7 +162,7 @@ complete documentation.
 
 
 <p>When implementing <tt>mm_init</tt>, <tt>mm_free</tt>,
-<tt>mm_malloc</tt><tt>mm_realloc</tt> functions, you need to invoke the
+<tt>mm_malloc</tt>, <tt>mm_realloc</tt> functions, you need to invoke the
 following functions which emulate the OS' syscalls, instead of using the real ones (in order to 
 make testing easier).  These emulated syscalls are defined in <tt>memlib.c</tt> and described below:
 
@@ -205,20 +212,20 @@ implicit list based malloc (with both header and footer).
 code given to you in <tt>mm-implicit.{c,h}</tt>. You should only
 modify <tt>mm-implicit.c</tt> while leaving <tt>mm-implicit.h</tt> unchanged.
 
-<p>In <tt>mm-implicit.h</tt>, we give you the definition of chunk header (or footer) in 
+<p>In <tt>mm-implicit.h</tt>, we give you the definition of the chunk header (or footer) type <tt>meta_t</tt> in
 the implicit list design.  Since the header is 8-byte in size, we'll pad the 
 start of the heap by 8 bytes so that the payloads start at 16-byte aligned boundaries.
 Since our implementation frequently
 refers to the size of the header, we set global variable <tt>hdr_size =
-sizeof(header_t)</tt>, and use <tt>hdr_size</tt> later in the code.
+sizeof(meta_t)</tt>, and use <tt>hdr_size</tt> later in the code.
 
-<p>You shall complete the implicit list implementation in the following 3 stages:
+<p>You shall complete the implicit list implementation in the following stages:
 <ol>
     <li>Complete various helper functions that manipulate the header, including <tt>set_size_status, get_size, get_status, set_status, header2footer, payload2header</tt>.   
 	<li>Complete helper function <tt>next_chunk_header</tt> and <tt>prev_chunk_header</tt>
-    <li>Implement <tt>mm_heapcheck</tt>. 
+    <li>Implement <tt>mm_checkheap</tt>.
 	<li>Complete helper functions <tt>split</tt>, <tt>first_fit</tt> and use them to implement <tt>mm_malloc</tt>.  
-	<li>Complete helper functions <tt>coalesce</tt> and use them to implement <tt>mm_free</tt>.
+	<li>Complete helper functions <tt>coalesce_next</tt> and <tt>coalesce_prev</tt> and use them to implement <tt>mm_free</tt>.
 	<li>Complete <tt>mm_realloc</tt>.
 </ol>
 
