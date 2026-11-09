@@ -544,11 +544,11 @@ function genHeaders(rng){
       `<code>h</code> is a <code>meta_t *</code> and <code>sizeof(meta_t)=8</code>, so <code>h + n</code> moves <code>n×8</code> bytes: <code>${hex(base)} + ${size}×8 = ${hex(ans)}</code> — <b>8× too far</b>. The next chunk is only at <code>${hex(base)} + ${size} = ${hex(base+size)}</code>. To advance <code>get_size(h)</code> <i>bytes</i>, add on a byte pointer: <code>(meta_t *)((char *)h + get_size(h))</code>. The lab writes <code>void *p = h; p += get_size(h);</code> — <code>void *</code> arithmetic counts bytes.`) };
   }
   if(kind==="ptrpick"){
-    const correct = "(meta_t *)((char *)h + get_size(h))";
-    return { prompt:`<b>which is right?</b> <code>h</code> is a <code>meta_t *</code> (<code>sizeof(meta_t) == 8</code>). Which expression gives the <i>next chunk's header</i> — the address exactly <code>get_size(h)</code> <b>bytes</b> after <code>h</code>?`,
+    const correct = "(char *)h + get_size(h)";
+    return { prompt:`<b>which is right?</b> <code>h</code> is a <code>meta_t *</code> (<code>sizeof(meta_t) == 8</code>). Which expression computes the address exactly <code>get_size(h)</code> <b>bytes</b> after <code>h</code> (the next chunk's header)?`,
       ...mkChoices(rng, correct,
-      ["h + get_size(h)", "(meta_t *)(char *)h + get_size(h)", "h + get_size(h) / sizeof(meta_t)"],
-      `<code>h + get_size(h)</code> does <code>meta_t *</code> arithmetic — it scales by 8 and overshoots. <code>(meta_t *)(char *)h + get_size(h)</code> looks safer, but the casts bind tighter than <code>+</code>, so it is <i>still</i> <code>meta_t *</code> arithmetic — the same 8× overshoot. You must add while the pointer is a byte pointer, then cast back: <code>(meta_t *)((char *)h + get_size(h))</code> — exactly what <code>void *p = h; p += get_size(h);</code> does.`) };
+      ["h + get_size(h)", "(char *)h + get_size(h) * sizeof(meta_t)", "(char *)h + get_size(h) - 8"],
+      `<code>h + get_size(h)</code> does <code>meta_t *</code> arithmetic — the compiler scales the <code>+</code> by <code>sizeof(meta_t)=8</code>, overshooting the next chunk <b>8×</b>. Cast to a byte pointer first so <code>+</code> counts bytes: <code>(char *)h + get_size(h)</code>. That is exactly what the lab's <code>void *p = h; p += get_size(h);</code> does — <code>void *</code>/<code>char *</code> arithmetic counts bytes.`) };
   }
   if(kind==="p2h"){
     const payload = base + 8;
