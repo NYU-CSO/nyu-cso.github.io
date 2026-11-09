@@ -177,6 +177,33 @@ a{color:var(--accent)}
 @keyframes clash{0%{opacity:0; transform:scale(.3)}35%{opacity:1; transform:scale(1.1)}100%{opacity:0; transform:scale(1.7)}}
 @keyframes winBounce{0%,100%{transform:translateY(0)}30%{transform:translateY(-12px)}55%{transform:translateY(-3px)}}
 
+/* ---- end-of-game review ---- */
+.review{margin-top:26px}
+.rev-title{font-size:13px; letter-spacing:.08em; text-transform:uppercase; color:var(--muted); text-align:center; margin:0 0 6px}
+.rev-item{background:var(--panel); border:1px solid var(--line); border-left-width:4px; border-radius:12px; padding:14px 16px; margin-top:12px}
+.rev-item.ok{border-left-color:var(--green)}
+.rev-item.bad{border-left-color:var(--wrong)}
+.rev-head{display:flex; justify-content:space-between; align-items:center; gap:10px; font-family:var(--disp); font-size:11px; color:var(--muted)}
+.rev-badge{font-family:var(--disp); font-size:9px; padding:3px 8px; border-radius:999px; white-space:nowrap}
+.rev-badge.ok{color:var(--green); border:1px solid var(--green)}
+.rev-badge.bad{color:var(--wrong); border:1px solid var(--wrong)}
+.rev-q{margin:10px 0; font-size:15px; line-height:1.5}
+.rev-q code{font-size:1.02em}
+.rev-opts{display:grid; gap:6px; margin-top:8px}
+.rev-opt{display:flex; gap:8px; align-items:center; font-family:var(--mono); font-size:14px; padding:7px 10px; border-radius:8px; border:1px solid var(--line); background:var(--panel2)}
+.rev-opt .mark{flex:0 0 auto; width:16px; text-align:center}
+.rev-opt.correct{border-color:var(--green); background:#10371f}
+.rev-opt.chosenwrong{border-color:var(--wrong); background:#3a1620}
+.rev-opt .txt{overflow-wrap:anywhere}
+.rev-opt .chips{margin-left:auto; display:flex; gap:4px; flex:0 0 auto}
+.rev-sum{margin-top:9px; display:flex; gap:8px; flex-wrap:wrap}
+.rev-why{margin-top:10px; padding:10px 12px; border-radius:8px; background:var(--panel2); border:1px solid var(--line); font-size:13.5px; line-height:1.55}
+.rev-why b{color:var(--fg)}
+.tchip{display:inline-block; font-family:var(--disp); font-size:9px; padding:2px 7px; border-radius:999px; border:1px solid var(--line); color:var(--muted); white-space:nowrap}
+.tchip.A{color:var(--blue); border-color:var(--blue-dim)}
+.tchip.B{color:var(--red); border-color:var(--red-dim)}
+.tchip.you{color:var(--accent); border-color:var(--accent)}
+
 @media(prefers-reduced-motion:reduce){*{transition:none!important; animation:none!important}}
 </style>
 
@@ -298,6 +325,7 @@ a{color:var(--accent)}
       <button class="btn primary lg" id="againBtn">Play again</button>
       <button class="btn lg" data-home>Home</button>
     </div>
+    <div id="review" class="review"></div>
   </section>
 
 </div>
@@ -371,6 +399,68 @@ function reactSolo(correct, gained){
   const f=$("figS"); if(!f) return;
   if(correct){ paintFighter(f,"S","win"); fxBody(f,"atkR"); floatDmg(f,"+"+gained,true); }
   else { paintFighter(f,"S","lose"); fxBody(f,"hitfx"); }
+}
+
+/* ---------- end-of-game review ----------
+   Each finished run logs the questions shown and the answer(s) picked
+   (G.picks). renderReview() rebuilds that as a list on the results
+   screen: the correct option is marked, a wrong pick is flagged, and
+   the explanation is shown for anything answered incorrectly. */
+function reviewOptionRows(q, chips){
+  return q.options.map((o,oi)=>{
+    const info = chips(oi);                   // {wrong:bool, html:string}
+    const isC = oi===q.correct;
+    const cls = isC ? "correct" : (info.wrong ? "chosenwrong" : "");
+    const mark = isC ? "✓" : (info.wrong ? "✗" : "");
+    return `<div class="rev-opt ${cls}"><span class="mark">${mark}</span>`+
+           `<span class="txt">${esc(o)}</span><span class="chips">${info.html||""}</span></div>`;
+  }).join("");
+}
+function reviewCardSolo(q, i, chosen){
+  const ok = chosen===q.correct;
+  const rows = reviewOptionRows(q, oi=>({
+    wrong: (oi===chosen && !ok),
+    html:  (oi===chosen) ? `<span class="tchip you">you</span>` : ""
+  }));
+  const why = ok ? "" : `<div class="rev-why"><b>Why ${chosen<0?"you missed it":"your answer was wrong"}:</b> ${q.explain}</div>`;
+  return `<div class="rev-item ${ok?"ok":"bad"}">`+
+    `<div class="rev-head"><span>Q${i+1} · ${esc(q.roundName)}</span>`+
+    `<span class="rev-badge ${ok?"ok":"bad"}">${ok?"CORRECT":(chosen<0?"NO ANSWER":"WRONG")}</span></div>`+
+    `<div class="rev-q">${q.prompt}</div>${q.diagram||""}`+
+    `<div class="rev-opts">${rows}</div>${why}</div>`;
+}
+function reviewCardBattle(q, i, p){
+  const aOK=p.A===q.correct, bOK=p.B===q.correct, anyWrong=!aOK||!bOK;
+  const youA=G.mode==="online"&&G.myTeam==="A", youB=G.mode==="online"&&G.myTeam==="B";
+  const rows = reviewOptionRows(q, oi=>{
+    const ch=[];
+    if(p.A===oi) ch.push(`<span class="tchip A">A${oi===q.correct?" ✓":""}</span>`);
+    if(p.B===oi) ch.push(`<span class="tchip B">B${oi===q.correct?" ✓":""}</span>`);
+    return { wrong:(p.A===oi&&!aOK)||(p.B===oi&&!bOK), html:ch.join("") };
+  });
+  const badge = (aOK&&bOK)?"BOTH ✓":((!aOK&&!bOK)?"BOTH ✗":"SPLIT");
+  const nameA=esc(G.names.A)+(youA?" (you)":""), nameB=esc(G.names.B)+(youB?" (you)":"");
+  const why = anyWrong ? `<div class="rev-why"><b>Why:</b> ${q.explain}</div>` : "";
+  return `<div class="rev-item ${anyWrong?"bad":"ok"}">`+
+    `<div class="rev-head"><span>Q${i+1} · ${esc(q.roundName)}</span><span class="rev-badge ${anyWrong?"bad":"ok"}">${badge}</span></div>`+
+    `<div class="rev-q">${q.prompt}</div>${q.diagram||""}`+
+    `<div class="rev-opts">${rows}</div>`+
+    `<div class="rev-sum"><span class="tchip A">${nameA}: ${aOK?"✓":"✗"}</span> <span class="tchip B">${nameB}: ${bOK?"✓":"✗"}</span></div>`+
+    `${why}</div>`;
+}
+function renderReview(){
+  const box=$("review"); if(!box) return;
+  if(!G||!G.picks||!G.picks.length){ box.innerHTML=""; return; }
+  const cards=[];
+  for(let i=0;i<G.picks.length;i++){
+    const q=G.qs[i]; if(!q) continue;
+    if(G.mode==="solo") cards.push(reviewCardSolo(q,i,(G.picks[i]===undefined?-1:G.picks[i])));
+    else cards.push(reviewCardBattle(q,i,G.picks[i]||{A:-1,B:-1}));
+  }
+  if(!cards.length){ box.innerHTML=""; return; }
+  const title = G.mode==="solo" ? "Review — every question &amp; your answer"
+                                : "Review — every question &amp; both teams' answers";
+  box.innerHTML = `<h3 class="rev-title">${title}</h3>`+cards.join("");
 }
 
 /* Build an options object from a correct answer + distractor list.
@@ -575,7 +665,7 @@ function setKeyHandler(fn){ if(keyHandler) document.removeEventListener("keydown
 function startSolo(){
   const seed = (Date.now()^(Math.random()*1e9))>>>0;
   const qs = buildQuestions(seed, [5,5,4]);
-  G = { mode:"solo", qs, i:0, score:0, streak:0, best:0, answered:false, shownAt:0, timer:null };
+  G = { mode:"solo", qs, i:0, score:0, streak:0, best:0, answered:false, shownAt:0, timer:null, picks:[] };
   show("solo"); renderSolo();
   setKeyHandler(e=>{ const k=e.key.toLowerCase(); const idx=KEYS_SOLO.indexOf(k); if(idx>=0){ e.preventDefault(); soloAnswer(idx);} });
 }
@@ -595,6 +685,7 @@ function renderSolo(){
 function soloAnswer(idx){
   if(G.answered) return; G.answered=true; stopTimer();
   const q=G.qs[G.i]; const correct = idx===q.correct;
+  G.picks[G.i]=idx;
   const ms = performance.now()-G.shownAt;
   let gained=0;
   if(correct){ const speed = Math.max(0, Math.round((1-Math.min(ms,QTIME*1000)/(QTIME*1000))*50)); gained=100+speed; G.score += gained; G.streak++; G.best=Math.max(G.best,G.streak); }
@@ -617,6 +708,7 @@ function soloResults(){
     `<div class="scorebox B"><div class="muted">BEST STREAK</div><div class="big">${G.best}</div></div></div>`+
     `<p class="center muted mt">You worked through all three rounds: headers, malloc/split, and heap-checking — the exact helpers you'll write in <code>mm-implicit.c</code>.</p>`;
   $("againBtn").onclick=startSolo;
+  renderReview();
 }
 
 /* ---------------- BATTLE (local + online share this) ---------------- */
@@ -627,7 +719,7 @@ function newBattle(mode, opts){
     hp:{A:100,B:100}, score:{A:0,B:0},
     ans:{A:-1,B:-1}, ms:{A:0,B:0},
     answered:{A:false,B:false},
-    resolved:false, shownAt:0, timer:null,
+    resolved:false, shownAt:0, timer:null, picks:[],
     names: opts.names || {A:"TEAM A", B:"TEAM B"},
     // online bits:
     room: opts.room||null, myTeam: opts.myTeam||null, oppPeer: opts.oppPeer||null, me: opts.me||null,
@@ -713,6 +805,7 @@ function battleTimeout(){
 function resolveBattle(){
   if(G.resolved) return; G.resolved=true; stopTimer();
   const q=G.qs[G.i];
+  G.picks[G.i]={A:G.ans.A, B:G.ans.B};
   const okA = G.ans.A===q.correct, okB = G.ans.B===q.correct;
   // speed: whoever answered correctly faster deals bonus
   let dmgToB=0, dmgToA=0;
@@ -762,6 +855,7 @@ function battleResults(){
     `<div class="scorebox B"><div class="resfig ${moodB==="win"?"rwin":""}">${spriteSVG("B",moodB)}</div><div class="name" style="color:var(--red)">${esc(G.names.B)}</div><div class="big">${Math.max(0,Math.round(G.hp.B))} HP</div><div class="muted">${G.score.B} pts</div></div>`+
     `</div><p class="center muted mt">Three rounds down — headers, first-fit &amp; split, and heap-checking. Now go write <code>mm-implicit.c</code>.</p>`;
   $("againBtn").onclick = ()=>{ if(G.mode==="local") startLocal(); else goHome(); };
+  renderReview();
 }
 
 /* reveal correct/wrong styling on a pad */
@@ -932,6 +1026,7 @@ function goHome(){
   if(unsubPeers){ unsubPeers(); unsubPeers=null; }
   if(NAMED){ NAMED.leave().catch(()=>{}); NAMED=null; }
   G=null; LOBBY=null;
+  const rv=$("review"); if(rv) rv.innerHTML="";
   show("home");
 }
 document.querySelectorAll("[data-home]").forEach(b=> b.onclick=goHome);
