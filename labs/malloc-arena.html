@@ -311,46 +311,52 @@ function genHeaders(rng){
   const stat = alloc?1:0;
   if(kind==="encode"){
     const word = size|stat;
-    return mkChoices(rng, hex(word),
+    return { prompt:`<b>encode</b>: build the header word for a <code>${size}</code>-byte chunk that is <b>${alloc?"allocated":"free"}</b>. What single value goes in the header?`,
+      ...mkChoices(rng, hex(word),
       [hex(size|(alloc?0:1)), hex((size+16)|stat), hex((size-16>0?size-16:size+32)|stat)],
-      `The header packs size + status: <code>${size} | ${stat}</code> = <code>${hex(word)}</code>. The status bit is bit&nbsp;0 (${alloc?"1 = allocated":"0 = free"}); the size fills the rest.`);
+      `The header packs size + status: <code>${size} | ${stat}</code> = <code>${hex(word)}</code>. The status bit is bit&nbsp;0 (${alloc?"1 = allocated":"0 = free"}); the size fills the rest.`) };
   }
   if(kind==="decode"){
     const word = size|stat;
     const correct = `${size} bytes, ${alloc?"allocated":"free"}`;
-    return mkChoices(rng, correct,
+    return { prompt:`<b>decode</b>: a chunk header holds the word <code>${hex(word)}</code>. What size and status does it describe?`,
+      ...mkChoices(rng, correct,
       [`${size} bytes, ${alloc?"free":"allocated"}`,
        `${size+16} bytes, ${alloc?"allocated":"free"}`,
        `${size>16?size-16:size+32} bytes, ${alloc?"allocated":"free"}`],
-      `<code>get_size</code> masks off the low 4 bits: <code>${hex(word)} &amp; ~0xF = ${size}</code>. <code>get_status</code> reads bit 0: <code>${stat}</code> → <b>${alloc?"allocated":"free"}</b>. Don't read the status bit as part of the size!`);
+      `<code>get_size</code> masks off the low 4 bits: <code>${hex(word)} &amp; ~0xF = ${size}</code>. <code>get_status</code> reads bit 0: <code>${stat}</code> → <b>${alloc?"allocated":"free"}</b>. Don't read the status bit as part of the size!`) };
   }
   // pointer arithmetic variants
   const base = 0x5000 + 16*randint(rng,0,180) + 8; // header addresses sit at ...8 (payloads 16-aligned)
   if(kind==="footer"){
     const ans = base + size - 8;
-    return mkChoices(rng, hex(ans),
+    return { prompt:`<b>header2footer</b>: a chunk's header is at <code>${hex(base)}</code> and its size is <code>${size}</code>. What is the address of its footer?`,
+      ...mkChoices(rng, hex(ans),
       [hex(base+size), hex(base+size-16), hex(base-8)],
-      `<code>header2footer(h) = h + get_size(h) − 8</code> = <code>${hex(base)} + ${size} − 8 = ${hex(ans)}</code>. The footer is the last 8 bytes of the chunk.`);
+      `<code>header2footer(h) = h + get_size(h) − 8</code> = <code>${hex(base)} + ${size} − 8 = ${hex(ans)}</code>. The footer is the last 8 bytes of the chunk.`) };
   }
   if(kind==="next"){
     const ans = base + size;
-    return mkChoices(rng, hex(ans),
+    return { prompt:`<b>next_chunk_header</b>: a chunk's header is at <code>${hex(base)}</code> and its size is <code>${size}</code>. Where does the <i>next</i> chunk's header begin?`,
+      ...mkChoices(rng, hex(ans),
       [hex(base+size-8), hex(base+size+8), hex(base+size-16)],
-      `<code>next_chunk_header(h) = h + get_size(h)</code> = <code>${hex(base)} + ${size} = ${hex(ans)}</code> (NULL if that runs past <code>mem_heap_hi</code>).`);
+      `<code>next_chunk_header(h) = h + get_size(h)</code> = <code>${hex(base)} + ${size} = ${hex(ans)}</code> (NULL if that runs past <code>mem_heap_hi</code>).`) };
   }
   if(kind==="p2h"){
     const payload = base + 8;
     const ans = base;
-    return mkChoices(rng, hex(ans),
+    return { prompt:`<b>payload2header</b>: <code>malloc</code> handed back the payload pointer <code>${hex(payload)}</code>. Where is this chunk's header?`,
+      ...mkChoices(rng, hex(ans),
       [hex(payload+8), hex(payload), hex(payload-16)],
-      `<code>payload2header(p) = p − 8</code> = <code>${hex(payload)} − 8 = ${hex(ans)}</code>. The header sits just before the payload.`);
+      `<code>payload2header(p) = p − 8</code> = <code>${hex(payload)} − 8 = ${hex(ans)}</code>. The header sits just before the payload.`) };
   }
   // prev
   const prevSize = 16*randint(rng,1,10);
   const ans = base - prevSize;
-  return mkChoices(rng, hex(ans),
+  return { prompt:`<b>prev_chunk_header</b>: a chunk's header is at <code>${hex(base)}</code>. The previous chunk's footer (at <code>${hex(base-8)}</code>) records size <code>${prevSize}</code>. Where does the previous chunk's header start?`,
+    ...mkChoices(rng, hex(ans),
     [hex(base-8), hex(base), hex(base+prevSize)],
-    `Read the <i>previous</i> chunk's footer at <code>h − 8</code> to get its size (<code>${prevSize}</code>), then step back: <code>prev = h − ${prevSize} = ${hex(ans)}</code>.`);
+    `Read the <i>previous</i> chunk's footer at <code>h − 8</code> to get its size (<code>${prevSize}</code>), then step back: <code>prev = h − ${prevSize} = ${hex(ans)}</code>.`) };
 }
 
 /* ---------- ROUND 2: malloc (first-fit + split) ---------- */
