@@ -1,0 +1,851 @@
+<title>Malloc Arena</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<style>
+/* Layout: a dark arcade "arena" — HUD with two HP bars on top, a question
+   card in the middle, answer pads below. One deliberate dark theme. */
+:root{
+  color-scheme: dark;
+  --bg:#0b0e17; --panel:#141b2e; --panel2:#1b2340; --line:#2a3458;
+  --fg:#eaf0ff; --muted:#93a0c6;
+  --blue:#4aa8ff; --blue-dim:#1c3a5e;
+  --red:#ff5d73; --red-dim:#5e1c2b;
+  --green:#36d399; --amber:#ffcf5c; --wrong:#ff6b6b;
+  --accent:#9b8cff;
+  --disp:"Press Start 2P", ui-monospace, Menlo, Consolas, monospace;
+  --mono:"JetBrains Mono", ui-monospace, Menlo, Consolas, monospace;
+  --sans:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+}
+*{box-sizing:border-box}
+html,body{height:100%}
+body{
+  margin:0; background:
+    radial-gradient(1200px 600px at 50% -10%, #14204a 0%, transparent 60%),
+    var(--bg);
+  color:var(--fg); font-family:var(--sans);
+  padding-left:max(16px,env(safe-area-inset-left,0px));
+  padding-right:max(16px,env(safe-area-inset-right,0px));
+  padding-block:16px;
+  -webkit-font-smoothing:antialiased;
+}
+.wrap{max-width:900px; margin:0 auto; min-height:100%;}
+h1,h2,h3{text-wrap:balance}
+.disp{font-family:var(--disp); line-height:1.5; letter-spacing:.5px}
+.mono{font-family:var(--mono)}
+.muted{color:var(--muted)}
+button{font-family:inherit; cursor:pointer}
+[hidden]{display:none!important}
+code{font-family:var(--mono); color:var(--amber)}
+
+/* ---- buttons ---- */
+.btn{
+  background:var(--panel2); color:var(--fg); border:1px solid var(--line);
+  border-radius:12px; padding:14px 18px; font-size:15px; font-weight:600;
+  transition:transform .06s ease, border-color .15s, background .15s;
+}
+.btn:hover{border-color:var(--accent); transform:translateY(-1px)}
+.btn:active{transform:translateY(1px)}
+.btn:focus-visible{outline:3px solid var(--accent); outline-offset:2px}
+.btn.primary{background:linear-gradient(180deg,#2b3f74,#223160); border-color:#3a56a0}
+.btn.lg{font-size:17px; padding:18px 22px}
+.btn.block{display:block; width:100%}
+
+/* ---- home ---- */
+.hero{text-align:center; padding:26px 0 10px}
+.hero .title{font-family:var(--disp); font-size:clamp(20px,5.2vw,38px); color:var(--fg);
+  text-shadow:0 0 18px rgba(155,140,255,.45); margin:0 0 6px}
+.hero .sub{color:var(--muted); font-size:14px; margin:0 auto; max-width:46ch}
+.modes{display:grid; grid-template-columns:repeat(auto-fit,minmax(220px,1fr)); gap:14px; margin-top:22px}
+.mode{
+  text-align:left; background:var(--panel); border:1px solid var(--line); border-radius:16px;
+  padding:18px; display:flex; flex-direction:column; gap:8px; min-width:0;
+}
+.mode:hover{border-color:var(--accent); transform:translateY(-2px)}
+.mode .k{font-family:var(--disp); font-size:12px; color:var(--accent)}
+.mode .d{color:var(--muted); font-size:13px}
+.rounds{margin-top:22px; background:var(--panel); border:1px solid var(--line); border-radius:14px; padding:16px}
+.rounds h3{margin:0 0 10px; font-size:13px; letter-spacing:.08em; text-transform:uppercase; color:var(--muted)}
+.rounds ol{margin:0; padding-left:20px; color:var(--fg); font-size:14px; line-height:1.7}
+
+/* ---- lobby ---- */
+.card{background:var(--panel); border:1px solid var(--line); border-radius:16px; padding:20px; margin-top:16px}
+.row{display:flex; gap:12px; flex-wrap:wrap; align-items:center}
+.field{display:flex; flex-direction:column; gap:6px; min-width:0}
+label.lab{font-size:12px; letter-spacing:.06em; text-transform:uppercase; color:var(--muted)}
+input[type=text]{
+  font-family:var(--mono); font-size:16px; background:var(--panel2); color:var(--fg);
+  border:1px solid var(--line); border-radius:10px; padding:12px 14px; min-width:0; width:100%;
+}
+input:focus-visible{outline:2px solid var(--accent); outline-offset:1px}
+.code-big{font-family:var(--disp); font-size:clamp(22px,7vw,40px); color:var(--amber); letter-spacing:.14em}
+
+/* ---- HUD ---- */
+.hud{display:grid; grid-template-columns:1fr auto 1fr; gap:12px; align-items:center; margin-top:8px}
+.team{min-width:0}
+.team .name{font-family:var(--disp); font-size:12px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis}
+.team.A .name{color:var(--blue)} .team.B .name{color:var(--red)}
+.team.B{text-align:right}
+.hpbar{height:16px; border-radius:9px; background:#0007; border:1px solid var(--line); overflow:hidden; margin-top:6px}
+.hpfill{height:100%; width:100%; transition:width .4s ease}
+.team.A .hpfill{background:linear-gradient(90deg,#2b6fb0,var(--blue))}
+.team.B .hpfill{background:linear-gradient(270deg,#b03a4c,var(--red))}
+.hpnum{font-family:var(--mono); font-size:12px; color:var(--muted); margin-top:3px}
+.vs{font-family:var(--disp); font-size:14px; color:var(--muted)}
+.statusline{text-align:center; min-height:20px; color:var(--muted); font-size:13px; margin:10px 0 2px}
+.roundtag{text-align:center; font-family:var(--disp); font-size:11px; color:var(--accent); letter-spacing:.1em; margin-top:10px}
+.timer{height:6px; border-radius:4px; background:#0006; overflow:hidden; margin:10px 0}
+.timerfill{height:100%; background:linear-gradient(90deg,var(--green),var(--amber)); width:100%}
+
+/* ---- question ---- */
+.qcard{background:var(--panel); border:1px solid var(--line); border-radius:16px; padding:20px; margin-top:12px}
+.qprompt{font-size:clamp(16px,2.4vw,20px); line-height:1.5}
+.qprompt code{font-size:1.05em}
+.heap{display:flex; gap:4px; flex-wrap:wrap; margin:16px 0; overflow-x:auto; padding-bottom:4px}
+.chunk{display:flex; align-items:stretch; border-radius:8px; overflow:hidden; border:1px solid #0008; min-width:0}
+.cell{display:flex; flex-direction:column; align-items:center; justify-content:center; padding:8px 6px; font-family:var(--mono); font-size:12px; line-height:1.2}
+.cell.tag{background:var(--amber); color:#241a00; font-weight:700; min-width:34px}
+.cell.pay{min-width:54px; color:#06121f}
+.cell.pay.alloc{background:var(--blue)} .cell.pay.free{background:var(--green)}
+.cell small{font-size:10px; opacity:.8}
+.cidx{font-family:var(--mono); font-size:10px; color:var(--muted); text-align:center; margin-top:2px}
+.chunkwrap{display:flex; flex-direction:column}
+
+/* ---- answer pads ---- */
+.pads{display:grid; gap:14px; margin-top:14px}
+.pads.two{grid-template-columns:1fr 1fr}
+@media(max-width:620px){ .pads.two{grid-template-columns:1fr} }
+.pad{min-width:0}
+.pad .padname{font-family:var(--disp); font-size:10px; margin-bottom:8px; letter-spacing:.08em}
+.pad.A .padname{color:var(--blue)} .pad.B .padname{color:var(--red)}
+.opts{display:grid; gap:8px}
+.opt{
+  display:flex; gap:10px; align-items:center; text-align:left; background:var(--panel2);
+  border:1px solid var(--line); border-radius:10px; padding:12px 14px; font-size:15px; color:var(--fg);
+  font-family:var(--mono); min-width:0; width:100%;
+}
+.opt:hover:not(:disabled){border-color:var(--accent)}
+.opt:disabled{opacity:.9; cursor:default}
+.opt .key{flex:0 0 auto; width:26px; height:26px; display:grid; place-items:center; border-radius:6px;
+  background:#0006; border:1px solid var(--line); font-family:var(--disp); font-size:10px; color:var(--muted)}
+.opt .txt{min-width:0; overflow-wrap:anywhere}
+.pad.A .opt.sel{border-color:var(--blue); background:var(--blue-dim)}
+.pad.B .opt.sel{border-color:var(--red); background:var(--red-dim)}
+.opt.correct{border-color:var(--green); background:#10371f}
+.opt.wrong{border-color:var(--wrong); background:#3a1620}
+.explain{margin-top:12px; padding:12px 14px; border-radius:10px; background:var(--panel2);
+  border:1px solid var(--line); font-size:14px; line-height:1.5; color:var(--fg)}
+.explain b{color:var(--green)}
+
+/* ---- results ---- */
+.banner{font-family:var(--disp); font-size:clamp(20px,6vw,40px); text-align:center; margin:18px 0 6px}
+.win-A{color:var(--blue)} .win-B{color:var(--red)} .win-draw{color:var(--amber)}
+.scoregrid{display:grid; grid-template-columns:1fr 1fr; gap:14px; margin-top:12px}
+.scorebox{background:var(--panel); border:1px solid var(--line); border-radius:14px; padding:16px; text-align:center}
+.scorebox .big{font-family:var(--disp); font-size:22px}
+.scorebox.A .big{color:var(--blue)} .scorebox.B .big{color:var(--red)}
+.center{text-align:center}
+.mt{margin-top:18px}
+.foot{margin-top:26px; text-align:center; color:var(--muted); font-size:12px; line-height:1.6}
+a{color:var(--accent)}
+.pill{display:inline-block; font-family:var(--mono); font-size:12px; background:var(--panel2); border:1px solid var(--line); border-radius:999px; padding:3px 10px; color:var(--muted)}
+.flash{animation:flash .5s ease}
+@keyframes flash{0%{filter:brightness(1.8)}100%{filter:brightness(1)}}
+@media(prefers-reduced-motion:reduce){*{transition:none!important; animation:none!important}}
+</style>
+
+<div class="wrap">
+
+  <!-- ===================== HOME ===================== -->
+  <section id="home">
+    <div class="hero">
+      <h1 class="title">MALLOC&nbsp;ARENA</h1>
+      <p class="sub">A head-to-head warm-up for the malloc lab. Battle through headers, first-fit + split, and heap-checking. Fast correct answers hit harder.</p>
+    </div>
+    <div class="modes">
+      <button class="mode" data-mode="solo">
+        <span class="k">SOLO</span>
+        <span class="d">Practice on your own. Rack up points, accuracy and your best streak.</span>
+      </button>
+      <button class="mode" data-mode="local">
+        <span class="k">2 TEAMS · 1 SCREEN</span>
+        <span class="d">Two teams on this device. Team&nbsp;A keys <b>Q&nbsp;W&nbsp;E&nbsp;R</b>, Team&nbsp;B keys <b>U&nbsp;I&nbsp;O&nbsp;P</b>.</span>
+      </button>
+      <button class="mode" data-mode="online">
+        <span class="k">ONLINE PK</span>
+        <span class="d">Two teams, two devices. Create a match code and share it with the other team.</span>
+      </button>
+    </div>
+    <div class="rounds">
+      <h3>Three rounds — the lab, by hand</h3>
+      <ol>
+        <li><b>Headers &amp; Pointers</b> — encode/decode the header word; <code>payload2header</code>, <code>header2footer</code>, <code>next</code>/<code>prev_chunk_header</code>.</li>
+        <li><b>Malloc</b> — first-fit search and the split decision (<code>first_fit</code>, <code>split</code>, <code>mm_malloc</code>).</li>
+        <li><b>Heap Doctor</b> — spot the broken invariant (<code>mm_checkheap</code>).</li>
+      </ol>
+    </div>
+    <p class="foot">Chunk = <code>[header 8B | payload | footer 8B]</code>, size a multiple of 16, status in bit 0 (1 = allocated, 0 = free).</p>
+  </section>
+
+  <!-- ===================== LOBBY (online) ===================== -->
+  <section id="lobby" hidden>
+    <div class="hero"><h1 class="title" style="font-size:clamp(16px,4vw,26px)">ONLINE&nbsp;PK</h1></div>
+    <div class="card">
+      <div class="field"><label class="lab" for="teamname">Your team name</label>
+        <input type="text" id="teamname" maxlength="18" placeholder="e.g. Segfault Squad"></div>
+      <div class="row mt">
+        <button class="btn primary lg" id="createBtn">Create match</button>
+        <span class="muted">or</span>
+        <div class="field" style="flex:1; min-width:160px"><label class="lab" for="joincode">Join with a code</label>
+          <input type="text" id="joincode" maxlength="4" placeholder="ABCD" autocapitalize="characters"></div>
+        <button class="btn lg" id="joinBtn">Join</button>
+      </div>
+      <p id="lobbyMsg" class="muted mt"></p>
+    </div>
+    <div class="card center" id="waitCard" hidden>
+      <div class="muted">Share this match code with the other team</div>
+      <div class="code-big mono mt" id="codeShow">————</div>
+      <div id="waitMsg" class="statusline mt">Waiting for the other team to join…</div>
+      <div class="pill" id="connPill">connecting…</div>
+    </div>
+    <div class="center mt"><button class="btn" data-home>← Back</button></div>
+  </section>
+
+  <!-- ===================== BATTLE ===================== -->
+  <section id="battle" hidden>
+    <div class="roundtag" id="roundTag">ROUND 1 · HEADERS &amp; POINTERS</div>
+    <div class="hud">
+      <div class="team A">
+        <div class="name" id="nameA">TEAM A</div>
+        <div class="hpbar"><div class="hpfill" id="hpA"></div></div>
+        <div class="hpnum"><span id="hpAnum">100</span> HP · <span id="scoreA">0</span> pts</div>
+      </div>
+      <div class="vs" id="vsTag">VS</div>
+      <div class="team B">
+        <div class="name" id="nameB">TEAM B</div>
+        <div class="hpbar"><div class="hpfill" id="hpB"></div></div>
+        <div class="hpnum"><span id="hpBnum">100</span> HP · <span id="scoreB">0</span> pts</div>
+      </div>
+    </div>
+    <div class="timer"><div class="timerfill" id="timerfill"></div></div>
+    <div class="statusline" id="statusLine"></div>
+
+    <div class="qcard">
+      <div class="qprompt" id="qprompt"></div>
+      <div id="qdiagram"></div>
+    </div>
+
+    <div class="pads" id="pads"></div>
+    <div class="explain" id="explain" hidden></div>
+    <div class="center mt"><button class="btn" data-home>Quit match</button></div>
+  </section>
+
+  <!-- ===================== SOLO HUD (simpler) ===================== -->
+  <section id="solo" hidden>
+    <div class="roundtag" id="sRoundTag">ROUND 1 · HEADERS &amp; POINTERS</div>
+    <div class="hud" style="grid-template-columns:1fr 1fr 1fr">
+      <div class="team A" style="text-align:left"><div class="hpnum">SCORE</div><div class="disp" style="font-size:18px" id="sScore">0</div></div>
+      <div class="team" style="text-align:center"><div class="hpnum">STREAK</div><div class="disp" style="font-size:18px" id="sStreak">0</div></div>
+      <div class="team B"><div class="hpnum">QUESTION</div><div class="disp" style="font-size:18px" id="sProg">1/14</div></div>
+    </div>
+    <div class="timer"><div class="timerfill" id="sTimer"></div></div>
+    <div class="qcard">
+      <div class="qprompt" id="sPrompt"></div>
+      <div id="sDiagram"></div>
+    </div>
+    <div class="pads"><div class="pad" id="sPad"></div></div>
+    <div class="explain" id="sExplain" hidden></div>
+    <div class="center mt"><button class="btn" data-home>Quit</button></div>
+  </section>
+
+  <!-- ===================== RESULTS ===================== -->
+  <section id="results" hidden>
+    <div class="banner" id="resultBanner">RESULT</div>
+    <div id="resultBody"></div>
+    <div class="center mt">
+      <button class="btn primary lg" id="againBtn">Play again</button>
+      <button class="btn lg" data-home>Home</button>
+    </div>
+  </section>
+
+</div>
+
+<script>
+"use strict";
+/* ============================================================
+   Malloc Arena — recitation warm-up for the malloc lab.
+   Modes: solo, local (2 teams/1 screen), online (room presence).
+   Questions are generated deterministically from a seed so that
+   two online devices produce an identical question stream.
+   ============================================================ */
+
+/* ---------- tiny helpers ---------- */
+const $ = id => document.getElementById(id);
+const hex = n => "0x" + (n >>> 0).toString(16);
+const align16 = n => Math.ceil(n/16)*16;
+function mulberry32(a){ return function(){ a|=0; a=a+0x6D2B79F5|0; let t=Math.imul(a^a>>>15,1|a); t=t+Math.imul(t^t>>>7,61|t)^t; return ((t^t>>>14)>>>0)/4294967296; }; }
+function seedFromString(s){ let h=2166136261>>>0; for(let i=0;i<s.length;i++){ h^=s.charCodeAt(i); h=Math.imul(h,16777619); } return h>>>0; }
+function makeRng(seed){ return mulberry32(seed>>>0); }
+const pick = (rng, arr) => arr[Math.floor(rng()*arr.length)];
+const randint = (rng,a,b) => a + Math.floor(rng()*(b-a+1));
+function shuffleInPlace(rng, arr){ for(let i=arr.length-1;i>0;i--){ const j=Math.floor(rng()*(i+1)); [arr[i],arr[j]]=[arr[j],arr[i]]; } return arr; }
+function esc(s){ return String(s).replace(/[&<>]/g, c=>({"&":"&amp;","<":"&lt;",">":"&gt;"}[c])); }
+
+/* Build an options object from a correct answer + distractor list.
+   Returns {options:[...4 strings], correct:index, explain} with shuffled order. */
+function mkChoices(rng, correct, distractors, explain){
+  const uniq = [];
+  const seen = new Set([correct]);
+  for(const d of distractors){ if(!seen.has(d)){ seen.add(d); uniq.push(d); } }
+  const opts = [correct, ...uniq].slice(0,4);
+  // pad if we somehow have <4
+  let pad=16;
+  while(opts.length<4){ const v = correct+" "+(pad); if(!opts.includes(v)){opts.push(v);} pad+=16; }
+  shuffleInPlace(rng, opts);
+  return { options: opts, correct: opts.indexOf(correct), explain };
+}
+
+/* ---------- ROUND 1: headers & pointers ---------- */
+function genHeaders(rng){
+  const kind = pick(rng, ["encode","decode","footer","next","p2h","prev"]);
+  const size = 16*randint(rng,1,15);      // 16..240, multiple of 16
+  const alloc = rng() < 0.5;
+  const stat = alloc?1:0;
+  if(kind==="encode"){
+    const word = size|stat;
+    return mkChoices(rng, hex(word),
+      [hex(size|(alloc?0:1)), hex((size+16)|stat), hex((size-16>0?size-16:size+32)|stat)],
+      `The header packs size + status: <code>${size} | ${stat}</code> = <code>${hex(word)}</code>. The status bit is bit&nbsp;0 (${alloc?"1 = allocated":"0 = free"}); the size fills the rest.`);
+  }
+  if(kind==="decode"){
+    const word = size|stat;
+    const correct = `${size} bytes, ${alloc?"allocated":"free"}`;
+    return mkChoices(rng, correct,
+      [`${size} bytes, ${alloc?"free":"allocated"}`,
+       `${size+16} bytes, ${alloc?"allocated":"free"}`,
+       `${size>16?size-16:size+32} bytes, ${alloc?"allocated":"free"}`],
+      `<code>get_size</code> masks off the low 4 bits: <code>${hex(word)} &amp; ~0xF = ${size}</code>. <code>get_status</code> reads bit 0: <code>${stat}</code> → <b>${alloc?"allocated":"free"}</b>. Don't read the status bit as part of the size!`);
+  }
+  // pointer arithmetic variants
+  const base = 0x5000 + 16*randint(rng,0,180) + 8; // header addresses sit at ...8 (payloads 16-aligned)
+  if(kind==="footer"){
+    const ans = base + size - 8;
+    return mkChoices(rng, hex(ans),
+      [hex(base+size), hex(base+size-16), hex(base-8)],
+      `<code>header2footer(h) = h + get_size(h) − 8</code> = <code>${hex(base)} + ${size} − 8 = ${hex(ans)}</code>. The footer is the last 8 bytes of the chunk.`);
+  }
+  if(kind==="next"){
+    const ans = base + size;
+    return mkChoices(rng, hex(ans),
+      [hex(base+size-8), hex(base+size+8), hex(base+size-16)],
+      `<code>next_chunk_header(h) = h + get_size(h)</code> = <code>${hex(base)} + ${size} = ${hex(ans)}</code> (NULL if that runs past <code>mem_heap_hi</code>).`);
+  }
+  if(kind==="p2h"){
+    const payload = base + 8;
+    const ans = base;
+    return mkChoices(rng, hex(ans),
+      [hex(payload+8), hex(payload), hex(payload-16)],
+      `<code>payload2header(p) = p − 8</code> = <code>${hex(payload)} − 8 = ${hex(ans)}</code>. The header sits just before the payload.`);
+  }
+  // prev
+  const prevSize = 16*randint(rng,1,10);
+  const ans = base - prevSize;
+  return mkChoices(rng, hex(ans),
+    [hex(base-8), hex(base), hex(base+prevSize)],
+    `Read the <i>previous</i> chunk's footer at <code>h − 8</code> to get its size (<code>${prevSize}</code>), then step back: <code>prev = h − ${prevSize} = ${hex(ans)}</code>.`);
+}
+
+/* ---------- ROUND 2: malloc (first-fit + split) ---------- */
+function genHeap(rng, n){
+  const sizes=[32,48,64,80,96,112];
+  const chunks=[];
+  for(let i=0;i<n;i++){ chunks.push({ size: pick(rng,sizes), free: false }); }
+  // mark some free (not two adjacent, to stay realistic)
+  for(let i=0;i<n;i++){ if(rng()<0.45 && !(i>0 && chunks[i-1].free)) chunks[i].free=true; }
+  if(!chunks.some(c=>c.free)) chunks[randint(rng,0,n-1)].free=true;
+  return chunks;
+}
+function heapHTML(chunks, opts={}){
+  let h = '<div class="heap">';
+  chunks.forEach((c,i)=>{
+    const cls = c.free?"free":"alloc";
+    const hs = (c.headSize!==undefined)?c.headSize:c.size;
+    const fs = (c.footSize!==undefined)?c.footSize:c.size;
+    const hstat = (c.headStat!==undefined)?c.headStat:(c.free?0:1);
+    const fstat = (c.footStat!==undefined)?c.footStat:(c.free?0:1);
+    h += '<div class="chunkwrap"><div class="chunk">'
+      + `<div class="cell tag">${hs}<small>|${hstat}</small></div>`
+      + `<div class="cell pay ${cls}">${c.free?"free":"used"}<small>${c.size}B</small></div>`
+      + `<div class="cell tag">${fs}<small>|${fstat}</small></div>`
+      + '</div><div class="cidx">#'+(i+1)+'</div></div>';
+  });
+  h += '</div>';
+  return h;
+}
+function genMalloc(rng){
+  const n = randint(rng,4,5);
+  const chunks = genHeap(rng,n);
+  const payload = 16*randint(rng,1,5);
+  const csz = align16(payload)+16;
+  const firstFit = chunks.findIndex(c=>c.free && c.size>=csz);
+  const kind = (firstFit>=0 && rng()<0.5) ? "split" : "firstfit";
+
+  if(kind==="firstfit"){
+    const correct = firstFit>=0 ? `chunk #${firstFit+1}` : "none — ask the OS (extend heap)";
+    const distract = [];
+    chunks.forEach((c,i)=>{ const s=`chunk #${i+1}`; if(s!==correct) distract.push(s); });
+    if(correct!=="none — ask the OS (extend heap)") distract.push("none — ask the OS (extend heap)");
+    shuffleInPlace(rng, distract);
+    return {
+      prompt:`<b>mm_malloc</b>: a request for a <code>${payload}</code>-byte payload needs a chunk of <code>${csz}</code> bytes (payload + 8-byte header + 8-byte footer). Scanning left → right, which chunk does <b>first-fit</b> pick?`,
+      diagram: heapHTML(chunks),
+      ...mkChoices(rng, correct, distract,
+        firstFit>=0
+          ? `First-fit takes the <b>first free</b> chunk big enough: <code>#${firstFit+1}</code> (${chunks[firstFit].size}B ≥ ${csz}B). Earlier free chunks were too small; allocated chunks are skipped.`
+          : `No free chunk is ≥ ${csz}B, so <code>first_fit</code> returns NULL and <code>mm_malloc</code> calls <code>ask_os_for_chunk</code>.`)
+    };
+  }
+  // split
+  const S = chunks[firstFit].size;
+  const leftover = S - csz;
+  const splits = leftover >= 16;
+  const correct = splits ? `${leftover}B free remainder` : "no split — use the whole chunk";
+  const distract = splits
+    ? [`${leftover+16}B free remainder`, `${leftover+32}B free remainder`, "no split — use the whole chunk"]
+    : [`16B free remainder`, `${S+16}B free remainder`, `${S+32}B free remainder`];
+  return {
+    prompt:`<b>split</b>: first-fit picked <code>chunk #${firstFit+1}</code> (<code>${S}B</code>) for a <code>${csz}B</code> need. After allocating, what happens to the leftover?`,
+    diagram: heapHTML(chunks),
+    ...mkChoices(rng, correct, distract,
+      splits
+        ? `Leftover = <code>${S} − ${csz} = ${leftover}B</code>, which is ≥ 16 (room for a header+footer), so <code>split</code> carves a <b>${leftover}B free</b> chunk after the ${csz}B allocation.`
+        : `Leftover = <code>${S} − ${csz} = ${leftover}B</code> &lt; 16, too small for a chunk's own header+footer — so <b>don't split</b>; give the caller the whole chunk.`)
+  };
+}
+
+/* ---------- ROUND 3: heap doctor (checkheap) ---------- */
+const BUGS = [
+  {key:"align",  label:"A chunk's size isn't a multiple of 16"},
+  {key:"tag",    label:"A header and its footer disagree on size"},
+  {key:"status", label:"A header and its footer disagree on status"},
+  {key:"overrun",label:"The chunk sizes don't add up to the heap size"},
+];
+function genCheckheap(rng){
+  const n = randint(rng,3,4);
+  const chunks = genHeap(rng,n).map(c=>({size:c.size, free:c.free}));
+  const bug = pick(rng, BUGS);
+  const i = randint(rng,0,n-1);
+  let note="";
+  if(bug.key==="align"){ chunks[i].size = chunks[i].size - 8; chunks[i].headSize=chunks[i].size; chunks[i].footSize=chunks[i].size; note=`Chunk #${i+1} has size ${chunks[i].size}, not a multiple of 16.`; }
+  else if(bug.key==="tag"){ chunks[i].headSize=chunks[i].size; chunks[i].footSize=chunks[i].size+16; note=`Chunk #${i+1}: header says ${chunks[i].size} but footer says ${chunks[i].size+16}.`; }
+  else if(bug.key==="status"){ chunks[i].headStat=chunks[i].free?0:1; chunks[i].footStat=chunks[i].free?1:0; note=`Chunk #${i+1}: header status ${chunks[i].headStat} ≠ footer status ${chunks[i].footStat}.`; }
+  else { chunks[i].headSize=chunks[i].size+16; chunks[i].footSize=chunks[i].size+16; chunks[i].size=chunks[i].size+16; note=`Chunk #${i+1} claims ${chunks[i].size} bytes, pushing the last chunk past <code>mem_heap_hi</code> (sizes no longer sum to the heap size).`; }
+  const correct = bug.label;
+  const distract = BUGS.filter(b=>b.key!==bug.key).map(b=>b.label);
+  return {
+    prompt:`<b>mm_checkheap</b>: exactly one invariant is broken below. Each box shows <code>header|status</code> · payload · <code>footer|status</code>. What's wrong?`,
+    diagram: heapHTML(chunks),
+    ...mkChoices(rng, correct, distract, `<b>${esc(correct)}.</b> ${note}`)
+  };
+}
+
+/* ---------- build a full question set from a seed ---------- */
+const ROUND_META = [
+  {name:"HEADERS & POINTERS", gen:genHeaders},
+  {name:"MALLOC: FIRST-FIT & SPLIT", gen:genMalloc},
+  {name:"HEAP DOCTOR", gen:genCheckheap},
+];
+function buildQuestions(seed, perRound){
+  const rng = makeRng(seed);
+  const qs=[];
+  ROUND_META.forEach((r,ri)=>{
+    for(let k=0;k<perRound[ri];k++){
+      const q = r.gen(rng);
+      q.round = ri; q.roundName = r.name;
+      qs.push(q);
+    }
+  });
+  return qs;
+}
+
+/* ============================================================
+   GAME STATE + FLOW
+   ============================================================ */
+const KEYS_SOLO = ["1","2","3","4"];
+const KEYS_A = ["q","w","e","r"];
+const KEYS_B = ["u","i","o","p"];
+const QTIME = 22;          // seconds per question (soft timer)
+const FEEDBACK_MS = 2600;
+
+let G = null;             // current game object
+let keyHandler = null;
+
+function show(sec){ ["home","lobby","battle","solo","results"].forEach(s=>$(s).hidden = (s!==sec)); }
+function setKeyHandler(fn){ if(keyHandler) document.removeEventListener("keydown",keyHandler); keyHandler=fn; if(fn) document.addEventListener("keydown",fn); }
+
+/* ---------------- SOLO ---------------- */
+function startSolo(){
+  const seed = (Date.now()^(Math.random()*1e9))>>>0;
+  const qs = buildQuestions(seed, [5,5,4]);
+  G = { mode:"solo", qs, i:0, score:0, streak:0, best:0, answered:false, shownAt:0, timer:null };
+  show("solo"); renderSolo();
+  setKeyHandler(e=>{ const k=e.key.toLowerCase(); const idx=KEYS_SOLO.indexOf(k); if(idx>=0){ e.preventDefault(); soloAnswer(idx);} });
+}
+function renderSolo(){
+  const q=G.qs[G.i];
+  $("sRoundTag").textContent = `ROUND ${q.round+1} · ${q.roundName}`;
+  $("sScore").textContent=G.score; $("sStreak").textContent=G.streak; $("sProg").textContent=`${G.i+1}/${G.qs.length}`;
+  $("sPrompt").innerHTML=q.prompt;
+  $("sDiagram").innerHTML=q.diagram||"";
+  $("sExplain").hidden=true;
+  const pad=$("sPad"); pad.innerHTML = optsHTML(q, KEYS_SOLO, "A");
+  pad.querySelectorAll(".opt").forEach((b,idx)=> b.onclick=()=>soloAnswer(idx));
+  G.answered=false; G.shownAt=performance.now();
+  runTimer($("sTimer"), ()=>{ if(!G.answered) soloAnswer(-1); });
+}
+function soloAnswer(idx){
+  if(G.answered) return; G.answered=true; stopTimer();
+  const q=G.qs[G.i]; const correct = idx===q.correct;
+  const ms = performance.now()-G.shownAt;
+  if(correct){ const speed = Math.max(0, Math.round((1-Math.min(ms,QTIME*1000)/(QTIME*1000))*50)); G.score += 100+speed; G.streak++; G.best=Math.max(G.best,G.streak); }
+  else G.streak=0;
+  revealOpts($("sPad"), q, idx);
+  $("sScore").textContent=G.score; $("sStreak").textContent=G.streak;
+  $("sExplain").innerHTML = (correct?"<b>Correct!</b> ":"<b style='color:var(--wrong)'>Not quite.</b> ")+q.explain;
+  $("sExplain").hidden=false;
+  setTimeout(()=>{ G.i++; if(G.i>=G.qs.length) soloResults(); else renderSolo(); }, FEEDBACK_MS);
+}
+function soloResults(){
+  stopTimer(); setKeyHandler(null);
+  show("results");
+  $("resultBanner").className="banner win-draw";
+  $("resultBanner").textContent="RUN COMPLETE";
+  $("resultBody").innerHTML =
+    `<div class="scoregrid"><div class="scorebox A"><div class="muted">SCORE</div><div class="big">${G.score}</div></div>`+
+    `<div class="scorebox B"><div class="muted">BEST STREAK</div><div class="big">${G.best}</div></div></div>`+
+    `<p class="center muted mt">You worked through all three rounds: headers, malloc/split, and heap-checking — the exact helpers you'll write in <code>mm-implicit.c</code>.</p>`;
+  $("againBtn").onclick=startSolo;
+}
+
+/* ---------------- BATTLE (local + online share this) ---------------- */
+function newBattle(mode, opts){
+  return {
+    mode, // "local" | "online"
+    qs: opts.qs, i:0,
+    hp:{A:100,B:100}, score:{A:0,B:0},
+    ans:{A:-1,B:-1}, ms:{A:0,B:0},
+    answered:{A:false,B:false},
+    resolved:false, shownAt:0, timer:null,
+    names: opts.names || {A:"TEAM A", B:"TEAM B"},
+    // online bits:
+    room: opts.room||null, myTeam: opts.myTeam||null, oppPeer: opts.oppPeer||null, me: opts.me||null,
+    over:false,
+  };
+}
+function startLocal(){
+  const seed=(Date.now()^(Math.random()*1e9))>>>0;
+  const qs=buildQuestions(seed,[4,4,3]);
+  G=newBattle("local",{qs, names:{A:"TEAM A",B:"TEAM B"}});
+  show("battle"); $("vsTag").textContent="VS";
+  renderBattle();
+  setKeyHandler(e=>{
+    const k=e.key.toLowerCase();
+    let t=null, idx=-1;
+    if((idx=KEYS_A.indexOf(k))>=0) t="A";
+    else if((idx=KEYS_B.indexOf(k))>=0) t="B";
+    if(t){ e.preventDefault(); localAnswer(t, idx); }
+  });
+}
+function optsHTML(q, keys, teamCls){
+  let h=`<div class="opts">`;
+  q.options.forEach((o,idx)=>{
+    h+=`<button class="opt" data-idx="${idx}"><span class="key">${(keys[idx]||"").toUpperCase()}</span><span class="txt">${esc(o)}</span></button>`;
+  });
+  return h+`</div>`;
+}
+function renderBattle(){
+  const q=G.qs[G.i];
+  $("roundTag").textContent=`ROUND ${q.round+1} · ${q.roundName}`;
+  $("nameA").textContent=G.names.A; $("nameB").textContent=G.names.B;
+  $("qprompt").innerHTML=q.prompt; $("qdiagram").innerHTML=q.diagram||"";
+  updateHUD();
+  $("explain").hidden=true;
+  const pads=$("pads");
+  if(G.mode==="local"){
+    pads.className="pads two";
+    pads.innerHTML =
+      `<div class="pad A"><div class="padname">${esc(G.names.A)} · Q W E R</div>${optsHTML(q,KEYS_A,"A")}</div>`+
+      `<div class="pad B"><div class="padname">${esc(G.names.B)} · U I O P</div>${optsHTML(q,KEYS_B,"B")}</div>`;
+    pads.querySelector(".pad.A").querySelectorAll(".opt").forEach((b,idx)=> b.onclick=()=>localAnswer("A",idx));
+    pads.querySelector(".pad.B").querySelectorAll(".opt").forEach((b,idx)=> b.onclick=()=>localAnswer("B",idx));
+  } else {
+    pads.className="pads";
+    const t=G.myTeam;
+    pads.innerHTML = `<div class="pad ${t}"><div class="padname">YOU · ${esc(G.names[t])} · keys 1-4</div>${optsHTML(q,KEYS_SOLO,t)}</div>`;
+    pads.querySelectorAll(".opt").forEach((b,idx)=> b.onclick=()=>onlineAnswer(idx));
+  }
+  G.ans={A:-1,B:-1}; G.ms={A:0,B:0}; G.answered={A:false,B:false}; G.resolved=false; G.shownAt=performance.now();
+  statusBattle();
+  runTimer($("timerfill"), ()=>battleTimeout());
+}
+function statusBattle(){
+  if(G.mode==="local"){ $("statusLine").textContent="Both teams: lock in your answer!"; return; }
+  const meDone=G.answered[G.myTeam];
+  const oppDone = G.oppPeer ? battleOppAnswered() : false;
+  $("statusLine").textContent = meDone ? (oppDone?"Resolving…":"Waiting for the other team…") : "Lock in your answer!";
+}
+function updateHUD(){
+  $("hpA").style.width=Math.max(0,G.hp.A)+"%"; $("hpB").style.width=Math.max(0,G.hp.B)+"%";
+  $("hpAnum").textContent=Math.max(0,Math.round(G.hp.A)); $("hpBnum").textContent=Math.max(0,Math.round(G.hp.B));
+  $("scoreA").textContent=G.score.A; $("scoreB").textContent=G.score.B;
+}
+
+/* local: a team locks an answer */
+function localAnswer(team, idx){
+  if(G.answered[team]||G.resolved) return;
+  G.answered[team]=true; G.ans[team]=idx; G.ms[team]=performance.now()-G.shownAt;
+  // mark selection
+  const pad=$("pads").querySelector(".pad."+team);
+  pad.querySelectorAll(".opt").forEach((b,i)=>{ if(i===idx) b.classList.add("sel"); b.disabled=true; });
+  statusBattle();
+  if(G.answered.A && G.answered.B) resolveBattle();
+}
+function battleTimeout(){
+  if(G.resolved) return;
+  if(G.mode==="local"){ if(!G.answered.A){G.answered.A=true;G.ans.A=-1;} if(!G.answered.B){G.answered.B=true;G.ans.B=-1;} resolveBattle(); }
+  else { if(!G.answered[G.myTeam]){ onlineAnswer(-1); } }
+}
+
+/* shared resolution: both answers known → compute damage */
+function resolveBattle(){
+  if(G.resolved) return; G.resolved=true; stopTimer();
+  const q=G.qs[G.i];
+  const okA = G.ans.A===q.correct, okB = G.ans.B===q.correct;
+  // speed: whoever answered correctly faster deals bonus
+  let dmgToB=0, dmgToA=0;
+  if(okA){ G.score.A+=100; dmgToB+=12; }
+  if(okB){ G.score.B+=100; dmgToB*=1; dmgToA+=12; }
+  if(okA&&okB){ if(G.ms.A<=G.ms.B){ dmgToB+=8; } else { dmgToA+=8; } }
+  else { if(okA) dmgToB+=8; if(okB) dmgToA+=8; }
+  G.hp.B=Math.max(0,G.hp.B-dmgToB); G.hp.A=Math.max(0,G.hp.A-dmgToA);
+  updateHUD();
+  // reveal on the relevant pad(s)
+  if(G.mode==="local"){
+    revealOpts($("pads").querySelector(".pad.A"), q, G.ans.A);
+    revealOpts($("pads").querySelector(".pad.B"), q, G.ans.B);
+  } else {
+    revealOpts($("pads").querySelector(".pad"), q, G.ans[G.myTeam]);
+  }
+  const who = (okA||okB) ? "" : "";
+  $("explain").innerHTML = q.explain + `<br><span class="muted">${G.names.A}: ${okA?"✓":"✗"} &nbsp;·&nbsp; ${G.names.B}: ${okB?"✓":"✗"}</span>`;
+  $("explain").hidden=false;
+  $("hpA").parentElement.classList.add("flash"); $("hpB").parentElement.classList.add("flash");
+  setTimeout(()=>{ $("hpA").parentElement.classList.remove("flash"); $("hpB").parentElement.classList.remove("flash"); },500);
+  setTimeout(nextBattle, FEEDBACK_MS);
+}
+function nextBattle(){
+  if(G.hp.A<=0||G.hp.B<=0){ return battleResults(); }
+  G.i++;
+  if(G.i>=G.qs.length) return battleResults();
+  renderBattle();
+  if(G.mode==="online") pushPresence();
+}
+function battleResults(){
+  stopTimer(); setKeyHandler(null); G.over=true;
+  if(G.mode==="online") pushPresence();
+  let winner;
+  if(G.hp.A===G.hp.B){ winner = G.score.A===G.score.B?"draw":(G.score.A>G.score.B?"A":"B"); }
+  else winner = G.hp.A>G.hp.B?"A":"B";
+  show("results");
+  const b=$("resultBanner");
+  if(winner==="draw"){ b.className="banner win-draw"; b.textContent="DRAW"; }
+  else { b.className="banner win-"+winner; b.textContent=(G.names[winner]||("TEAM "+winner))+" WINS"; }
+  $("resultBody").innerHTML =
+    `<div class="scoregrid">`+
+    `<div class="scorebox A"><div class="name" style="color:var(--blue)">${esc(G.names.A)}</div><div class="big">${Math.max(0,Math.round(G.hp.A))} HP</div><div class="muted">${G.score.A} pts</div></div>`+
+    `<div class="scorebox B"><div class="name" style="color:var(--red)">${esc(G.names.B)}</div><div class="big">${Math.max(0,Math.round(G.hp.B))} HP</div><div class="muted">${G.score.B} pts</div></div>`+
+    `</div><p class="center muted mt">Three rounds down — headers, first-fit &amp; split, and heap-checking. Now go write <code>mm-implicit.c</code>.</p>`;
+  $("againBtn").onclick = ()=>{ if(G.mode==="local") startLocal(); else goHome(); };
+}
+
+/* reveal correct/wrong styling on a pad */
+function revealOpts(pad, q, chosen){
+  if(!pad) return;
+  pad.querySelectorAll(".opt").forEach((b,i)=>{
+    b.disabled=true;
+    if(i===q.correct) b.classList.add("correct");
+    if(i===chosen && chosen!==q.correct) b.classList.add("wrong");
+  });
+}
+
+/* ---------- timer ---------- */
+function runTimer(fillEl, onEnd){
+  stopTimer();
+  const start=performance.now(); const dur=QTIME*1000;
+  fillEl.style.width="100%";
+  G.timer=setInterval(()=>{
+    const t=performance.now()-start; const left=Math.max(0,1-t/dur);
+    fillEl.style.width=(left*100)+"%";
+    if(t>=dur){ stopTimer(); onEnd&&onEnd(); }
+  }, 80);
+}
+function stopTimer(){ if(G&&G.timer){ clearInterval(G.timer); G.timer=null; } }
+
+/* ============================================================
+   ONLINE (room presence)
+   ============================================================ */
+let ROOM = null;           // claude.use("room") namespace
+let NAMED = null;          // the joined named room
+let unsubPeers = null;
+const PERROUND_ONLINE = [4,4,3];
+const ONLINE_SEED_SALT = "malloc-arena-v1:";
+
+function randCode(){ const A="ABCDEFGHJKMNPQRSTUVWXYZ23456789"; let s=""; for(let i=0;i<4;i++) s+=A[Math.floor(Math.random()*A.length)]; return s; }
+
+async function goOnline(){
+  show("lobby"); $("waitCard").hidden=true; $("lobbyMsg").textContent="";
+  ROOM = await (window.claude?.use ? window.claude.use("room") : Promise.resolve(null));
+  if(!ROOM){ $("lobbyMsg").innerHTML="Online play isn't available in this view. Try <b>2 Teams · 1 Screen</b> instead — it works everywhere."; return; }
+}
+function myName(){ const v=$("teamname").value.trim(); return v || "Team "+Math.floor(Math.random()*90+10); }
+
+async function createMatch(){
+  if(!ROOM){ await goOnline(); if(!ROOM) return; }
+  const code = randCode();
+  await enterRoom(code);
+}
+async function joinMatch(){
+  if(!ROOM){ await goOnline(); if(!ROOM) return; }
+  const code = $("joincode").value.trim().toUpperCase();
+  if(!/^[A-Z0-9]{4}$/.test(code)){ $("lobbyMsg").textContent="Enter a 4-character match code."; return; }
+  await enterRoom(code);
+}
+async function enterRoom(code){
+  $("lobbyMsg").textContent="";
+  try{
+    NAMED = await ROOM.join("pk-"+code.toLowerCase());
+  }catch(err){
+    $("lobbyMsg").textContent="Couldn't join the match ("+(err&&err.code||"error")+"). Check the code and try again.";
+    return;
+  }
+  const name = myName();
+  LOBBY = { code, name, started:false };
+  $("waitCard").hidden=false; $("codeShow").textContent=code;
+  $("waitMsg").textContent="Waiting for the other team to join…";
+  $("connPill").textContent = NAMED.connected()?"connected":"connecting…";
+  NAMED.onConnection(c=>{ $("connPill").textContent=c?"connected":"reconnecting…"; });
+  await NAMED.presence({ name, inLobby:true, qi:-1, ans:-1, ansMs:0, started:false, ready:true });
+  if(unsubPeers) unsubPeers();
+  unsubPeers = NAMED.onPeers(handlePeers);
+}
+
+let LOBBY = null;
+
+function humanPlayers(){
+  // peers that are viewers (not agents), sorted by stable peer id → deterministic A/B
+  return NAMED.peers().filter(p=>p.kind==="viewer").slice().sort((a,b)=> a.peer<b.peer?-1:a.peer>b.peer?1:0);
+}
+function handlePeers(change){
+  if(!NAMED) return;
+  // lobby phase
+  if(!G || G.mode!=="online" || !G.started){
+    const players = humanPlayers();
+    if(players.length>=2){
+      // the two lowest peers are the players
+      const two = players.slice(0,2);
+      const me = two.find(p=>p.isMe);
+      if(!me){ $("waitMsg").textContent="This match is full (2 teams already playing)."; return; }
+      // all four players present → start together, deterministically
+      startOnlineMatch(two, me);
+    } else {
+      $("waitMsg").textContent="Waiting for the other team to join…";
+    }
+    return;
+  }
+  // in-match: opponent left?
+  if(G && G.mode==="online" && G.started && !G.over){
+    const opp = NAMED.peers().find(p=>p.peer===G.oppPeer);
+    if(!opp){ // opponent gone → win by forfeit
+      G.over=true; stopTimer(); setKeyHandler(null);
+      show("results"); $("resultBanner").className="banner win-"+G.myTeam;
+      $("resultBanner").textContent="OPPONENT LEFT — YOU WIN";
+      $("resultBody").innerHTML=`<p class="center muted mt">The other team disconnected. Share a new code for a rematch.</p>`;
+      $("againBtn").onclick=goHome;
+      return;
+    }
+    tryResolveOnline();
+    statusBattle();
+  }
+}
+function startOnlineMatch(two, me){
+  const seed = seedFromString(ONLINE_SEED_SALT + LOBBY.code.toUpperCase());
+  const qs = buildQuestions(seed, PERROUND_ONLINE);
+  const myTeam = (two[0].peer===me.peer) ? "A" : "B";
+  const oppPeer = (myTeam==="A") ? two[1].peer : two[0].peer;
+  const nameOf = p => (p.presence && typeof p.presence.name==="string" && p.presence.name) ? p.presence.name.slice(0,18) : "Team";
+  const names = { A: nameOf(two[0]), B: nameOf(two[1]) };
+  G = newBattle("online",{ qs, names, room:NAMED, myTeam, oppPeer, me });
+  G.started=true;
+  show("battle"); $("vsTag").textContent="VS";
+  renderBattle();
+  // keys 1-4 for the local team
+  setKeyHandler(e=>{ const idx=KEYS_SOLO.indexOf(e.key.toLowerCase()); if(idx>=0){ e.preventDefault(); onlineAnswer(idx);} });
+  pushPresence();
+}
+function battleOppAnswered(){
+  const opp = NAMED.peers().find(p=>p.peer===G.oppPeer);
+  return !!(opp && opp.presence && opp.presence.qi===G.i && typeof opp.presence.ans==="number" && opp.presence.ans>=-0.5 && opp.presence.answered);
+}
+function onlineAnswer(idx){
+  const t=G.myTeam;
+  if(G.answered[t]||G.resolved) return;
+  G.answered[t]=true; G.ans[t]=idx; G.ms[t]=Math.round(performance.now()-G.shownAt);
+  const pad=$("pads").querySelector(".pad");
+  pad.querySelectorAll(".opt").forEach((b,i)=>{ if(i===idx) b.classList.add("sel"); b.disabled=true; });
+  pushPresence();
+  statusBattle();
+  tryResolveOnline();
+}
+function pushPresence(){
+  if(!NAMED||!G) return;
+  const t=G.myTeam;
+  NAMED.presence({
+    name:G.names[t], inLobby:false, started:true,
+    qi:G.i, ans:G.ans[t], ansMs:Math.round(G.ms[t]), answered:!!G.answered[t],
+    hp:Math.round(G.hp[t]), score:G.score[t], over:!!G.over
+  }).catch(()=>{});
+}
+function tryResolveOnline(){
+  if(!G||G.resolved||!G.answered[G.myTeam]) return;
+  const opp = NAMED.peers().find(p=>p.peer===G.oppPeer);
+  if(!opp||!opp.presence) return;
+  const op=opp.presence;
+  if(op.qi!==G.i || !op.answered) return;   // opponent hasn't answered THIS question yet
+  const oppTeam = G.myTeam==="A"?"B":"A";
+  G.ans[oppTeam]= (typeof op.ans==="number")?op.ans:-1;
+  G.ms[oppTeam]= (typeof op.ansMs==="number")?op.ansMs:QTIME*1000;
+  G.answered[oppTeam]=true;
+  resolveBattle();
+}
+
+/* ============================================================
+   NAV / WIRING
+   ============================================================ */
+function goHome(){
+  stopTimer(); setKeyHandler(null);
+  if(unsubPeers){ unsubPeers(); unsubPeers=null; }
+  if(NAMED){ NAMED.leave().catch(()=>{}); NAMED=null; }
+  G=null; LOBBY=null;
+  show("home");
+}
+document.querySelectorAll("[data-home]").forEach(b=> b.onclick=goHome);
+document.querySelectorAll(".mode").forEach(b=> b.onclick=()=>{
+  const m=b.dataset.mode;
+  if(m==="solo") startSolo();
+  else if(m==="local") startLocal();
+  else goOnline();
+});
+$("createBtn").onclick=createMatch;
+$("joinBtn").onclick=joinMatch;
+$("joincode").addEventListener("keydown",e=>{ if(e.key==="Enter") joinMatch(); });
+
+show("home");
+</script>
