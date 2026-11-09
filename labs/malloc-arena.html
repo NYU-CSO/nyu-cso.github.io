@@ -149,6 +149,34 @@ a{color:var(--accent)}
 .pill{display:inline-block; font-family:var(--mono); font-size:12px; background:var(--panel2); border:1px solid var(--line); border-radius:999px; padding:3px 10px; color:var(--muted)}
 .flash{animation:flash .5s ease}
 @keyframes flash{0%{filter:brightness(1.8)}100%{filter:brightness(1)}}
+
+/* ---- fighters / sprites ---- */
+.stage{position:relative; display:flex; align-items:flex-end; justify-content:space-between; gap:12px; margin-top:12px; padding:0 8px; min-height:82px}
+.stage.solo{justify-content:center; min-height:96px; margin-top:6px}
+.fighter{position:relative; width:74px; height:74px; flex:0 0 auto}
+.fighter.solo{width:90px; height:90px}
+.fighter .body{width:100%; height:100%; animation:idle 2.6s ease-in-out infinite; transform-origin:center bottom}
+.fighter.B .body svg{transform:scaleX(-1)}        /* team B faces the centre */
+.fighter .body.atkR{animation:lungeR .5s ease}
+.fighter .body.atkL{animation:lungeL .5s ease}
+.fighter .body.hitfx{animation:hitShake .5s ease}
+.fighter .dmg{position:absolute; left:50%; top:-4px; transform:translateX(-50%); font-family:var(--disp);
+  font-size:13px; color:var(--wrong); text-shadow:0 1px 3px #000; opacity:0; pointer-events:none; white-space:nowrap}
+.fighter .dmg.good{color:var(--green)}
+.fighter .dmg.show{animation:floatDmg 1s ease-out}
+.clash{position:absolute; left:50%; top:34%; width:46px; height:46px; margin:-23px 0 0 -23px; border-radius:50%;
+  opacity:0; pointer-events:none; background:radial-gradient(circle,#fff 0%,var(--amber) 35%,transparent 72%)}
+.clash.show{animation:clash .55s ease-out}
+.resfig{width:66px; height:66px; margin:0 auto 8px}
+.resfig.rwin{animation:winBounce 1.2s ease-in-out infinite; transform-origin:center bottom}
+@keyframes idle{0%,100%{transform:translateY(0)}50%{transform:translateY(-5px)}}
+@keyframes lungeR{0%{transform:translateX(0)}45%{transform:translateX(28px) translateY(-4px)}100%{transform:translateX(0)}}
+@keyframes lungeL{0%{transform:translateX(0)}45%{transform:translateX(-28px) translateY(-4px)}100%{transform:translateX(0)}}
+@keyframes hitShake{0%,100%{transform:translateX(0) rotate(0)}15%{transform:translateX(-7px) rotate(-5deg)}35%{transform:translateX(6px) rotate(4deg)}55%{transform:translateX(-5px) rotate(-3deg)}75%{transform:translateX(4px) rotate(2deg)}}
+@keyframes floatDmg{0%{opacity:0; transform:translate(-50%,2px) scale(.6)}20%{opacity:1; transform:translate(-50%,-6px) scale(1.15)}100%{opacity:0; transform:translate(-50%,-42px) scale(1)}}
+@keyframes clash{0%{opacity:0; transform:scale(.3)}35%{opacity:1; transform:scale(1.1)}100%{opacity:0; transform:scale(1.7)}}
+@keyframes winBounce{0%,100%{transform:translateY(0)}30%{transform:translateY(-12px)}55%{transform:translateY(-3px)}}
+
 @media(prefers-reduced-motion:reduce){*{transition:none!important; animation:none!important}}
 </style>
 
@@ -225,6 +253,11 @@ a{color:var(--accent)}
         <div class="hpnum"><span id="hpBnum">100</span> HP · <span id="scoreB">0</span> pts</div>
       </div>
     </div>
+    <div class="stage" id="stage">
+      <div class="fighter A" id="figA"><div class="body"></div><span class="dmg"></span></div>
+      <div class="clash" id="clash"></div>
+      <div class="fighter B" id="figB"><div class="body"></div><span class="dmg"></span></div>
+    </div>
     <div class="timer"><div class="timerfill" id="timerfill"></div></div>
     <div class="statusline" id="statusLine"></div>
 
@@ -247,6 +280,7 @@ a{color:var(--accent)}
       <div class="team B"><div class="hpnum">QUESTION</div><div class="disp" style="font-size:18px" id="sProg">1/14</div></div>
     </div>
     <div class="timer"><div class="timerfill" id="sTimer"></div></div>
+    <div class="stage solo"><div class="fighter solo" id="figS"><div class="body"></div><span class="dmg"></span></div></div>
     <div class="qcard">
       <div class="qprompt" id="sPrompt"></div>
       <div id="sDiagram"></div>
@@ -288,6 +322,56 @@ const pick = (rng, arr) => arr[Math.floor(rng()*arr.length)];
 const randint = (rng,a,b) => a + Math.floor(rng()*(b-a+1));
 function shuffleInPlace(rng, arr){ for(let i=arr.length-1;i>0;i--){ const j=Math.floor(rng()*(i+1)); [arr[i],arr[j]]=[arr[j],arr[i]]; } return arr; }
 function esc(s){ return String(s).replace(/[&<>]/g, c=>({"&":"&amp;","<":"&lt;",">":"&gt;"}[c])); }
+
+/* ---------- fighter sprites + juice ----------
+   A little blob combatant drawn as inline SVG. `mood` swaps the face
+   (idle / attack / hit / win / lose). No RNG is used here, so match
+   determinism across devices is unaffected. */
+const SPRITE_COLORS = { A:{b:"#4aa8ff",d:"#15314f"}, B:{b:"#ff5d73",d:"#5a1826"}, S:{b:"#36d399",d:"#0e5a3f"} };
+function spriteSVG(variant, mood){
+  const P = SPRITE_COLORS[variant] || {b:"#9b8cff",d:"#2a2250"};
+  const look = mood==="attack" ? 3 : 0;   // pupils glance toward the opponent
+  let eyes;
+  if(mood==="hit"||mood==="lose"){
+    eyes = `<g stroke="${P.d}" stroke-width="2.6" stroke-linecap="round"><path d="M23 33 l7 7 M30 33 l-7 7"/><path d="M42 33 l7 7 M49 33 l-7 7"/></g>`;
+  } else {
+    eyes = `<g><circle cx="27" cy="36" r="6.2" fill="#fff"/><circle cx="45" cy="36" r="6.2" fill="#fff"/>`+
+           `<circle cx="${27+look}" cy="37" r="3" fill="#10131f"/><circle cx="${45+look}" cy="37" r="3" fill="#10131f"/></g>`;
+  }
+  let mouth;
+  if(mood==="attack")    mouth=`<path d="M28 45 Q36 58 44 45 Q36 50 28 45 Z" fill="${P.d}"/>`;
+  else if(mood==="win")  mouth=`<path d="M26 44 Q36 60 46 44 Q36 49 26 44 Z" fill="${P.d}"/>`;
+  else if(mood==="hit")  mouth=`<path d="M26 49 L30 45 L34 49 L38 45 L42 49 L46 45" fill="none" stroke="${P.d}" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/>`;
+  else if(mood==="lose") mouth=`<path d="M27 51 Q36 44 45 51" fill="none" stroke="${P.d}" stroke-width="2.6" stroke-linecap="round"/>`;
+  else                   mouth=`<path d="M27 47 Q36 53 45 47" fill="none" stroke="${P.d}" stroke-width="2.6" stroke-linecap="round"/>`;
+  const brows = mood==="attack" ? `<g stroke="${P.d}" stroke-width="2.6" stroke-linecap="round"><path d="M21 27 l11 4"/><path d="M51 27 l-11 4"/></g>` : "";
+  const spark = mood==="win" ? `<path d="M59 15 l1.6 4.4 4.4 1.6 -4.4 1.6 -1.6 4.4 -1.6 -4.4 -4.4 -1.6 4.4 -1.6 Z" fill="#ffcf5c"/>` : "";
+  return `<svg viewBox="0 0 72 72" width="100%" height="100%" aria-hidden="true">`+
+    `<ellipse cx="36" cy="67" rx="19" ry="3.5" fill="#0006"/>`+
+    `<rect x="35" y="5" width="2" height="7" fill="${P.b}"/><circle cx="36" cy="5" r="2.8" fill="${P.b}"/>`+
+    `<path d="M36 10 C55 10 64 23 64 40 C64 57 52 65 36 65 C20 65 8 57 8 40 C8 23 17 10 36 10 Z" fill="${P.b}" stroke="#0008" stroke-width="2"/>`+
+    eyes+brows+mouth+spark+`</svg>`;
+}
+function paintFighter(el, variant, mood){ if(!el) return; const b=el.querySelector(".body"); if(b) b.innerHTML=spriteSVG(variant,mood); }
+function fxBody(el, cls){ if(!el) return; const b=el.querySelector(".body"); if(!b) return;
+  b.classList.remove("atkR","atkL","hitfx"); void b.offsetWidth; b.classList.add(cls);
+  b.addEventListener("animationend", ()=>b.classList.remove(cls), {once:true}); }
+function floatDmg(el, text, good){ if(!el) return; const d=el.querySelector(".dmg"); if(!d) return;
+  d.textContent=text; d.classList.toggle("good", !!good); d.classList.remove("show"); void d.offsetWidth; d.classList.add("show"); }
+function clashFx(){ const c=$("clash"); if(!c) return; c.classList.remove("show"); void c.offsetWidth; c.classList.add("show"); }
+function animateClash(okA, okB, dmgToA, dmgToB){
+  const figA=$("figA"), figB=$("figB");
+  if(dmgToA>0){ paintFighter(figA,"A","hit"); fxBody(figA,"hitfx"); floatDmg(figA,"-"+dmgToA); }
+  else if(okA){ paintFighter(figA,"A","attack"); fxBody(figA,"atkR"); }
+  if(dmgToB>0){ paintFighter(figB,"B","hit"); fxBody(figB,"hitfx"); floatDmg(figB,"-"+dmgToB); }
+  else if(okB){ paintFighter(figB,"B","attack"); fxBody(figB,"atkL"); }
+  if(dmgToA>0||dmgToB>0) clashFx();
+}
+function reactSolo(correct, gained){
+  const f=$("figS"); if(!f) return;
+  if(correct){ paintFighter(f,"S","win"); fxBody(f,"atkR"); floatDmg(f,"+"+gained,true); }
+  else { paintFighter(f,"S","lose"); fxBody(f,"hitfx"); }
+}
 
 /* Build an options object from a correct answer + distractor list.
    Returns {options:[...4 strings], correct:index, explain} with shuffled order. */
@@ -501,6 +585,7 @@ function renderSolo(){
   $("sScore").textContent=G.score; $("sStreak").textContent=G.streak; $("sProg").textContent=`${G.i+1}/${G.qs.length}`;
   $("sPrompt").innerHTML=q.prompt;
   $("sDiagram").innerHTML=q.diagram||"";
+  paintFighter($("figS"),"S","idle");
   $("sExplain").hidden=true;
   const pad=$("sPad"); pad.innerHTML = optsHTML(q, KEYS_SOLO, "A");
   pad.querySelectorAll(".opt").forEach((b,idx)=> b.onclick=()=>soloAnswer(idx));
@@ -511,8 +596,10 @@ function soloAnswer(idx){
   if(G.answered) return; G.answered=true; stopTimer();
   const q=G.qs[G.i]; const correct = idx===q.correct;
   const ms = performance.now()-G.shownAt;
-  if(correct){ const speed = Math.max(0, Math.round((1-Math.min(ms,QTIME*1000)/(QTIME*1000))*50)); G.score += 100+speed; G.streak++; G.best=Math.max(G.best,G.streak); }
+  let gained=0;
+  if(correct){ const speed = Math.max(0, Math.round((1-Math.min(ms,QTIME*1000)/(QTIME*1000))*50)); gained=100+speed; G.score += gained; G.streak++; G.best=Math.max(G.best,G.streak); }
   else G.streak=0;
+  reactSolo(correct, gained);
   revealOpts($("sPad"), q, idx);
   $("sScore").textContent=G.score; $("sStreak").textContent=G.streak;
   $("sExplain").innerHTML = (correct?"<b>Correct!</b> ":"<b style='color:var(--wrong)'>Not quite.</b> ")+q.explain;
@@ -525,6 +612,7 @@ function soloResults(){
   $("resultBanner").className="banner win-draw";
   $("resultBanner").textContent="RUN COMPLETE";
   $("resultBody").innerHTML =
+    `<div class="resfig rwin" style="width:84px;height:84px">${spriteSVG("S","win")}</div>`+
     `<div class="scoregrid"><div class="scorebox A"><div class="muted">SCORE</div><div class="big">${G.score}</div></div>`+
     `<div class="scorebox B"><div class="muted">BEST STREAK</div><div class="big">${G.best}</div></div></div>`+
     `<p class="center muted mt">You worked through all three rounds: headers, malloc/split, and heap-checking — the exact helpers you'll write in <code>mm-implicit.c</code>.</p>`;
@@ -572,6 +660,7 @@ function renderBattle(){
   $("roundTag").textContent=`ROUND ${q.round+1} · ${q.roundName}`;
   $("nameA").textContent=G.names.A; $("nameB").textContent=G.names.B;
   $("qprompt").innerHTML=q.prompt; $("qdiagram").innerHTML=q.diagram||"";
+  paintFighter($("figA"),"A","idle"); paintFighter($("figB"),"B","idle");
   updateHUD();
   $("explain").hidden=true;
   const pads=$("pads");
@@ -633,6 +722,7 @@ function resolveBattle(){
   else { if(okA) dmgToB+=8; if(okB) dmgToA+=8; }
   G.hp.B=Math.max(0,G.hp.B-dmgToB); G.hp.A=Math.max(0,G.hp.A-dmgToA);
   updateHUD();
+  animateClash(okA, okB, dmgToA, dmgToB);
   // reveal on the relevant pad(s)
   if(G.mode==="local"){
     revealOpts($("pads").querySelector(".pad.A"), q, G.ans.A);
@@ -664,10 +754,12 @@ function battleResults(){
   const b=$("resultBanner");
   if(winner==="draw"){ b.className="banner win-draw"; b.textContent="DRAW"; }
   else { b.className="banner win-"+winner; b.textContent=(G.names[winner]||("TEAM "+winner))+" WINS"; }
+  const moodA = winner==="A"?"win":(winner==="B"?"lose":"idle");
+  const moodB = winner==="B"?"win":(winner==="A"?"lose":"idle");
   $("resultBody").innerHTML =
     `<div class="scoregrid">`+
-    `<div class="scorebox A"><div class="name" style="color:var(--blue)">${esc(G.names.A)}</div><div class="big">${Math.max(0,Math.round(G.hp.A))} HP</div><div class="muted">${G.score.A} pts</div></div>`+
-    `<div class="scorebox B"><div class="name" style="color:var(--red)">${esc(G.names.B)}</div><div class="big">${Math.max(0,Math.round(G.hp.B))} HP</div><div class="muted">${G.score.B} pts</div></div>`+
+    `<div class="scorebox A"><div class="resfig ${moodA==="win"?"rwin":""}">${spriteSVG("A",moodA)}</div><div class="name" style="color:var(--blue)">${esc(G.names.A)}</div><div class="big">${Math.max(0,Math.round(G.hp.A))} HP</div><div class="muted">${G.score.A} pts</div></div>`+
+    `<div class="scorebox B"><div class="resfig ${moodB==="win"?"rwin":""}">${spriteSVG("B",moodB)}</div><div class="name" style="color:var(--red)">${esc(G.names.B)}</div><div class="big">${Math.max(0,Math.round(G.hp.B))} HP</div><div class="muted">${G.score.B} pts</div></div>`+
     `</div><p class="center muted mt">Three rounds down — headers, first-fit &amp; split, and heap-checking. Now go write <code>mm-implicit.c</code>.</p>`;
   $("againBtn").onclick = ()=>{ if(G.mode==="local") startLocal(); else goHome(); };
 }
