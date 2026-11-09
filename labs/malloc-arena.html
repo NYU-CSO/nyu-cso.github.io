@@ -600,15 +600,22 @@ function heapHTML(chunks, opts={}){
   h += '</div>';
   return h;
 }
+const MINCHUNK = 32; // smallest legal chunk: 8B header + 8B footer + 16B minimum payload
 function genMalloc(rng){
   const n = randint(rng,4,5);
   const chunks = genHeap(rng,n);
-  const payload = 16*randint(rng,1,5);
-  const csz = align16(payload)+16;
-  const firstFit = chunks.findIndex(c=>c.free && c.size>=csz);
-  const kind = (firstFit>=0 && rng()<0.5) ? "split" : "firstfit";
+  const ff = chunks.findIndex(c=>c.free);   // first free chunk (genHeap guarantees one)
+  const S = chunks[ff].size;
+  const canSplit = (S - MINCHUNK) >= MINCHUNK; // room for a MINCHUNK alloc AND a MINCHUNK remainder → S ≥ 64
+  const roll = rng();
+  const kind = (roll < 0.34) ? "firstfit"
+             : (roll < 0.67 && canSplit) ? "split"
+             : "nosplit";
 
   if(kind==="firstfit"){
+    const payload = 16*randint(rng,1,5);
+    const csz = align16(payload)+16;
+    const firstFit = chunks.findIndex(c=>c.free && c.size>=csz);
     const correct = firstFit>=0 ? `chunk #${firstFit+1}` : "none — ask the OS (extend heap)";
     const distract = [];
     chunks.forEach((c,i)=>{ const s=`chunk #${i+1}`; if(s!==correct) distract.push(s); });
@@ -623,21 +630,34 @@ function genMalloc(rng){
           : `No free chunk is ≥ ${csz}B, so <code>first_fit</code> returns NULL and <code>mm_malloc</code> calls <code>ask_os_for_chunk</code>.`)
     };
   }
-  // split
-  const S = chunks[firstFit].size;
-  const leftover = S - csz;
-  const splits = leftover >= 16;
-  const correct = splits ? `${leftover}B free remainder` : "no split — use the whole chunk";
-  const distract = splits
-    ? [`${leftover+16}B free remainder`, `${leftover+32}B free remainder`, "no split — use the whole chunk"]
-    : [`16B free remainder`, `${S+16}B free remainder`, `${S+32}B free remainder`];
+
+  if(kind==="split"){
+    // target the first free chunk; pick a need that leaves a splittable remainder (≥ MINCHUNK)
+    const steps = ((S - MINCHUNK) - MINCHUNK) / 16;   // ≥ 0 since canSplit
+    const csz = MINCHUNK + 16*randint(rng,0,steps);
+    const leftover = S - csz;                         // ≥ MINCHUNK, multiple of 16
+    const payload = csz - 16;
+    const correct = `${leftover}B free remainder`;
+    const distract = [`${leftover-16}B free remainder`, `${leftover+16}B free remainder`, "no split — use the whole chunk"];
+    return {
+      prompt:`<b>split</b>: first-fit picked <code>chunk #${ff+1}</code> (<code>${S}B</code>) for a <code>${csz}B</code> need (<code>${payload}B</code> payload). After allocating, what happens to the leftover?`,
+      diagram: heapHTML(chunks),
+      ...mkChoices(rng, correct, distract,
+        `Leftover = <code>${S} − ${csz} = ${leftover}B</code>, which is ≥ ${MINCHUNK} (the minimum chunk size: 8B header + 8B footer + 16B min payload), so <code>split</code> carves a <b>${leftover}B free</b> chunk after the ${csz}B allocation.`)
+    };
+  }
+
+  // nosplit: force a remainder of 16B — too small for its own chunk, so no split
+  if(S < 48) chunks[ff].size = pick(rng,[48,64,80,96,112]); // ensure S-16 is a legal csz (≥ MINCHUNK)
+  const Sn = chunks[ff].size;
+  const csz = Sn - 16;                 // leftover = 16 < MINCHUNK
+  const payload = csz - 16;
   return {
-    prompt:`<b>split</b>: first-fit picked <code>chunk #${firstFit+1}</code> (<code>${S}B</code>) for a <code>${csz}B</code> need. After allocating, what happens to the leftover?`,
+    prompt:`<b>split?</b> first-fit picked <code>chunk #${ff+1}</code> (<code>${Sn}B</code>) for a <code>${csz}B</code> need (<code>${payload}B</code> payload). After allocating, what happens to the leftover?`,
     diagram: heapHTML(chunks),
-    ...mkChoices(rng, correct, distract,
-      splits
-        ? `Leftover = <code>${S} − ${csz} = ${leftover}B</code>, which is ≥ 16 (room for a header+footer), so <code>split</code> carves a <b>${leftover}B free</b> chunk after the ${csz}B allocation.`
-        : `Leftover = <code>${S} − ${csz} = ${leftover}B</code> &lt; 16, too small for a chunk's own header+footer — so <b>don't split</b>; give the caller the whole chunk.`)
+    ...mkChoices(rng, "no split — use the whole chunk",
+      ["16B free remainder", "32B free remainder", "48B free remainder"],
+      `Leftover = <code>${Sn} − ${csz} = 16B</code>, which is &lt; ${MINCHUNK} — the minimum chunk size (8B header + 8B footer + 16B min payload). A 16-byte gap can't become its own free chunk (no room for a payload), so <b>don't split</b>: give the caller the whole ${Sn}B chunk.`)
   };
 }
 
