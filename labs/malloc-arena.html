@@ -608,8 +608,9 @@ function genMalloc(rng){
   const S = chunks[ff].size;
   const canSplit = (S - MINCHUNK) >= MINCHUNK; // room for a MINCHUNK alloc AND a MINCHUNK remainder → S ≥ 64
   const roll = rng();
-  const kind = (roll < 0.34) ? "firstfit"
-             : (roll < 0.67 && canSplit) ? "split"
+  const kind = (roll < 0.28) ? "firstfit"
+             : (roll < 0.52) ? "writeval"
+             : (roll < 0.74 && canSplit) ? "split"
              : "nosplit";
 
   if(kind==="firstfit"){
@@ -644,6 +645,33 @@ function genMalloc(rng){
       diagram: heapHTML(chunks),
       ...mkChoices(rng, correct, distract,
         `Leftover = <code>${S} − ${csz} = ${leftover}B</code>, which is ≥ ${MINCHUNK} (the minimum chunk size: 8B header + 8B footer + 16B min payload), so <code>split</code> carves a <b>${leftover}B free</b> chunk after the ${csz}B allocation.`)
+    };
+  }
+
+  if(kind==="writeval"){
+    // guarantee a real split, then ask for the 8-byte word written at one header/footer
+    if(S < 64) chunks[ff].size = pick(rng,[64,80,96,112]);
+    const Sn = chunks[ff].size;
+    const base = 0x5000 + 16*randint(rng,0,16) + 8;    // header address ≡ 8 (mod 16)
+    const steps = ((Sn - MINCHUNK) - MINCHUNK) / 16;   // ≥ 0 since Sn ≥ 64
+    const csz = MINCHUNK + 16*randint(rng,0,steps);
+    const rem = Sn - csz;                               // ≥ 32, multiple of 16
+    const payload = csz - 16;
+    const targets = [
+      {addr: base,            sz: csz, st: 1, field:"the allocated block's <b>header</b>"},
+      {addr: base + csz - 8,  sz: csz, st: 1, field:"the allocated block's <b>footer</b>"},
+      {addr: base + csz,      sz: rem, st: 0, field:"the leftover chunk's <b>header</b>"},
+      {addr: base + Sn - 8,   sz: rem, st: 0, field:"the leftover chunk's <b>footer</b>"},
+    ];
+    const t = pick(rng, targets);
+    const val = t.sz | t.st;
+    const statName = t.st ? "allocated" : "free";
+    return {
+      prompt:`<b>store value</b>: a free <code>${Sn}B</code> chunk with header at <code>${hex(base)}</code> satisfies a <code>${csz}B</code> allocation (<code>${payload}B</code> payload) and splits off a <code>${rem}B</code> free remainder. What 8-byte value is written at <code>${hex(t.addr)}</code> — ${t.field}?`,
+      diagram: heapHTML(chunks),
+      ...mkChoices(rng, hex(val),
+        [hex(t.sz | (t.st^1)), hex((t.sz+16) | t.st), hex((t.sz-16) | t.st)],
+        `A chunk stores <code>size | status</code> in both its header and footer, status in bit 0 (<b>1 = allocated, 0 = free</b>). This word is in the ${statName} ${t.st? "block":"remainder"}: <code>${t.sz} | ${t.st} = ${hex(val)}</code>.`)
     };
   }
 
