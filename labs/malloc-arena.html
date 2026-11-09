@@ -65,6 +65,11 @@ code{font-family:var(--mono); color:var(--amber)}
 .rounds{margin-top:22px; background:var(--panel); border:1px solid var(--line); border-radius:14px; padding:16px}
 .rounds h3{margin:0 0 10px; font-size:13px; letter-spacing:.08em; text-transform:uppercase; color:var(--muted)}
 .rounds ol{margin:0; padding-left:20px; color:var(--fg); font-size:14px; line-height:1.7}
+.roundsel{display:flex; flex-wrap:wrap; gap:8px; align-items:center; justify-content:center; margin-top:18px}
+.rs-label{font-family:var(--disp); font-size:11px; color:var(--muted); letter-spacing:.08em}
+.rs{background:var(--panel2); color:var(--muted); border:1px solid var(--line); border-radius:999px; padding:8px 14px; font-size:13px; font-weight:600; font-family:var(--sans)}
+.rs:hover{border-color:var(--accent)}
+.rs[aria-pressed="true"]{color:var(--fg); border-color:var(--accent); background:var(--panel); box-shadow:0 0 0 1px var(--accent) inset}
 
 /* ---- lobby ---- */
 .card{background:var(--panel); border:1px solid var(--line); border-radius:16px; padding:20px; margin-top:16px}
@@ -217,6 +222,13 @@ a{color:var(--accent)}
     <div class="hero">
       <h1 class="title">MALLOC&nbsp;ARENA</h1>
       <p class="sub">A head-to-head warm-up for the malloc lab. Battle through headers, first-fit + split, and heap-checking. Fast correct answers hit harder.</p>
+    </div>
+    <div class="roundsel" id="roundSel">
+      <span class="rs-label">PLAY:</span>
+      <button class="rs" type="button" data-round="all" aria-pressed="true">All rounds</button>
+      <button class="rs" type="button" data-round="0" aria-pressed="false">1 · Headers</button>
+      <button class="rs" type="button" data-round="1" aria-pressed="false">2 · Malloc</button>
+      <button class="rs" type="button" data-round="2" aria-pressed="false">3 · Heap Doctor</button>
     </div>
     <div class="modes">
       <button class="mode" data-mode="solo">
@@ -664,6 +676,21 @@ const KEYS_B = ["u","i","o","p"];
 const QTIME = 22;          // seconds per question (soft timer)
 const FEEDBACK_MS = 2600;
 
+/* Round selection. SELECTED_ROUND is null (all three) or 0/1/2 for a single
+   round; a single round gets a few more questions so it isn't over too fast. */
+const SOLO_COUNTS=[5,5,4], PK_COUNTS=[4,4,3];
+const SOLO_SINGLE=8, PK_SINGLE=6;
+let SELECTED_ROUND=null;
+function perRoundFor(base, single, round){ if(round==null) return base.slice(); const a=[0,0,0]; a[round]=single; return a; }
+function roundsDoneText(round){
+  if(round==null) return "Three rounds down — headers, first-fit &amp; split, and heap-checking.";
+  return ["The Headers &amp; Pointers round","The Malloc round","The Heap Doctor round"][round]+" is done.";
+}
+function setRoundSel(val){
+  SELECTED_ROUND = (val==="all") ? null : parseInt(val,10);
+  document.querySelectorAll("#roundSel .rs").forEach(b=> b.setAttribute("aria-pressed", String(b.dataset.round===String(val))));
+}
+
 let G = null;             // current game object
 let keyHandler = null;
 
@@ -673,8 +700,8 @@ function setKeyHandler(fn){ if(keyHandler) document.removeEventListener("keydown
 /* ---------------- SOLO ---------------- */
 function startSolo(){
   const seed = (Date.now()^(Math.random()*1e9))>>>0;
-  const qs = buildQuestions(seed, [5,5,4]);
-  G = { mode:"solo", qs, i:0, score:0, streak:0, best:0, answered:false, shownAt:0, timer:null, picks:[] };
+  const qs = buildQuestions(seed, perRoundFor(SOLO_COUNTS, SOLO_SINGLE, SELECTED_ROUND));
+  G = { mode:"solo", qs, i:0, score:0, streak:0, best:0, answered:false, shownAt:0, timer:null, picks:[], round:SELECTED_ROUND };
   show("solo"); renderSolo();
   setKeyHandler(e=>{ const k=e.key.toLowerCase(); const idx=KEYS_SOLO.indexOf(k); if(idx>=0){ e.preventDefault(); soloAnswer(idx);} });
 }
@@ -715,7 +742,7 @@ function soloResults(){
     `<div class="resfig rwin" style="width:84px;height:84px">${spriteSVG("S","win")}</div>`+
     `<div class="scoregrid"><div class="scorebox A"><div class="muted">SCORE</div><div class="big">${G.score}</div></div>`+
     `<div class="scorebox B"><div class="muted">BEST STREAK</div><div class="big">${G.best}</div></div></div>`+
-    `<p class="center muted mt">You worked through all three rounds: headers, malloc/split, and heap-checking — the exact helpers you'll write in <code>mm-implicit.c</code>.</p>`;
+    `<p class="center muted mt">${roundsDoneText(G.round)} These are the exact helpers you'll write in <code>mm-implicit.c</code>.</p>`;
   $("againBtn").onclick=startSolo;
   renderReview();
 }
@@ -737,8 +764,9 @@ function newBattle(mode, opts){
 }
 function startLocal(){
   const seed=(Date.now()^(Math.random()*1e9))>>>0;
-  const qs=buildQuestions(seed,[4,4,3]);
+  const qs=buildQuestions(seed, perRoundFor(PK_COUNTS, PK_SINGLE, SELECTED_ROUND));
   G=newBattle("local",{qs, names:{A:"TEAM A",B:"TEAM B"}});
+  G.round=SELECTED_ROUND;
   show("battle"); $("vsTag").textContent="VS";
   renderBattle();
   setKeyHandler(e=>{
@@ -862,7 +890,7 @@ function battleResults(){
     `<div class="scoregrid">`+
     `<div class="scorebox A"><div class="resfig ${moodA==="win"?"rwin":""}">${spriteSVG("A",moodA)}</div><div class="name" style="color:var(--blue)">${esc(G.names.A)}</div><div class="big">${Math.max(0,Math.round(G.hp.A))} HP</div><div class="muted">${G.score.A} pts</div></div>`+
     `<div class="scorebox B"><div class="resfig ${moodB==="win"?"rwin":""}">${spriteSVG("B",moodB)}</div><div class="name" style="color:var(--red)">${esc(G.names.B)}</div><div class="big">${Math.max(0,Math.round(G.hp.B))} HP</div><div class="muted">${G.score.B} pts</div></div>`+
-    `</div><p class="center muted mt">Three rounds down — headers, first-fit &amp; split, and heap-checking. Now go write <code>mm-implicit.c</code>.</p>`;
+    `</div><p class="center muted mt">${roundsDoneText(G.round)} Now go write <code>mm-implicit.c</code>.</p>`;
   $("againBtn").onclick = ()=>{ if(G.mode==="local") startLocal(); else goHome(); };
   renderReview();
 }
@@ -896,7 +924,6 @@ function stopTimer(){ if(G&&G.timer){ clearInterval(G.timer); G.timer=null; } }
 let ROOM = null;           // claude.use("room") namespace
 let NAMED = null;          // the joined named room
 let unsubPeers = null;
-const PERROUND_ONLINE = [4,4,3];
 const ONLINE_SEED_SALT = "malloc-arena-v1:";
 
 function randCode(){ const A="ABCDEFGHJKMNPQRSTUVWXYZ23456789"; let s=""; for(let i=0;i<4;i++) s+=A[Math.floor(Math.random()*A.length)]; return s; }
@@ -1004,16 +1031,16 @@ async function createMatch(){
   ROOM = await resolveRoom();
   if(!ROOM){ noRoomMsg(); return; }
   const code = randCode();
-  await enterRoom(code);
+  await enterRoom(code, true);
 }
 async function joinMatch(){
   ROOM = await resolveRoom();
   if(!ROOM){ noRoomMsg(); return; }
   const code = $("joincode").value.trim().toUpperCase();
   if(!/^[A-Z0-9]{4}$/.test(code)){ $("lobbyMsg").textContent="Enter a 4-character match code."; return; }
-  await enterRoom(code);
+  await enterRoom(code, false);
 }
-async function enterRoom(code){
+async function enterRoom(code, isHost){
   $("lobbyMsg").textContent="";
   try{
     NAMED = await ROOM.join("pk-"+code.toLowerCase());
@@ -1027,7 +1054,8 @@ async function enterRoom(code){
   $("waitMsg").textContent="Waiting for the other team to join…";
   $("connPill").textContent = NAMED.connected()?"connected":"connecting…";
   NAMED.onConnection(c=>{ $("connPill").textContent=c?"connected":"reconnecting…"; });
-  await NAMED.presence({ name, inLobby:true, qi:-1, ans:-1, ansMs:0, started:false, ready:true });
+  await NAMED.presence({ name, inLobby:true, qi:-1, ans:-1, ansMs:0, started:false, ready:true,
+                         host:!!isHost, round:(isHost?SELECTED_ROUND:null) });
   if(unsubPeers) unsubPeers();
   unsubPeers = NAMED.onPeers(handlePeers);
 }
@@ -1048,7 +1076,10 @@ function handlePeers(change){
       const two = players.slice(0,2);
       const me = two.find(p=>p.isMe);
       if(!me){ $("waitMsg").textContent="This match is full (2 teams already playing)."; return; }
-      // all four players present → start together, deterministically
+      // Wait until the host's presence (which carries the chosen round) is
+      // visible, so both devices build the same question stream.
+      const hostReady = two.some(p=>p.presence && p.presence.host===true);
+      if(!hostReady){ $("waitMsg").textContent="Syncing match setup…"; return; }
       startOnlineMatch(two, me);
     } else {
       $("waitMsg").textContent="Waiting for the other team to join…";
@@ -1071,14 +1102,20 @@ function handlePeers(change){
   }
 }
 function startOnlineMatch(two, me){
+  // The host (match creator) picks the round; both devices read it off the
+  // host's presence so they build the identical question stream.
+  const hostP = two.find(p => p.presence && p.presence.host);
+  const r = hostP && hostP.presence ? hostP.presence.round : null;
+  const round = (r===0||r===1||r===2) ? r : null;
   const seed = seedFromString(ONLINE_SEED_SALT + LOBBY.code.toUpperCase());
-  const qs = buildQuestions(seed, PERROUND_ONLINE);
+  const qs = buildQuestions(seed, perRoundFor(PK_COUNTS, PK_SINGLE, round));
   const myTeam = (two[0].peer===me.peer) ? "A" : "B";
   const oppPeer = (myTeam==="A") ? two[1].peer : two[0].peer;
   const nameOf = p => (p.presence && typeof p.presence.name==="string" && p.presence.name) ? p.presence.name.slice(0,18) : "Team";
   const names = { A: nameOf(two[0]), B: nameOf(two[1]) };
   G = newBattle("online",{ qs, names, room:NAMED, myTeam, oppPeer, me });
   G.started=true;
+  G.round=round;
   show("battle"); $("vsTag").textContent="VS";
   renderBattle();
   // keys 1-4 for the local team
@@ -1144,6 +1181,7 @@ $("joinBtn").onclick=joinMatch;
 $("joincode").addEventListener("keydown",e=>{ if(e.key==="Enter") joinMatch(); });
 $("testRelayBtn").onclick=testRelay;
 $("relayUrl").addEventListener("change", testRelay);
+document.querySelectorAll("#roundSel .rs").forEach(b=> b.onclick=()=>setRoundSel(b.dataset.round));
 
 show("home");
 </script>
