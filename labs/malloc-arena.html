@@ -499,7 +499,7 @@ function mkChoices(rng, correct, distractors, explain){
 
 /* ---------- ROUND 1: headers & pointers ---------- */
 function genHeaders(rng){
-  const kind = pick(rng, ["encode","decode","footer","next","p2h","prev"]);
+  const kind = pick(rng, ["encode","decode","footer","next","ptrscale","ptrpick","p2h","prev"]);
   const size = 16*randint(rng,1,10);      // 16..160, multiple of 16 (small, so hex math is doable under time pressure)
   const alloc = rng() < 0.5;
   const stat = alloc?1:0;
@@ -527,14 +527,28 @@ function genHeaders(rng){
     return { prompt:`<b>header2footer</b>: a chunk's header is at <code>${hex(base)}</code> and its size is <code>${size}</code>. What is the address of its footer?`,
       ...mkChoices(rng, hex(ans),
       [hex(base+size), hex(base+size-16), hex(base-8)],
-      `<code>header2footer(h) = h + get_size(h) − 8</code> = <code>${hex(base)} + ${size} − 8 = ${hex(ans)}</code>. The footer is the last 8 bytes of the chunk.`) };
+      `The footer is the last 8 bytes of the chunk — <code>get_size(h) − hdr_size</code> bytes past the header: <code>(meta_t *)((char *)h + ${size} − 8) = ${hex(base)} + ${size} − 8 = ${hex(ans)}</code>. (Do the <code>+</code> on a byte pointer, not on <code>h</code> directly — <code>h</code> is a <code>meta_t *</code>.)`) };
   }
   if(kind==="next"){
     const ans = base + size;
     return { prompt:`<b>next_chunk_header</b>: a chunk's header is at <code>${hex(base)}</code> and its size is <code>${size}</code>. Where does the <i>next</i> chunk's header begin?`,
       ...mkChoices(rng, hex(ans),
       [hex(base+size-8), hex(base+size+8), hex(base+size-16)],
-      `<code>next_chunk_header(h) = h + get_size(h)</code> = <code>${hex(base)} + ${size} = ${hex(ans)}</code> (NULL if that runs past <code>mem_heap_hi</code>).`) };
+      `The next chunk starts <code>get_size(h)</code> <b>bytes</b> after <code>h</code>: <code>(meta_t *)((char *)h + ${size}) = ${hex(base)} + ${size} = ${hex(ans)}</code>. Writing <code>h + get_size(h)</code> would land 8× too far — <code>h</code> is a <code>meta_t *</code>! (NULL if past <code>mem_heap_hi</code>.)`) };
+  }
+  if(kind==="ptrscale"){
+    const ans = base + 8*size;   // meta_t* arithmetic scales by sizeof(meta_t)=8
+    return { prompt:`<b>pointer scaling</b>: <code>h</code> is a <code>meta_t *</code> and <code>sizeof(meta_t) == 8</code>. With <code>h = ${hex(base)}</code> and <code>get_size(h) = ${size}</code>, what address does <code>h + get_size(h)</code> compute? <span class="muted">(pointer <code>+</code> scales by the pointee size)</span>`,
+      ...mkChoices(rng, hex(ans),
+      [hex(base+size), hex(base+8*size-8), hex(base+8*size+8)],
+      `<code>h</code> is a <code>meta_t *</code> and <code>sizeof(meta_t)=8</code>, so <code>h + n</code> moves <code>n×8</code> bytes: <code>${hex(base)} + ${size}×8 = ${hex(ans)}</code> — <b>8× too far</b>. The next chunk is only at <code>${hex(base)} + ${size} = ${hex(base+size)}</code>. To advance <code>get_size(h)</code> <i>bytes</i>, add on a byte pointer: <code>(meta_t *)((char *)h + get_size(h))</code>. The lab writes <code>void *p = h; p += get_size(h);</code> — <code>void *</code> arithmetic counts bytes.`) };
+  }
+  if(kind==="ptrpick"){
+    const correct = "(meta_t *)((char *)h + get_size(h))";
+    return { prompt:`<b>which is right?</b> <code>h</code> is a <code>meta_t *</code> (<code>sizeof(meta_t) == 8</code>). Which expression gives the <i>next chunk's header</i> — the address exactly <code>get_size(h)</code> <b>bytes</b> after <code>h</code>?`,
+      ...mkChoices(rng, correct,
+      ["h + get_size(h)", "(meta_t *)(char *)h + get_size(h)", "h + get_size(h) / sizeof(meta_t)"],
+      `<code>h + get_size(h)</code> does <code>meta_t *</code> arithmetic — it scales by 8 and overshoots. <code>(meta_t *)(char *)h + get_size(h)</code> looks safer, but the casts bind tighter than <code>+</code>, so it is <i>still</i> <code>meta_t *</code> arithmetic — the same 8× overshoot. You must add while the pointer is a byte pointer, then cast back: <code>(meta_t *)((char *)h + get_size(h))</code> — exactly what <code>void *p = h; p += get_size(h);</code> does.`) };
   }
   if(kind==="p2h"){
     const payload = base + 8;
