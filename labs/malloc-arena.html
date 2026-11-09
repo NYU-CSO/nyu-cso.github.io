@@ -500,7 +500,7 @@ function mkChoices(rng, correct, distractors, explain){
 /* ---------- ROUND 1: headers & pointers ---------- */
 function genHeaders(rng){
   const kind = pick(rng, ["encode","decode","footer","next","p2h","prev"]);
-  const size = 16*randint(rng,1,15);      // 16..240, multiple of 16
+  const size = 16*randint(rng,1,10);      // 16..160, multiple of 16 (small, so hex math is doable under time pressure)
   const alloc = rng() < 0.5;
   const stat = alloc?1:0;
   if(kind==="encode"){
@@ -521,7 +521,7 @@ function genHeaders(rng){
       `<code>get_size</code> masks off the low 4 bits: <code>${hex(word)} &amp; ~0xF = ${size}</code>. <code>get_status</code> reads bit 0: <code>${stat}</code> → <b>${alloc?"allocated":"free"}</b>. Don't read the status bit as part of the size!`) };
   }
   // pointer arithmetic variants
-  const base = 0x5000 + 16*randint(rng,0,180) + 8; // header addresses sit at ...8 (payloads 16-aligned)
+  const base = 0x5000 + 16*randint(rng,0,20) + 8; // 0x5008..0x5148; header addresses sit at ...8 (payloads 16-aligned)
   if(kind==="footer"){
     const ans = base + size - 8;
     return { prompt:`<b>header2footer</b>: a chunk's header is at <code>${hex(base)}</code> and its size is <code>${size}</code>. What is the address of its footer?`,
