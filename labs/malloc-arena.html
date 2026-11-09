@@ -246,6 +246,8 @@ a{color:var(--accent)}
     <div class="card">
       <div class="field"><label class="lab" for="teamname">Your team name</label>
         <input type="text" id="teamname" maxlength="18" placeholder="e.g. Segfault Squad"></div>
+      <div class="field mt"><label class="lab" for="relayUrl">Relay server URL <span class="muted" style="text-transform:none; letter-spacing:0">(off claude.ai — paste the Codespace URL; leave blank on claude.ai)</span></label>
+        <input type="text" id="relayUrl" placeholder="wss://your-codespace-8080.app.github.dev" autocapitalize="off" autocomplete="off" spellcheck="false"></div>
       <div class="row mt">
         <button class="btn primary lg" id="createBtn">Create match</button>
         <span class="muted">or</span>
@@ -892,20 +894,92 @@ const ONLINE_SEED_SALT = "malloc-arena-v1:";
 
 function randCode(){ const A="ABCDEFGHJKMNPQRSTUVWXYZ23456789"; let s=""; for(let i=0;i<4;i++) s+=A[Math.floor(Math.random()*A.length)]; return s; }
 
+/* ---- transport selection ----
+   Online play needs a realtime relay. Two sources, in order:
+     1. a WebSocket relay URL (works anywhere this page is hosted, e.g.
+        GitHub Pages + a tiny server in a Codespace), or
+     2. the claude.ai artifact's built-in "room" capability (only when the
+        page is opened on claude.ai).
+   Only tiny presence blobs cross the wire; questions are generated locally
+   from the match code, so both devices stay in lockstep regardless. */
+function normalizeRelay(u){
+  u=(u||"").trim(); if(!u) return "";
+  u=u.replace(/^https:\/\//i,"wss://").replace(/^http:\/\//i,"ws://");
+  if(!/^wss?:\/\//i.test(u)) u="wss://"+u;
+  if(location.protocol==="https:" && /^ws:\/\//i.test(u)) u="wss://"+u.slice(5);
+  return u.replace(/\/+$/,"");
+}
+function getRelay(){ const el=$("relayUrl"); return normalizeRelay(el?el.value:""); }
+
+/* A room-like object over a WebSocket relay, matching the subset of the
+   claude.ai "room" API the game uses: connected/onConnection/presence/
+   onPeers/peers/leave. Auto-reconnects and re-sends presence. */
+function makeWsRoom(url){ return { join(name){ return new WsNamedRoom(url, name); } }; }
+class WsNamedRoom{
+  constructor(url, name){
+    this.url=url; this.name=name;
+    this.myPeer="p-"+Math.random().toString(36).slice(2,10);
+    this.lastPresence={}; this._roster=[];
+    this._peersCbs=[]; this._connCbs=[];
+    this._isConnected=false; this._closed=false;
+    this._connect();
+  }
+  _connect(){
+    let ws; try{ ws=new WebSocket(this.url); }catch(e){ this._reconnect(); return; }
+    this.ws=ws;
+    ws.onopen=()=>{ this._isConnected=true; this._emitConn(true);
+      try{ ws.send(JSON.stringify({t:"join", room:this.name, peer:this.myPeer, presence:this.lastPresence})); }catch(e){} };
+    ws.onmessage=(ev)=>{ let m; try{ m=JSON.parse(ev.data); }catch{ return; }
+      if(m && m.t==="peers"){ this._roster=Array.isArray(m.peers)?m.peers:[]; this._emitPeers(); } };
+    ws.onclose=()=>{ this._isConnected=false; this._emitConn(false); if(!this._closed) this._reconnect(); };
+    ws.onerror=()=>{ try{ ws.close(); }catch(e){} };
+  }
+  _reconnect(){ if(this._closed) return; clearTimeout(this._rt); this._rt=setTimeout(()=>this._connect(), 1500); }
+  connected(){ return this._isConnected; }
+  onConnection(cb){ this._connCbs.push(cb); return ()=>{ this._connCbs=this._connCbs.filter(c=>c!==cb); }; }
+  _emitConn(b){ this._connCbs.forEach(cb=>{ try{ cb(b); }catch(e){} }); }
+  onPeers(cb){ this._peersCbs.push(cb); try{ cb(this.peers()); }catch(e){}
+    return ()=>{ this._peersCbs=this._peersCbs.filter(c=>c!==cb); }; }
+  _emitPeers(){ const p=this.peers(); this._peersCbs.forEach(cb=>{ try{ cb(p); }catch(e){} }); }
+  peers(){ return this._roster.map(r=>({ peer:r.peer, presence:r.presence||{}, isMe:r.peer===this.myPeer, kind:"viewer" })); }
+  async presence(patch){ this.lastPresence=patch||{};
+    if(this.ws && this._isConnected){ try{ this.ws.send(JSON.stringify({t:"presence", presence:this.lastPresence})); }catch(e){} } }
+  async leave(){ this._closed=true; clearTimeout(this._rt);
+    try{ if(this.ws && this._isConnected) this.ws.send(JSON.stringify({t:"leave"})); }catch(e){}
+    try{ this.ws && this.ws.close(); }catch(e){} }
+}
+
+async function resolveRoom(){
+  const relay=getRelay();
+  if(relay){ try{ localStorage.setItem("ma_relay", relay); }catch(e){} return makeWsRoom(relay); }
+  return await (window.claude?.use ? window.claude.use("room") : Promise.resolve(null));
+}
+function noRoomMsg(){
+  $("lobbyMsg").innerHTML="To play online off claude.ai, paste a <b>relay server URL</b> above "+
+    "(run the tiny relay in a Codespace — see the recitation README). "+
+    "Otherwise use <b>2 Teams · 1 Screen</b>, which needs no network.";
+}
+
 async function goOnline(){
   show("lobby"); $("waitCard").hidden=true; $("lobbyMsg").textContent="";
-  ROOM = await (window.claude?.use ? window.claude.use("room") : Promise.resolve(null));
-  if(!ROOM){ $("lobbyMsg").innerHTML="Online play isn't available in this view. Try <b>2 Teams · 1 Screen</b> instead — it works everywhere."; return; }
+  const field=$("relayUrl");
+  if(field && !field.value){
+    let q=""; try{ q=new URLSearchParams(location.search).get("relay")||""; }catch(e){}
+    let saved=""; try{ saved=localStorage.getItem("ma_relay")||""; }catch(e){}
+    field.value=q||saved||"";
+  }
 }
 function myName(){ const v=$("teamname").value.trim(); return v || "Team "+Math.floor(Math.random()*90+10); }
 
 async function createMatch(){
-  if(!ROOM){ await goOnline(); if(!ROOM) return; }
+  ROOM = await resolveRoom();
+  if(!ROOM){ noRoomMsg(); return; }
   const code = randCode();
   await enterRoom(code);
 }
 async function joinMatch(){
-  if(!ROOM){ await goOnline(); if(!ROOM) return; }
+  ROOM = await resolveRoom();
+  if(!ROOM){ noRoomMsg(); return; }
   const code = $("joincode").value.trim().toUpperCase();
   if(!/^[A-Z0-9]{4}$/.test(code)){ $("lobbyMsg").textContent="Enter a 4-character match code."; return; }
   await enterRoom(code);
