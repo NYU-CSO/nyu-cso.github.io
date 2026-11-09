@@ -327,7 +327,6 @@ a{color:var(--accent)}
       <div class="team" style="text-align:center"><div class="hpnum">STREAK</div><div class="disp" style="font-size:18px" id="sStreak">0</div></div>
       <div class="team B"><div class="hpnum">QUESTION</div><div class="disp" style="font-size:18px" id="sProg">1/14</div></div>
     </div>
-    <div class="timer"><div class="timerfill" id="sTimer"></div></div>
     <div class="stage solo"><div class="fighter solo" id="figS"><div class="body"></div><span class="dmg"></span></div></div>
     <div class="qcard">
       <div class="qprompt" id="sPrompt"></div>
@@ -716,15 +715,13 @@ function renderSolo(){
   const pad=$("sPad"); pad.innerHTML = optsHTML(q, KEYS_SOLO, "A");
   pad.querySelectorAll(".opt").forEach((b,idx)=> b.onclick=()=>soloAnswer(idx));
   G.answered=false; G.shownAt=performance.now();
-  runTimer($("sTimer"), ()=>{ if(!G.answered) soloAnswer(-1); });
 }
 function soloAnswer(idx){
   if(G.answered) return; G.answered=true; stopTimer();
   const q=G.qs[G.i]; const correct = idx===q.correct;
   G.picks[G.i]=idx;
-  const ms = performance.now()-G.shownAt;
   let gained=0;
-  if(correct){ const speed = Math.max(0, Math.round((1-Math.min(ms,QTIME*1000)/(QTIME*1000))*50)); gained=100+speed; G.score += gained; G.streak++; G.best=Math.max(G.best,G.streak); }
+  if(correct){ gained=100; G.score += gained; G.streak++; G.best=Math.max(G.best,G.streak); }
   else G.streak=0;
   reactSolo(correct, gained);
   revealOpts($("sPad"), q, idx);
