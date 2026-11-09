@@ -219,6 +219,112 @@ Since our implementation frequently
 refers to the size of the header, we set global variable <tt>hdr_size =
 sizeof(meta_t)</tt>, and use <tt>hdr_size</tt> later in the code.
 
+<figure style="margin:1.5em 0; text-align:center;">
+<svg role="img" viewBox="0 0 760 520" style="width:100%; height:auto; max-width:760px; border:1px solid #dee2e6; border-radius:6px; background:#ffffff; font-family:-apple-system,Segoe UI,Roboto,Helvetica,Arial,sans-serif;">
+  <title>Implicit free list heap layout</title>
+  <desc>The heap is an 8-byte padding followed by a sequence of chunks; each chunk is a header, a payload, and a footer. The header and footer both store the chunk size and allocated/free status.</desc>
+
+  <!-- ===== Panel 1: heap overview ===== -->
+  <text x="24" y="22" font-size="13" font-weight="bold" fill="#212529">The heap: an implicit list of chunks (low address &#8594; high address)</text>
+
+  <!-- padding -->
+  <rect x="24" y="44" width="40" height="52" fill="#e9ecef" stroke="#343a40"/>
+  <text x="44" y="66" font-size="10" text-anchor="middle" fill="#212529">pad</text>
+  <text x="44" y="80" font-size="10" text-anchor="middle" fill="#212529">8 B</text>
+
+  <!-- chunk 1 : allocated -->
+  <rect x="64"  y="44" width="34"  height="52" fill="#ffe08a" stroke="#343a40"/>
+  <rect x="98"  y="44" width="136" height="52" fill="#cfe2ff" stroke="#343a40"/>
+  <rect x="234" y="44" width="34"  height="52" fill="#ffe08a" stroke="#343a40"/>
+  <text x="81"  y="64" font-size="10" text-anchor="middle" fill="#212529">48</text>
+  <text x="81"  y="80" font-size="10" text-anchor="middle" fill="#212529">A</text>
+  <text x="166" y="64" font-size="11" text-anchor="middle" fill="#212529">payload</text>
+  <text x="166" y="80" font-size="10" text-anchor="middle" fill="#495057">(allocated)</text>
+  <text x="251" y="64" font-size="10" text-anchor="middle" fill="#212529">48</text>
+  <text x="251" y="80" font-size="10" text-anchor="middle" fill="#212529">A</text>
+
+  <!-- chunk 2 : free -->
+  <rect x="268" y="44" width="34"  height="52" fill="#ffe08a" stroke="#343a40"/>
+  <rect x="302" y="44" width="120" height="52" fill="#d1e7dd" stroke="#343a40"/>
+  <rect x="422" y="44" width="34"  height="52" fill="#ffe08a" stroke="#343a40"/>
+  <text x="285" y="64" font-size="10" text-anchor="middle" fill="#212529">32</text>
+  <text x="285" y="80" font-size="10" text-anchor="middle" fill="#212529">F</text>
+  <text x="362" y="64" font-size="11" text-anchor="middle" fill="#212529">free space</text>
+  <text x="439" y="64" font-size="10" text-anchor="middle" fill="#212529">32</text>
+  <text x="439" y="80" font-size="10" text-anchor="middle" fill="#212529">F</text>
+
+  <!-- chunk 3 : allocated -->
+  <rect x="456" y="44" width="34"  height="52" fill="#ffe08a" stroke="#343a40"/>
+  <rect x="490" y="44" width="136" height="52" fill="#cfe2ff" stroke="#343a40"/>
+  <rect x="626" y="44" width="34"  height="52" fill="#ffe08a" stroke="#343a40"/>
+  <text x="473" y="64" font-size="10" text-anchor="middle" fill="#212529">64</text>
+  <text x="473" y="80" font-size="10" text-anchor="middle" fill="#212529">A</text>
+  <text x="558" y="64" font-size="11" text-anchor="middle" fill="#212529">payload</text>
+  <text x="558" y="80" font-size="10" text-anchor="middle" fill="#495057">(allocated)</text>
+  <text x="643" y="64" font-size="10" text-anchor="middle" fill="#212529">64</text>
+  <text x="643" y="80" font-size="10" text-anchor="middle" fill="#212529">A</text>
+
+  <text x="678" y="76" font-size="18" text-anchor="middle" fill="#212529">&#8230;</text>
+
+  <!-- heap bounds -->
+  <line x1="24"  y1="40" x2="24"  y2="104" stroke="#0d6efd" stroke-width="1.5"/>
+  <text x="24"  y="118" font-size="10" text-anchor="start" fill="#0d6efd">mem_heap_lo()</text>
+  <line x1="700" y1="40" x2="700" y2="104" stroke="#0d6efd" stroke-width="1.5"/>
+  <text x="700" y="118" font-size="10" text-anchor="end" fill="#0d6efd">mem_heap_hi()</text>
+
+  <!-- returned-pointer callout -->
+  <line x1="98" y1="140" x2="98" y2="98" stroke="#d6336c" stroke-width="1.5" marker-end="url(#ah)"/>
+  <text x="104" y="138" font-size="10" text-anchor="start" fill="#d6336c">pointer returned by mm_malloc (16-byte aligned)</text>
+
+  <!-- invariant -->
+  <text x="24" y="166" font-size="11" fill="#495057">Invariant: mm_free coalesces neighbours, so two free chunks are never adjacent.</text>
+
+  <!-- legend -->
+  <rect x="24"  y="178" width="12" height="12" fill="#e9ecef" stroke="#343a40"/><text x="40"  y="188" font-size="10" fill="#212529">8 B start padding</text>
+  <rect x="150" y="178" width="12" height="12" fill="#ffe08a" stroke="#343a40"/><text x="166" y="188" font-size="10" fill="#212529">header / footer (size + status)</text>
+  <rect x="360" y="178" width="12" height="12" fill="#cfe2ff" stroke="#343a40"/><text x="376" y="188" font-size="10" fill="#212529">allocated payload</text>
+  <rect x="500" y="178" width="12" height="12" fill="#d1e7dd" stroke="#343a40"/><text x="516" y="188" font-size="10" fill="#212529">free chunk</text>
+
+  <line x1="24" y1="206" x2="736" y2="206" stroke="#dee2e6"/>
+
+  <!-- ===== Panel 2: one chunk ===== -->
+  <text x="24" y="228" font-size="13" font-weight="bold" fill="#212529">Anatomy of one chunk</text>
+  <rect x="24"  y="242" width="126" height="50" fill="#ffe08a" stroke="#343a40"/>
+  <rect x="150" y="242" width="460" height="50" fill="#cfe2ff" stroke="#343a40"/>
+  <rect x="610" y="242" width="126" height="50" fill="#ffe08a" stroke="#343a40"/>
+  <text x="87"  y="264" font-size="11" text-anchor="middle" fill="#212529">header</text>
+  <text x="87"  y="279" font-size="10" text-anchor="middle" fill="#495057">8 B (meta_t)</text>
+  <text x="380" y="264" font-size="11" text-anchor="middle" fill="#212529">payload &#8212; returned to the caller</text>
+  <text x="380" y="279" font-size="10" text-anchor="middle" fill="#495057">(a multiple of 16 bytes)</text>
+  <text x="673" y="264" font-size="11" text-anchor="middle" fill="#212529">footer</text>
+  <text x="673" y="279" font-size="10" text-anchor="middle" fill="#495057">8 B (meta_t)</text>
+  <text x="24" y="310" font-size="11" fill="#495057">chunk size = 8 + payload + 8 &#8212; a multiple of 16, and written identically in <tspan font-style="italic">both</tspan> the header and the footer (boundary tags).</text>
+
+  <!-- ===== Panel 3: header word ===== -->
+  <text x="24" y="338" font-size="13" font-weight="bold" fill="#212529">What a header / footer word holds (64 bits)</text>
+  <rect x="24"  y="350" width="656" height="34" fill="#f1f3f5" stroke="#343a40"/>
+  <rect x="680" y="350" width="56"  height="34" fill="#ffe08a" stroke="#343a40"/>
+  <text x="352" y="371" font-size="11" text-anchor="middle" fill="#212529">chunk size (bits 63..4) &#8212; a multiple of 16, so the low 4 bits are always 0</text>
+  <text x="708" y="366" font-size="9"  text-anchor="middle" fill="#212529">status</text>
+  <text x="708" y="378" font-size="9"  text-anchor="middle" fill="#212529">bit 0</text>
+  <text x="24" y="402" font-size="12" fill="#212529" font-family="ui-monospace,Menlo,Consolas,monospace">get_size(h) = *h &amp; ~0xF &#160;&#160;&#160; get_status(h) = *h &amp; 1 &#160;&#160; (1 = allocated, 0 = free)</text>
+
+  <!-- ===== Panel 4: pointer arithmetic ===== -->
+  <text x="24" y="430" font-size="13" font-weight="bold" fill="#212529">Finding your way around (pointer arithmetic)</text>
+  <text x="24" y="450" font-size="12" fill="#212529" font-family="ui-monospace,Menlo,Consolas,monospace">payload2header(p)    = (char *)p + hdr_size          (i.e. p &#8722; 8)</text>
+  <text x="24" y="468" font-size="12" fill="#212529" font-family="ui-monospace,Menlo,Consolas,monospace">header2footer(h)     = (char *)h + get_size(h) &#8722; hdr_size</text>
+  <text x="24" y="486" font-size="12" fill="#212529" font-family="ui-monospace,Menlo,Consolas,monospace">next_chunk_header(h) = (char *)h + get_size(h)        (NULL if past mem_heap_hi)</text>
+  <text x="24" y="504" font-size="12" fill="#212529" font-family="ui-monospace,Menlo,Consolas,monospace">prev_chunk_header(h) = step back via the previous chunk's footer at h &#8722; hdr_size</text>
+
+  <defs>
+    <marker id="ah" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto">
+      <path d="M0,0 L6,3 L0,6 Z" fill="#d6336c"/>
+    </marker>
+  </defs>
+</svg>
+<figcaption style="font-size:0.9em; color:#6c757d; margin-top:0.4em;">Figure: the implicit free list. The heap is 8 bytes of padding followed by a contiguous run of chunks; each chunk carries its size and allocated/free status in both a header and a footer, which lets <tt>mm_free</tt> find and coalesce neighbours in O(1).</figcaption>
+</figure>
+
 <p>You shall complete the implicit list implementation in the following stages:
 <ol>
     <li>Complete various helper functions that manipulate the header, including <tt>set_size_status, get_size, get_status, set_status, header2footer, payload2header</tt>.   
