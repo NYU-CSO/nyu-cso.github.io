@@ -147,6 +147,9 @@ input:focus-visible{outline:2px solid var(--accent); outline-offset:1px}
 .foot{margin-top:26px; text-align:center; color:var(--muted); font-size:12px; line-height:1.6}
 a{color:var(--accent)}
 .pill{display:inline-block; font-family:var(--mono); font-size:12px; background:var(--panel2); border:1px solid var(--line); border-radius:999px; padding:3px 10px; color:var(--muted)}
+.pill.ok{color:var(--green); border-color:var(--green)}
+.pill.bad{color:var(--wrong); border-color:var(--wrong)}
+.pill.warn{color:var(--amber); border-color:var(--amber)}
 .flash{animation:flash .5s ease}
 @keyframes flash{0%{filter:brightness(1.8)}100%{filter:brightness(1)}}
 
@@ -247,7 +250,11 @@ a{color:var(--accent)}
       <div class="field"><label class="lab" for="teamname">Your team name</label>
         <input type="text" id="teamname" maxlength="18" placeholder="e.g. Segfault Squad"></div>
       <div class="field mt"><label class="lab" for="relayUrl">Relay server URL <span class="muted" style="text-transform:none; letter-spacing:0">(off claude.ai — paste the Codespace URL; leave blank on claude.ai)</span></label>
-        <input type="text" id="relayUrl" placeholder="wss://your-codespace-8080.app.github.dev" autocapitalize="off" autocomplete="off" spellcheck="false"></div>
+        <input type="text" id="relayUrl" placeholder="wss://your-codespace-8080.app.github.dev" autocapitalize="off" autocomplete="off" spellcheck="false">
+        <div class="row" style="margin-top:8px; align-items:center">
+          <button class="btn" id="testRelayBtn" type="button" style="padding:8px 14px; font-size:13px">Test relay</button>
+          <span id="relayStatus" class="pill">not tested</span>
+        </div></div>
       <div class="row mt">
         <button class="btn primary lg" id="createBtn">Create match</button>
         <span class="muted">or</span>
@@ -954,6 +961,26 @@ async function resolveRoom(){
   if(relay){ try{ localStorage.setItem("ma_relay", relay); }catch(e){} return makeWsRoom(relay); }
   return await (window.claude?.use ? window.claude.use("room") : Promise.resolve(null));
 }
+
+/* Pre-flight: open a throwaway WebSocket to the relay so students can confirm
+   the URL works before creating/joining a match. */
+let _relayTestWs=null, _relayTestTimer=null;
+function setRelayStatus(cls, text){ const el=$("relayStatus"); if(!el) return; el.className="pill "+(cls||""); el.textContent=text; }
+function testRelay(){
+  const url=getRelay();
+  if(_relayTestWs){ try{ _relayTestWs.close(); }catch(e){} _relayTestWs=null; }
+  clearTimeout(_relayTestTimer);
+  if(!url){ setRelayStatus(window.claude?.use?"":"", window.claude?.use?"optional on claude.ai":"enter a URL"); return; }
+  setRelayStatus("warn","connecting…");
+  let ws, done=false;
+  const finish=(cls,text)=>{ if(done) return; done=true; clearTimeout(_relayTestTimer); setRelayStatus(cls,text); try{ ws&&ws.close(); }catch(e){} _relayTestWs=null; };
+  try{ ws=new WebSocket(url); }catch(e){ setRelayStatus("bad","bad URL"); return; }
+  _relayTestWs=ws;
+  _relayTestTimer=setTimeout(()=>finish("bad","no response ✗"), 6000);
+  ws.onopen =()=>finish("ok","relay reachable ✓");
+  ws.onerror=()=>finish("bad","can't connect ✗");
+  ws.onclose=()=>finish("bad","can't connect ✗");
+}
 function noRoomMsg(){
   $("lobbyMsg").innerHTML="To play online off claude.ai, paste a <b>relay server URL</b> above "+
     "(run the tiny relay in a Codespace — see the recitation README). "+
@@ -968,6 +995,8 @@ async function goOnline(){
     let saved=""; try{ saved=localStorage.getItem("ma_relay")||""; }catch(e){}
     field.value=q||saved||"";
   }
+  if(field && field.value) testRelay();
+  else setRelayStatus("", window.claude?.use ? "optional on claude.ai" : "enter a URL to play online");
 }
 function myName(){ const v=$("teamname").value.trim(); return v || "Team "+Math.floor(Math.random()*90+10); }
 
@@ -1113,6 +1142,8 @@ document.querySelectorAll(".mode").forEach(b=> b.onclick=()=>{
 $("createBtn").onclick=createMatch;
 $("joinBtn").onclick=joinMatch;
 $("joincode").addEventListener("keydown",e=>{ if(e.key==="Enter") joinMatch(); });
+$("testRelayBtn").onclick=testRelay;
+$("relayUrl").addEventListener("change", testRelay);
 
 show("home");
 </script>
